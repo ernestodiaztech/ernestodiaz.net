@@ -1,0 +1,11 @@
+# Hugo build output
+/public/
+/resources/_gen/
+
+# OS / editor noise
+.DS_Store
+.vscode/
+.idea/
+
+# Optional: ignore local env files
+.env

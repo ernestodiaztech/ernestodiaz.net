@@ -1,0 +1,29 @@
+baseURL: https://ernestodiaz.net/
+languageCode: en-us
+title: Ernesto Diaz
+theme: hextra
+
+params:
+  page:
+    # full (100%), wide (90rem), normal (1280px)
+    width: full
+    contextMenu:
+      enable: true
+outputs:
+  page: [html, markdown]
+  section: [html, rss, markdown]
+
+menu:
+  main:
+    - name: "Docs"
+      pageRef: "/docs"
+      weight: 1
+    - name: Theme Toggle
+      params:
+        type: theme-toggle
+        label: true # optional, default is false
+      weight: 2
+    - name: Search
+      params:
+        type: search
+      weight: 3

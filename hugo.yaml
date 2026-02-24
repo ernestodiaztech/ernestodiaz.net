@@ -3,27 +3,73 @@ languageCode: en-us
 title: Ernesto Diaz
 theme: hextra
 
+enableGitInfo: true
+
 params:
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: images/darklogo.svg
+      dark: images/darklogo.svg
   page:
     # full (100%), wide (90rem), normal (1280px)
-    width: full
+    width: wide
     contextMenu:
       enable: true
+  displayUpdatedDate: true
+  dateFormat: "January 2, 2006"
+  displayUpdatedAuthor: true
+  blog:
+    list:
+      displayTags: true
+  imageZoom:
+    enable: true
+  editURL:
+    enable: true
+    base: "https://github.com/ernestodiaztech/ernestodiaz.net/edit/main"
 outputs:
   page: [html, markdown]
   section: [html, rss, markdown]
 
+taxonomies:
+  tag: tags
+  
+
 menu:
   main:
-    - name: "Docs"
-      pageRef: "/docs"
+    - name: "About"
+      pageRef: "/about"
       weight: 1
+    - name: "Blog"
+      pageRef: "/blog"
+      weight: 2
+    - name: "Projects"
+      pageRef: "/docs"
+      weight: 3
+    - name: "Study Notes"
+      pageRef: "/study"
+      weight: 4
     - name: Theme Toggle
       params:
         type: theme-toggle
         label: true # optional, default is false
-      weight: 2
+      weight: 7
     - name: Search
       params:
         type: search
-      weight: 3
+      weight: 6
+    - name: Github
+      params:
+        type: link
+        icon: github
+      url: "https://github.com/ernestodiaztech"
+      weight: 5
+markup:
+  goldmark:
+    parser:
+      attribute:
+        block: true
+        title: true
+    renderer:
+      unsafe: true

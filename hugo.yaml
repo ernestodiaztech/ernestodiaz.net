@@ -1,4 +1,4 @@
-baseURL: https://ernestodiaz.net/
+baseURL: "https://ernestodiaz.net/"
 languageCode: en-us
 title: Ernesto Diaz
 theme: hextra
@@ -10,8 +10,8 @@ params:
     displayTitle: true
     displayLogo: true
     logo:
-      path: images/darklogo.svg
-      dark: images/darklogo.svg
+      path: /images/lightlogo.png
+      dark: /images/darklogo.png
   page:
     # full (100%), wide (90rem), normal (1280px)
     width: wide

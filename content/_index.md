@@ -1,5 +1,5 @@
 ---
-draft: fase
+draft: false
 title: ''
 ---
 
@@ -16,12 +16,14 @@ System & Network Engineering Projects.
 {{< hextra/hero-button text="About Me" link="/about/" >}}
 {{< hextra/hero-button text="GitHub" link="https://github.com/ernestodiaztech/ernestodiaz.net" >}}
 
-{{< cards >}}
-  {{< card link="/docs/" title="Fast and Full-featured" subtitle="Simple and easy to use, yet powerful and feature-rich." >}}
-  {{< card link="/docs/" title="Markdown is All You Need" subtitle="Compose with just Markdown. Enrich with Shortcode components." >}}
-  {{< card link="/docs/" title="Full Text Search" subtitle="Built-in full text search with FlexSearch, no extra setup required." >}}
-  {{< card link="/docs/" title="Lightweight as a Feather" subtitle="No dependency or Node.js is needed to use Hextra." >}}
-  {{< card link="/docs/" title="Responsive with Dark Mode Included" subtitle="Looks great on different screen sizes." >}}
-  {{< card link="/docs/" title="Build and Host for Free" subtitle="Deploy via GitHub Actions or any static host." >}}
+---
+
+{{< cards cols="2">}}
+  {{< card title="Network Engineering" subtitle="Designing, deploying, and managing enterprise routing, switching, and wireless across distributed environments." >}}
+  {{< card title="Ansible Automation" subtitle="Automating network configurations, deployments, and troubleshooting workflows at scale." >}}
+  {{< card title="Endpoint Management" subtitle="Managing and securing devices across sites with Intune, Jamf, NinjaOne, and Action1." >}}
+  {{< card title="PowerShell" subtitle="Scripts and tools for automating system administration and streamlining daily operations." >}}
+  {{< card title="High Availability Cluster" subtitle="Building resilient self-hosted infrastructure with failover, redundancy, and load balancing." >}}
+  {{< card title="Networking News" subtitle="Keeping up with the latest in networking, infrastructure, and enterprise IT." >}}
 {{< /cards >}}
 

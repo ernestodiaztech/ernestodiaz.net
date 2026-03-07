@@ -1,11 +1,13 @@
 baseURL: "https://ernestodiaz.net/"
 languageCode: en-us
+timeZone: "America/Chicago"
 title: Ernesto Diaz
 theme: hextra
 
 enableGitInfo: true
 
 params:
+  externalLinkDecoration: true
   navbar:
     displayTitle: true
     displayLogo: true
@@ -27,7 +29,7 @@ params:
     enable: true
   editURL:
     enable: true
-    base: "https://github.com/ernestodiaztech/ernestodiaz.net/edit/main"
+    base: "https://github.com/ernestodiaztech/ernestodiaz.net/edit/main/content"
 outputs:
   page: [html, markdown]
   section: [html, rss, markdown]
@@ -47,25 +49,25 @@ menu:
     - name: "Projects"
       pageRef: "/docs"
       weight: 3
-    - name: "Study Notes"
-      pageRef: "/study"
-      weight: 4
     - name: Theme Toggle
       params:
         type: theme-toggle
         label: true # optional, default is false
-      weight: 7
+      weight: 6
     - name: Search
       params:
         type: search
-      weight: 6
+      weight: 5
     - name: Github
       params:
         type: link
         icon: github
       url: "https://github.com/ernestodiaztech"
-      weight: 5
+      weight: 4
 markup:
+  tableOfContents:
+    startLevel: 2
+    endLevel: 3
   goldmark:
     parser:
       attribute:
@@ -73,3 +75,4 @@ markup:
         title: true
     renderer:
       unsafe: true
+

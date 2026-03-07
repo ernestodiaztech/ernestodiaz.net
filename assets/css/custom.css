@@ -1,0 +1,4 @@
+/* Hide H4+ headings from TOC only (not left sidebar) */
+.hextra-scrollbar:has(> p) a[class*="pl-8"] {
+  display: none !important;
+}

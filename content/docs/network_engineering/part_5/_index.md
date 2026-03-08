@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '5 - Ansible Install'
 description: "Part 5 of my Ansible learning geared towards Network Engineering."
 tags:

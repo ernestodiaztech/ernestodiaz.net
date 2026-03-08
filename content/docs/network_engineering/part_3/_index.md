@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '4 - Virtualenv'
 toc: true
 description: "Part 4 of my Ansible learning geared towards Network Engineering."

@@ -166,9 +166,9 @@ This key is specifically for GitHub. I generate it on the Ubuntu VM itself:
 ssh-keygen -t ed25519 -C "myemail@company.com" -f ~/.ssh/github_key
 ```
 
-- `-t ed25519` — Ed25519 is the modern, recommended key type for GitHub
-- `-C "myemail@company.com"` — the comment becomes a label in GitHub's SSH key list, helping me identify which key is which
-- `-f ~/.ssh/github_key` — saves the key pair as `github_key` (private) and `github_key.pub` (public)
+- `-t ed25519` - Ed25519 is the modern, recommended key type for GitHub
+- `-C "myemail@company.com"` - the comment becomes a label in GitHub's SSH key list, helping me identify which key is which
+- `-f ~/.ssh/github_key` - saves the key pair as `github_key` (private) and `github_key.pub` (public)
 
 When prompted for a passphrase, I set one. GitHub SSH keys should always have a passphrase.
 
@@ -272,7 +272,7 @@ I copy this entire line, then:
 1. Go to **GitHub.com** → click my profile picture → **Settings**
 2. In the left sidebar, click **SSH and GPG keys**
 3. Click **New SSH key**
-4. **Title:** `ansible-ubuntu-vm` (a descriptive name so I know which machine this key belongs to)
+4. **Title:** `ansible-ubuntu-vm`
 5. **Key type:** Authentication Key
 6. **Key:** paste the public key
 7. Click **Add SSH key**
@@ -451,7 +451,7 @@ awx_export/
 - **Lines 54-55** - AWX / Tower export files. These can contain credentials if exported carelessly.
 
 {{< callout type="Important">}}
-> The `.gitignore` file only prevents **untracked** files from being added to Git. If I accidentally commit a secret file before adding it to `.gitignore`, the secret is now in the Git history. Even if I delete the file afterward. Git history is permanent. The correct remediation is `git filter-repo` to rewrite history (which destroys all commit SHAs and requires every team member to re-clone), plus immediately rotating the compromised credential. The lesson: set up `.gitignore` before the first commit, every single time.
+The `.gitignore` file only prevents **untracked** files from being added to Git. If I accidentally commit a secret file before adding it to `.gitignore`, the secret is now in the Git history. Even if I delete the file afterward. Git history is permanent. The correct remediation is `git filter-repo` to rewrite history (which destroys all commit SHAs and requires every team member to re-clone), plus immediately rotating the compromised credential. The lesson: set up `.gitignore` before the first commit, every single time.
 {{< /callout >}}
 
 ---
@@ -470,7 +470,7 @@ If I uncomment them, Git ignores the entire `host_vars/` and `group_vars/` direc
 The correct approach is to use Ansible Vault to encrypt only the sensitive values within those files. I commit the encrypted vault files. Git stores the ciphertext, which is safe. The vault password itself goes in `.vault_pass`, which is in `.gitignore`.
 
 {{< callout type="Important" >}}
-> GitHub maintains a comprehensive collection of `.gitignore` templates at `github.com/github/gitignore`. There's a Python template and an Ansible template worth reviewing. I can also generate a `.gitignore` at `gitignore.io` by searching for "Ansible", "Python", "Linux", and "VisualStudioCode" all at once and it merges all four templates into one file.
+GitHub maintains a comprehensive collection of `.gitignore` templates at `github.com/github/gitignore`. There's a Python template and an Ansible template worth reviewing. I can also generate a `.gitignore` at `gitignore.io` by searching for "Ansible", "Python", "Linux", and "VisualStudioCode" all at once and it merges all four templates into one file.
 {{< /callout >}}
 
 {{% /steps %}}
@@ -645,13 +645,13 @@ Closes: #42
 #### Good vs Bad Commit Messages {class="no-step-marker"}
 
 ```bash
-# ❌ Bad — tells me nothing useful
+# Bad — tells me nothing useful
 git commit -m "fix"
 git commit -m "update playbook"
 git commit -m "changes"
 git commit -m "WIP"
 
-# ✅ Good — tells me exactly what changed and why
+# Good — tells me exactly what changed and why
 git commit -m "fix(ios): correct interface description task to use ios_config not raw"
 git commit -m "feat(nxos): add VLAN provisioning playbook for datacenter fabric"
 git commit -m "chore: update ansible from 9.7.0 to 9.8.0, pin in requirements.txt"
@@ -766,7 +766,7 @@ I can now go to `github.com/myusername/ansible-network` and see my files online.
 
 These are the commands I run every day. After Parts 1-3, I now have a routine:
 
-1. Start the session — activate the virtualenv and navigate to the project
+1. Start the session (activate the virtualenv and navigate to the lab)
 
 ```bash
 source ~/venvs/ansible-network/bin/activate
@@ -779,7 +779,7 @@ cd ~/projects/ansible-network
 git pull
 ```
 
-3. Do my work — edit playbooks, add roles, update inventory
+3. Do my work (edit playbooks, add roles, update inventory)
 
 4. Check what changed
 
@@ -1262,7 +1262,7 @@ Install the hooks (runs once — creates hooks in .git/hooks/)
 pre-commit install
 ```
 
-- `pre-commit install` — installs the hooks into `.git/hooks/pre-commit`. Now every `git commit` automatically runs these checks first.
+- `pre-commit install` - installs the hooks into `.git/hooks/pre-commit`. Now every `git commit` automatically runs these checks first.
 - If any check fails, the commit is blocked until I fix the issue.
 
 Test it manually
@@ -1280,7 +1280,7 @@ pre-commit run --all-files
 
 This is the procedure if I accidentally committed a credential:
 
-1. **Rotate the credential immediately** — assume it's compromised. Change the password, revoke the API token, generate a new SSH key. Do this first, before anything else.
+1. **Rotate the credential immediately** - assume it's compromised. Change the password, revoke the API token, generate a new SSH key. Do this first, before anything else.
 2. **Remove it from history** using `git filter-repo` (not `git filter-branch` which is deprecated):
    ```bash
    pip install git-filter-repo

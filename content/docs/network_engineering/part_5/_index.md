@@ -17,7 +17,7 @@ weight: 5
 
 This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
 
-## Installing Ansible & Understanding How It Works
+## Installing Ansible
 
 This part isn't about reinstalling it, it's about understanding what I actually installed, why it's structured the way it is, and what's happening behind the scenes when a playbook runs. That understanding is what separates someone who can copy-paste playbooks from someone who can write, debug, and maintain them confidently.
 
@@ -238,7 +238,7 @@ Understanding this diagram saves hours of debugging. When something goes wrong, 
     │  Cisco IOS   │  │  Cisco NX-OS │  │   Juniper    │
     │  R1, R2, R3  │  │  SW1, SW2    │  │  vJunos-1    │
     └──────────────┘  └──────────────┘  └──────────────┘
-         MANAGED NODES (network devices — no agent installed)
+         MANAGED NODES (network devices, no agent installed)
 ```
 
 #### The Key Components

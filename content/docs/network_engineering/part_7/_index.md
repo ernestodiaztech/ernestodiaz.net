@@ -8,7 +8,7 @@ tags:
 categories:
   - automation
 sidebar:
-  exclude: true
+  exclude: false
 weight: 7
 ---
 
@@ -53,7 +53,7 @@ The inventory is the 'what exists and how to reach it'. Playbooks are the 'what 
 
 ## INI vs YAML Inventory Formats
 
-Ansible supports multiple inventory file formats. The two most common are INI and YAML. I'll show both side by side so I understand what I'm looking at when I encounter either in the wild, then commit to YAML for this guide.
+Ansible supports multiple inventory file formats. The two most common are INI and YAML. I'll show both side by side so I understand what I'm looking at when I encounter either in the wild, then commit to YAML for this lab.
 
 #### The Same Inventory in Both Formats
 
@@ -81,16 +81,16 @@ fw-01 ansible_host=172.16.0.10
 host-01 ansible_host=172.16.0.31
 host-02 ansible_host=172.16.0.32
 
-# Group of groups — cisco_ios contains the wan group
+# Group of groups - cisco_ios contains the wan group
 [cisco_ios:children]
 wan
 
-# Group of groups — cisco_nxos contains spine and leaf groups
+# Group of groups - cisco_nxos contains spine and leaf groups
 [cisco_nxos:children]
 spine_switches
 leaf_switches
 
-# Group of groups — datacenter contains nxos switches
+# Group of groups - datacenter contains nxos switches
 [datacenter:children]
 cisco_nxos
 

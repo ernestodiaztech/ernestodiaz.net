@@ -1,5 +1,5 @@
 ---
-draft: false
+draft: true
 title: '8 - Structure'
 description: "Part 8 of my Ansible learning geared towards Network Engineering."
 tags:

@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '8 - Structure'
 description: "Part 8 of my Ansible learning geared towards Network Engineering."
 tags:
@@ -8,7 +8,7 @@ tags:
 categories:
   - automation
 sidebar:
-  exclude: true
+  exclude: false
 weight: 8
 ---
 

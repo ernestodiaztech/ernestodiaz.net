@@ -1,6 +1,7 @@
 ---
 title: Day 1 of CCNA Study
 date: 2026-03-01
+description: This is a blog series of me studying for the CCNA. I learn best when reiterating the material or "teaching". The part focuses on the OSI & TCP/IP models.
 tags:
     - ccna
 toc: false

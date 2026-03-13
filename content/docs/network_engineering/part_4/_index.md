@@ -29,7 +29,7 @@ I already know the basics (add, commit, push). But there's a big difference betw
 
 Before Git, network changes worked like this: an engineer SSHs into a device, makes changes, types `write mem`, and hopes nothing breaks. If it does break, the rollback is "remember what you changed and undo it manually." The config backup, if it exists, is a text file on a shared drive with a name like `R1-config-final-FINAL-v3-USE-THIS-ONE.txt`.
 
-Ansible without version control isn't much better. I have a playbook that works today. I change it. It breaks something in production. I can't remember exactly what I changed or when. There's no rollback. I'm guessing.
+Ansible without version control isn't much better. I have a playbook that works today. I change it. It breaks something in production. I can't remember exactly what I changed or when.
 
 Version control changes everything:
 
@@ -40,7 +40,7 @@ Version control changes everything:
 - **Collaboration is structured**: multiple engineers can work on the same codebase without overwriting each other
 
 >[!Info]
-> Git and GitHub are different things. Git is the version control system (the software that tracks changes locally on my Ubuntu VM). GitHub is a cloud hosting platform for Git repositories. It stores a copy of my repo online and provides collaboration features like Pull Requests, Issues, and Actions. There are alternatives to GitHub (GitLab, Bitbucket, Azure DevOps) but GitHub is the most common and what this guide uses.
+> Git and GitHub are different things. Git is the version control system (the software that tracks changes locally on my Ubuntu VM). GitHub is a cloud hosting platform for Git repositories. It stores a copy of my repo online and provides collaboration features like Pull Requests, Issues, and Actions.
 
 ---
 
@@ -92,7 +92,7 @@ git config --global init.defaultBranch main
 
 #### Setting the Default Editor
 
-When Git needs me to write a commit message in an editor (e.g., during a merge), it opens the default editor. I set it to nano since it's beginner-friendly:
+When Git needs me to write a commit message in an editor (e.g., during a merge), it opens the default editor. I set it to nano since it's what I'm used to:
 
 ```bash
 git config --global core.editor nano
@@ -170,7 +170,7 @@ ssh-keygen -t ed25519 -C "myemail@company.com" -f ~/.ssh/github_key
 - `-C "myemail@company.com"` - the comment becomes a label in GitHub's SSH key list, helping me identify which key is which
 - `-f ~/.ssh/github_key` - saves the key pair as `github_key` (private) and `github_key.pub` (public)
 
-When prompted for a passphrase, I set one. GitHub SSH keys should always have a passphrase.
+When prompted for a passphrase, I set one.
 
 ---
 
@@ -185,13 +185,13 @@ chmod 644 ~/.ssh/github_key.pub
 
 #### Configuring SSH to Use This Key for GitHub
 
-I edit (or create) `~/.ssh/config` on the Ubuntu VM to tell SSH which key to use when connecting to GitHub:
+I edit create `~/.ssh/config` on the Ubuntu VM to tell SSH which key to use when connecting to GitHub:
 
 ```bash
 nano ~/.ssh/config
 ```
 
-Add the following:
+I add the following:
 
 ```
 Host github.com
@@ -206,7 +206,7 @@ Host github.com
 - `IdentityFile ~/.ssh/github_key` - use my GitHub-specific key
 - `IdentitiesOnly yes` - only try this key, don't offer others
 
-Set correct permissions on the config file:
+I set correct permissions on the config file:
 ```bash
 chmod 600 ~/.ssh/config
 ```
@@ -229,7 +229,7 @@ Add my GitHub key to the agent (will prompt for passphrase once):
 ssh-add ~/.ssh/github_key
 ```
 
-Verify it's loaded"
+Verify it's loaded
 
 ```bash
 ssh-add -l
@@ -302,15 +302,22 @@ Now I set up the Git repository for the Ansible project I'll build throughout th
 
 #### Creating the Project Directory Structure
 
+Create the project directory
+
 ```bash
-# Create the project directory
 mkdir -p ~/projects/ansible-network
 cd ~/projects/ansible-network
+```
 
-# Create the initial directory structure
+Create the initial directory structure
+
+```bash
 mkdir -p {playbooks,inventory/{group_vars,host_vars},roles,collections,templates,files,vars}
+```
 
-# Verify the structure
+Verify the structure
+
+```bash
 tree .
 ```
 
@@ -343,8 +350,9 @@ Initialized empty Git repository in /home/ansible/projects/ansible-network/.git/
 
 Git creates a hidden `.git/` directory that contains the entire history of the repository. I never manually edit anything inside `.git/`.
 
+Check the current state of the repository:
+
 ```bash
-# Check the current state of the repository
 git status
 ```
 
@@ -481,6 +489,8 @@ GitHub maintains a comprehensive collection of `.gitignore` templates at `github
 
 With the `.gitignore` in place, I'm ready to start tracking files. The core Git workflow I use daily is: **modify → stage → commit → push**.
 
+---
+
 #### The Three States of a File in Git
 
 ```
@@ -540,9 +550,6 @@ git commit -m "Add initial project directory structure"
 
 - `git add .` - stages all untracked and modified files in the current directory and below. The `.` means "here and everything beneath."
 - `git add .gitignore` - stages only that specific file. Precise staging like this produces cleaner commits.
-
->[!Tip]
-> I always run `git status` before `git add .` and again after, before `git commit`. This two-second habit has saved me from committing the wrong files countless times. `git status` shows exactly what's staged, what's modified, and what's untracked, it's the sanity check before I make anything permanent.
 
 ---
 
@@ -764,7 +771,7 @@ I can now go to `github.com/myusername/ansible-network` and see my files online.
 
 ## The Daily Git Workflow
 
-These are the commands I run every day. After Parts 1-3, I now have a routine:
+These are the commands I run every day.
 
 1. Start the session (activate the virtualenv and navigate to the lab)
 
@@ -823,8 +830,8 @@ On a team with a formal review process, nobody pushes directly to `main`. Change
 #### Branch Structure
 
 ```
-main          ← Production-ready code only. Protected branch.
-│             ← All changes enter via Pull Request and peer review
+main          # Production-ready code only. Protected branch.
+│             # All changes enter via Pull Request and peer review
 ├── feature/add-bgp-role
 ├── feature/nxos-vlan-playbook
 ├── fix/ospf-dead-interval-wan
@@ -842,15 +849,11 @@ main          ← Production-ready code only. Protected branch.
 | Chore | `chore/short-description` | Dependency updates, documentation, `.gitignore` changes |
 | Test | `test/short-description` | Experimental changes, not intended for merge |
 
-{{< callout type="info" >}}
-Unlike GitFlow (which uses `develop`, `release`, and `hotfix` branches), this lightweight model has only one long-lived branch: `main`. Everything else is short-lived. Network automation playbooks don't have "releases" in the traditional software sense. When a change is reviewed, tested, and approved, it goes straight to `main` and can be run. This keeps the model simple without sacrificing safety.
-{{< /callout >}}
-
 ---
 
 #### Creating and Working on a Branch
 
-Always start from an up-to-date main
+I always start from an up-to-date main
 
 ```bash
 git checkout main
@@ -876,7 +879,9 @@ git branch
 
 ---
 
-- Do my work on this branch
+Do my work on this branch
+
+---
 
 Stage and commit as normal. Commits go to the feature branch, not main
 
@@ -1054,7 +1059,7 @@ For a team with formal review, I configure branch protection on `main` in GitHub
 
 {{% steps %}}
 
-#### git log - Viewing Commit History
+#### `git log` - Viewing Commit History
 
 Basic log:
 
@@ -1115,7 +1120,7 @@ Sample `git log --oneline --graph --all` output:
 
 ---
 
-#### git show - Inspecting a Specific Commit
+#### `git show` - Inspecting a Specific Commit
 
 Show the full diff of a specific commit:
 
@@ -1137,7 +1142,7 @@ git show a3f2b1c -- playbooks/bgp.yml
 
 ---
 
-#### git diff - Comparing States
+#### `git diff` - Comparing States
 
 What changed between two commits:
 
@@ -1295,6 +1300,6 @@ This is the procedure if I accidentally committed a credential:
 
 ---
 
-Every change I make from this point forward goes through Git. Playbooks, inventory files, variable files, roles, templates. All of it is version-controlled, reviewed, and traceable. Part 5 installs Ansible itself and explains what's actually happening under the hood when a playbook runs.
+Every change I make from this point forward goes through Git. Playbooks, inventory files, variable files, roles, templates. All of it is version-controlled, reviewed, and traceable.
 
 

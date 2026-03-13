@@ -20,13 +20,13 @@ This is me documenting my journey of learning Ansible that is focused on network
 
 ## Containerlab
 
-Containerlab spins up actual vendor network operating systems as containers on my Ubuntu VM. I get a full enterprise-style topology with Cisco routers, NX-OS switches, and a Palo Alto firewall running in minutes, and I can destroy and rebuild it just as fast. This is the lab environment that makes everything else in this lab real.
+Containerlab spins up actual vendor network operating systems as containers on my Ubuntu VM. I get a full enterprise-style topology with Cisco routers, NX-OS switches, and a Palo Alto firewall running in minutes, and I can destroy and rebuild it just as fast.
 
 ---
 
 #### What Containerlab Is
 
-Traditional network labs had three options: physical hardware (expensive, inflexible), GNS3/EVE-NG (heavy, complex setup), or vendor-specific simulators (limited to one platform). Containerlab is a different approach entirely.
+Traditional network labs had three options: physical hardware , GNS3/EVE-NG, or vendor-specific simulators. Containerlab is a different approach entirely.
 
 Containerlab is an open-source tool that uses Docker containers to run network operating systems as lightweight, fast-starting instances. Instead of emulating hardware at the CPU level like GNS3, Containerlab runs the actual vendor NOS binaries directly as containers. The result:
 
@@ -138,9 +138,6 @@ Check Docker version
 docker --version
 # Docker version 26.x.x, build ...
 ```
-
->[!Caution]
-> Adding my user to the `docker` group gives me the ability to run Docker without `sudo` but this is effectively equivalent to root access. Any container I run can mount the host filesystem, modify system files, and escalate privileges. On a shared server, adding users to the `docker` group should be done carefully. On a personal lab VM that only I access, this is the standard and expected setup.
 
 ---
 
@@ -261,14 +258,11 @@ topology:
 | Palo Alto PAN-OS | `vr-pan_panos` |
 | Linux host | `linux` |
 
->[!Info]
-> The `vr-` prefix stands for **vrnetlab** the tool used to wrap VM-based router images into Docker containers. When I see `kind: vr-cisco_csr1000v`, Containerlab knows to use the vrnetlab runtime, which handles booting the VM inside the container and bridging the network interfaces. The management interface is always handled automatically by Containerlab.
-
 ---
 
 ## The Lab Topology Design
 
-Before writing the topology file, I draw out what I'm building. This is the enterprise-style topology that all automation in this guide is written against.
+Before writing the topology file, I draw out what I'm building.
 
 ```
                         INTERNET / WAN CLOUD
@@ -345,13 +339,12 @@ nano ~/projects/ansible-network/containerlab/enterprise-lab.yml
 name: enterprise-lab
 
 mgmt:
-  network: mgmt-net           # Name of the Docker management network
-  ipv4-subnet: 172.16.0.0/24  # Management subnet for all devices
+  network: mgmt-net
+  ipv4-subnet: 172.16.0.0/24
 
 topology:
 
   defaults:
-    # Default credentials for all nodes
     env:
       USERNAME: ansible
       PASSWORD: ansible123
@@ -359,7 +352,7 @@ topology:
   nodes:
 
     # =========================================================
-    # WAN ROUTERS — Cisco IOS-XE (CSR1000v)
+    # WAN ROUTERS — Cisco IOS-XE
     # =========================================================
     wan-r1:
       kind: vr-cisco_csr1000v
@@ -383,7 +376,7 @@ topology:
       startup-config: configs/fw-01-base.cfg
 
     # =========================================================
-    # SPINE SWITCHES — Cisco NX-OS (Nexus 9000v)
+    # SPINE SWITCHES — Cisco NX-OS
     # =========================================================
     spine-01:
       kind: vr-cisco_nxosv
@@ -398,7 +391,7 @@ topology:
       startup-config: configs/spine-02-base.cfg
 
     # =========================================================
-    # LEAF SWITCHES — Cisco NX-OS (Nexus 9000v)
+    # LEAF SWITCHES — Cisco NX-OS
     # =========================================================
     leaf-01:
       kind: vr-cisco_nxosv
@@ -413,7 +406,7 @@ topology:
       startup-config: configs/leaf-02-base.cfg
 
     # =========================================================
-    # LINUX HOSTS — Alpine Linux (lightweight)
+    # LINUX HOSTS — Alpine Linux
     # =========================================================
     host-01:
       kind: linux
@@ -472,7 +465,7 @@ topology:
 This creates a virtual cable between `wan-r1`'s `eth1` interface and `fw-01`'s `eth1` interface. Containerlab creates a Linux veth (virtual ethernet) pair and attaches one end to each container.
 
 **Interface naming convention:**
-- `eth0` — always the management interface (handled automatically by Containerlab, never wired in `links:`)
+- `eth0` - always the management interface (handled automatically by Containerlab, never wired in `links:`)
 - `eth1`, `eth2`, etc. — data plane interfaces, wired in the `links:` section
 
 #### Creating Base Startup Configs Directory
@@ -505,8 +498,9 @@ ip ssh authentication-retries 3
 end
 ```
 
+---
+
 **`configs/leaf-01-base.cfg`** (repeat for `leaf-02-base.cfg` with `leaf-02` as the hostname).  
-Cat9Kv runs IOS-XE — the startup config format is identical to the CSR1000v:
 
 ```
 hostname leaf-01
@@ -525,8 +519,9 @@ line vty 0 4
 end
 ```
 
-**`configs/spine-01-base.cfg`** (repeat for `spine-02-base.cfg` with correct hostname).  
-N9Kv runs NX-OS — different syntax from IOS-XE:
+---
+
+**`configs/spine-01-base.cfg`** (repeat for `spine-02-base.cfg`).  
 
 ```
 hostname spine-01
@@ -653,7 +648,7 @@ sudo containerlab destroy -t enterprise-lab.yml --cleanup
 ```
 
 >[!Caution]
-> `containerlab destroy` removes all containers and their state. Any configuration changes made inside the devices that aren't saved in startup-config files or Git-committed Ansible playbooks are gone permanently. This is by design since the lab should be fully reproducible from the topology file and playbooks. If I want to preserve a device configuration, I run an Ansible backup playbook (covered in Part 30) before destroying.
+> `containerlab destroy` removes all containers and their state. Any configuration changes made inside the devices that aren't saved in startup-config files or Git-committed Ansible playbooks are gone permanently. This is by design since the lab should be fully reproducible from the topology file and playbooks.
 
 ---
 
@@ -666,7 +661,7 @@ sudo containerlab destroy -t enterprise-lab.yml --cleanup
 sudo containerlab deploy -t enterprise-lab.yml
 ```
 
-This is my "nuclear reset" when a lab gets into a bad state. The entire topology comes back to a clean baseline in minutes.
+The entire topology comes back to a clean baseline in minutes.
 
 {{% /steps %}}
 
@@ -815,9 +810,6 @@ Data plane (eth1+):       I configure these via playbooks (e.g., 10.0.0.0/30 poi
 
 This separation mirrors real enterprise networks where out-of-band management (OOBM) is kept completely separate from production traffic.
 
->[!Info]
-> In enterprise networks, out-of-band management is taken very seriously. Production routers and switches have a dedicated management interface (often `Gi0/0` on IOS or `mgmt0` on NX-OS) connected to a separate management network, sometimes on a dedicated VLAN or even a completely separate physical network. Ansible always connects to devices through this management interface, never through a production data plane interface.
-
 ---
 
 ## Mapping Containerlab Devices to the Ansible Inventory
@@ -835,7 +827,7 @@ nano ~/projects/ansible-network/inventory/hosts.yml
 ```yaml
 ---
 # =============================================================
-# Ansible Inventory — Enterprise Lab (Containerlab)
+# Ansible Inventory
 # Management Network: 172.16.0.0/24
 # =============================================================
 
@@ -843,9 +835,8 @@ all:
   children:
 
     # =========================================================
-    # CISCO IOS-XE — WAN Routers + Leaf Switches
+    # CISCO IOS-XE - WAN Routers + Leaf Switches
     # CSR1000v (wan-r1, wan-r2) and Cat9Kv (leaf-01, leaf-02)
-    # both run IOS-XE and use the same connection settings
     # =========================================================
     cisco_ios:
       children:
@@ -863,7 +854,7 @@ all:
               ansible_host: 172.16.0.24
 
     # =========================================================
-    # CISCO NX-OS — Spine Switches only
+    # CISCO NX-OS - Spine Switches only
     # =========================================================
     cisco_nxos:
       children:
@@ -875,7 +866,7 @@ all:
               ansible_host: 172.16.0.22
 
     # =========================================================
-    # PALO ALTO — Firewall
+    # PALO ALTO - Firewall
     # =========================================================
     paloalto:
       hosts:
@@ -893,7 +884,7 @@ all:
           ansible_host: 172.16.0.32
 
     # =========================================================
-    # LOGICAL GROUPINGS (cross-platform)
+    # LOGICAL GROUPINGS
     # =========================================================
     wan:
       hosts:
@@ -922,7 +913,7 @@ Group variables define connection settings that apply to all devices in a group.
 # Create group_vars files for each platform
 ```
 
-**`inventory/group_vars/all.yml`** — settings for every device:
+**`inventory/group_vars/all.yml`** - settings for every device:
 
 ```yaml
 ---
@@ -1101,7 +1092,7 @@ source ~/venvs/ansible-network/bin/activate
 3. Start a tmux session (from Part 1)
 
 ```bash
-tmux new -s ansible-lab   # or attach: tmux attach -t ansible-lab
+tmux new -s ansible-lab
 ```
 
 4. Deploy the lab (if not already running)
@@ -1193,5 +1184,5 @@ git commit -m "feat(lab): add Containerlab enterprise topology and Ansible inven
 
 ---
 
-The lab is running. I have a full enterprise-style topology, WAN routers, a firewall, spine/leaf switches, and Linux hosts. All reachable from Ansible via the 172.16.0.0/24 management network. Every playbook from here on runs against real devices.
+The lab is running. I have a full enterprise-style topology, WAN routers, a firewall, spine/leaf switches, and Linux hosts.
 

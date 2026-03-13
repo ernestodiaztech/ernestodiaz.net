@@ -162,7 +162,7 @@ VS Code opened a new window, downloaded the VS Code Server onto the Ubuntu VM an
 
 ### VS Code Extensions
 
-Next, I installed some extensions on the remote host (VS Code will show a "Install on SSH: ansible-leb" button rather than a plain "Install" button).
+Next, I installed some extensions on the remote host.
 
 ![](yamlbyredhat.jpg)
 

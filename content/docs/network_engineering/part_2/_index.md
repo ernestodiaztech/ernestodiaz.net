@@ -22,9 +22,9 @@ This is me documenting my journey of learning Ansible that is focused on network
 
 ## Python 3
 
-When I first started looking at Ansible, I assumed I could avoid Python entirely (after all, playbooks are just YAML). That assumption breaks down fast. The goal of this part is to get comfortable enough with Python that it never slows me down when working with Ansible
+The goal of this part is to get comfortable enough with Python that it never slows me down when working with Ansible
 
-Here's where Python shows up whether I plan for it or not:
+Here's where Python shows up:
 
 - **Variables and data structures in playbooks** are Python dictionaries and lists, just written in YAML syntax
 - **Jinja2 filters** (used constantly in templates) are Python expressions
@@ -41,7 +41,7 @@ Here's where Python shows up whether I plan for it or not:
 
 #### Ubuntu 22.04
 
-Ubuntu 22.04 ships with Python 3 already installed. Before writing a single line of code, I confirm what I have:
+Ubuntu 22.04 ships with Python 3 already installed. I confirm what I have:
 
 ```bash {hl_lines=[2,3]}
 python3 --version
@@ -181,7 +181,6 @@ print(router.items())
   - **Line 22** - Prints all dictionary values using `.values()`.
   - **Line 23** - Prints all key-value pairs using `.items()`.
   {{< /tab >}}
-  {{< tab name="Key Takeaways" >}}I almost always use `.get()` instead of direct key access in scripts. Direct access crashes with a `KeyError` if the key doesn't exist. `.get()` returns `None` (or a default value I specify). Much safer when working with device data that might be incomplete.{{< /tab >}}
 
 {{< /tabs >}}
 
@@ -246,18 +245,6 @@ print(state)
   - **Line 25** - Retrieves R1's management IP.
   - **Line26** - Retrieves the IP address of R1's `GigabitEthernet0/0`.
   - **Lines 28-29** - This uses chained `.get()` calls with default empty dictionaries `{}`. Each level safely returns `{}` if the key does not exist. Returns "up" if everything exsists, or returns "none" if any level is missing.
-  {{< /tab >}}
-  {{< tab name="Key Takeaways" >}}
-Chaining `.get()` calls with empty dict defaults `{}` lets me safely drill into deeply nested data without risking a `KeyError` at any level. This pattern comes up constantly when processing Ansible facts.
-
-  - Nested dictionaries are ideal for modeling heirarchical infrastructure data.
-  - Direct indexing is clean but unsafe if keys may be missing.
-  - Chaind `.get()` with `{}` prevents runtime errors.
-  - This structure closely resembles:
-    - Ansible inventory variables
-    - Parsed JSON output
-    - REST API responses
-    - Structured network state data
   {{< /tab >}}
 
 {{< /tabs >}}
@@ -338,9 +325,6 @@ print(status)
     - Uses a one-line conditional expression.
     - If the interface is "up", "status" becomes "active".
     - Otherwise, it becomes "inactive".
-  {{< /tab >}}
-  {{< tab name="Key Takeaways" >}}
-`and` / `or` / `not` are Python's logical operators. In Ansible's `when:` conditions, I use the same logic.
   {{< /tab >}}
 
 {{< /tabs >}}
@@ -491,8 +475,6 @@ with open("output.yml", "w") as f:
   - Access nested YAML data.
   - Load YAML from a file.
   - Write structured data back to a YAML file.
-
-  This mirrors real-world workflows in network automation, especially when working with Ansible-style inventories and variable files.
   {{< /tab >}}
   {{< tab name="Line Explanation" >}}
   - **Line 3-18** - A structured YAML document.
@@ -501,9 +483,6 @@ with open("output.yml", "w") as f:
   - **Line 23** - Prints "[10,20,30]"
   - **Line 25** - Opens an external file, parses it into a Python dictionary, and stores it in `vars_data`.
   - **Lines 28-29** - Opens `output.yml`, writes the `data` dictionary to YAML format. `default_flow_style=False` ensures block-style YAML.
-  {{< /tab >}}
-  {{< tab name="Key Takeaways" >}}
-``yaml.safe_load()` is always preferred over `yaml.load()`. The unsafe `yaml.load()` can execute arbitrary Python code embedded in a YAML file. `safe_load()` only parses data, never executes code.
   {{< /tab >}}
 
 {{< /tabs >}}
@@ -757,4 +736,4 @@ Common Errors
 
 ---
 
-Now that I'm comfortable with the fundamentals, Part 3 sets up the Python virtual environment that will contain all my Ansible tools, keeping my Ubuntu VM clean and my project dependencies isolated.
+Part 3 sets up Git for version control.

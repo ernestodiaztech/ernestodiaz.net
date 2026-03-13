@@ -20,7 +20,7 @@ This is me documenting my journey of learning Ansible that is focused on network
 
 ## Ansible Inventory
 
-In Part 6 I created a minimal inventory just to get Ansible talking to the lab. That was enough to prove connectivity. This part is where the inventory becomes a proper, production-quality data source with well-structured groups, realistic per-device variables, platform-specific connection settings, and a preview of how dynamic inventory will eventually replace static files when Netbox is running. The inventory isn't just a list of IPs. It's the foundation every playbook is built on.
+This part is where the inventory becomes a proper, production-quality data source with well-structured groups, realistic per-device variables, and platform-specific connection settings.
 
 ---
 
@@ -54,6 +54,8 @@ The inventory is the 'what exists and how to reach it'. Playbooks are the 'what 
 ## INI vs YAML Inventory Formats
 
 Ansible supports multiple inventory file formats. The two most common are INI and YAML. I'll show both side by side so I understand what I'm looking at when I encounter either in the wild, then commit to YAML for this lab.
+
+---
 
 #### The Same Inventory in Both Formats
 
@@ -178,11 +180,11 @@ all:
 
 ---
 
-#### My Recommendation
+#### This Project
 
-I use YAML exclusively for all real projects. The INI format is fine for a five-device quick test but breaks down as inventory grows. YAML's nested structure maps naturally to how I think about network hierarchy (core vs access, datacenter vs WAN, production vs lab). The extra verbosity is a worthwhile tradeoff.
+I use YAML exclusively for all projects. The INI format is fine for a five-device quick test but breaks down as inventory grows. YAML's nested structure maps naturally to how I think about network hierarchy (core vs access, datacenter vs WAN, production vs lab).
 
-The rest of this lab uses YAML inventory.
+The rest of this project uses YAML inventory.
 
 >[!Tip]
 > When I find an old INI-format inventory and want to convert it to YAML, I can use `ansible-inventory` to do the conversion:
@@ -231,9 +233,6 @@ all:
 
     # =========================================================
     # PLATFORM GROUPS
-    # These groups define HOW to connect (connection type,
-    # network OS). Group vars in group_vars/ handle credentials
-    # and connection settings per platform.
     # =========================================================
 
     cisco_ios:
@@ -274,10 +273,6 @@ all:
 
     # =========================================================
     # LOGICAL GROUPS
-    # These groups define WHAT role a device plays. Used for
-    # targeting specific device roles regardless of platform.
-    # A device can belong to both a platform group AND a
-    # logical group simultaneously.
     # =========================================================
 
     # All devices involved in WAN connectivity
@@ -293,7 +288,7 @@ all:
         spine_switches:
         leaf_switches:
 
-    # All network devices (excludes Linux hosts)
+    # All network devices
     network_devices:
       children:
         cisco_ios:
@@ -305,7 +300,7 @@ all:
 
 #### Understanding Group Hierarchy
 
-When a device belongs to a group, it also implicitly belongs to all **parent groups** above it. For example, `spine-01` is in:
+When a device belongs to a group, it also implicitly belongs to all parent groups above it. For example, `spine-01` is in:
 
 ```
 spine-01
@@ -316,9 +311,6 @@ spine-01
 ```
 
 This matters for variable inheritance and for playbook targeting. If I write `hosts: cisco_nxos`, my playbook runs against `spine-01`, `spine-02`, `leaf-01`, and `leaf-02`. All devices in the hierarchy beneath `cisco_nxos`.
-
->[!Info]
-> The `all` group always exists in Ansible, even if I don't define it explicitly. Every host in any inventory is automatically a member of `all`. This is why `group_vars/all.yml` is the place for truly global variables because they apply to every single device regardless of what other groups they belong to. I use `all` for things like NTP servers, DNS servers, and global credentials that are the same across every platform.
 
 ---
 
@@ -381,7 +373,7 @@ hosts: wan_edge
 
 ## Host Variables
 
-Host variables are variables specific to a single device. Ansible has a set of magic variables,special variable names it recognizes and uses to control connection behavior.
+Host variables are variables specific to a single device. Ansible has a set of magic variables, special variable names it recognizes and uses to control connection behavior.
 
 ---
 
@@ -414,16 +406,16 @@ Host variables can be set in three places:
 
 The rule I follow:
 
-- If a variable is **the same for every device in a group** → `group_vars/`
-- If a variable is **unique to a single device** → `host_vars/<hostname>.yml`
-- If a variable is **truly global** (same for every device everywhere) → `group_vars/all.yml`
-- **Never** put credentials inline in `hosts.yml` - they should always be in `group_vars/` or `host_vars/` where Vault can encrypt them
+- If a variable is the same for every device in a group → `group_vars/`
+- If a variable is unique to a single device → `host_vars/<hostname>.yml`
+- If a variable is truly global (same for every device everywhere) → `group_vars/all.yml`
+- Never put credentials inline in `hosts.yml` - they should always be in `group_vars/` or `host_vars/` where Vault can encrypt them
 
 ---
 
 ## Group Variables
 
-The `group_vars/` directory is where I define variables that apply to an entire group. Ansible automatically reads these files when it processes the inventory, no explicit reference needed.
+The `group_vars/` directory is where I define variables that apply to an entire group. Ansible automatically reads these files when it processes the inventory.
 
 ---
 
@@ -433,14 +425,14 @@ The `group_vars/` directory is where I define variables that apply to an entire 
 inventory/
 ├── hosts.yml
 ├── group_vars/
-│   ├── all.yml              ← Applies to every device
-│   ├── cisco_ios.yml        ← Applies to all cisco_ios hosts
-│   ├── cisco_nxos.yml       ← Applies to all cisco_nxos hosts
-│   ├── paloalto.yml         ← Applies to all paloalto hosts
-│   ├── spine_switches.yml   ← Applies to spine switches only
-│   ├── leaf_switches.yml    ← Applies to leaf switches only
-│   ├── wan.yml              ← Applies to WAN group only
-│   └── linux_hosts.yml      ← Applies to Linux hosts
+│   ├── all.yml              # Applies to every device
+│   ├── cisco_ios.yml        # Applies to all cisco_ios hosts
+│   ├── cisco_nxos.yml       # Applies to all cisco_nxos hosts
+│   ├── paloalto.yml         # Applies to all paloalto hosts
+│   ├── spine_switches.yml   # Applies to spine switches only
+│   ├── leaf_switches.yml    # Applies to leaf switches only
+│   ├── wan.yml              # Applies to WAN group only
+│   └── linux_hosts.yml      # Applies to Linux hosts
 └── host_vars/
     ├── wan-r1.yml
     ├── wan-r2.yml
@@ -515,12 +507,10 @@ ansible_become_method: enable
 ansible_become_password: "ansible123"
 
 # --- IOS-specific platform settings ---
-# SSH terminal width - prevent line wrapping in show commands
+# Prevent line wrapping in show commands
 ansible_terminal_length: 0
 
 # --- IOS Feature Flags ---
-# Whether this IOS device supports the newer Resource Module style
-# (IOS-XE 16.x+ supports declarative resource modules)
 ios_resource_modules_supported: true
 
 # --- Backup settings ---
@@ -552,7 +542,6 @@ ansible_become: false
 ansible_terminal_length: 0
 
 # --- NX-OS Features to ensure are enabled ---
-# These will be referenced in the NX-OS base config role
 nxos_features_required:
   - bgp
   - ospf
@@ -577,14 +566,13 @@ nano ~/projects/ansible-network/inventory/group_vars/spine_switches.yml
 ```yaml
 ---
 # =============================================================
-# Spine Switches — DC spine layer specific variables
-# Inherits all cisco_nxos.yml variables automatically
+# Spine Switches - DC spine layer specific variables
 # =============================================================
 
-# Role identifier — used in templates and conditionals
+# Role identifier
 device_role: spine
 
-# BGP AS number for spine layer (used in BGP config templates)
+# BGP AS number for spine layer
 bgp_as: 65000
 
 # Spine-to-spine link subnet
@@ -608,14 +596,10 @@ nano ~/projects/ansible-network/inventory/group_vars/leaf_switches.yml
 ```yaml
 ---
 # =============================================================
-# Leaf Switches — DC leaf layer specific variables
-# Inherits all cisco_nxos.yml variables automatically
+# Leaf Switches - DC leaf layer specific variables
 # =============================================================
 
 device_role: leaf
-
-# BGP AS numbers for leaf layer (unique per leaf in eBGP spine-leaf)
-# Individual leaf AS numbers are defined in host_vars/
 
 # VLANs that all leaf switches should have
 base_vlans:
@@ -650,20 +634,18 @@ nano ~/projects/ansible-network/inventory/group_vars/paloalto.yml
 ```yaml
 ---
 # =============================================================
-# Palo Alto PAN-OS — Connection and platform settings
-# PAN-OS uses HTTPS API, not SSH CLI
+# Palo Alto PAN-OS - Connection and platform settings
 # =============================================================
 
 ansible_network_os: paloaltonetworks.panos.panos
 ansible_connection: ansible.netcommon.httpapi
 ansible_httpapi_use_ssl: true
-ansible_httpapi_validate_certs: false    # Lab uses self-signed cert
+ansible_httpapi_validate_certs: false
 
 # PAN-OS API port
 ansible_port: 443
 
 # --- PAN-OS specific settings ---
-# Device group (for Panorama-managed devices — standalone for now)
 panos_device_group: "lab"
 
 # Vsys to target
@@ -672,7 +654,7 @@ panos_vsys: "vsys1"
 # Backup settings
 backup_dir: backups/paloalto
 
-# Security zone names (referenced in security policy playbooks)
+# Security zone names
 zones:
   untrust: "untrust"
   trust: "trust"
@@ -690,8 +672,7 @@ nano ~/projects/ansible-network/inventory/group_vars/wan.yml
 ```yaml
 ---
 # =============================================================
-# WAN Group — Variables for WAN-facing routers
-# Inherits cisco_ios.yml variables automatically
+# WAN Group - Variables for WAN-facing routers
 # =============================================================
 
 device_role: wan_router
@@ -739,7 +720,7 @@ device_role: server
 
 ## Host Variables
 
-While `group_vars/` handles settings shared across a group, `host_vars/` is for variables that are unique to a specific device such as its loopback IP, its BGP AS number, its specific interface assignments. I build realistic `host_vars` files for one device from each platform.
+While `group_vars/` handles settings shared across a group, `host_vars/` is for variables that are unique to a specific device such as its loopback IP, its BGP AS number, its specific interface assignments.
 
 ---
 
@@ -771,18 +752,18 @@ device_role: wan_router
 device_vendor: cisco
 device_platform: ios-xe
 device_location: HQ-DC-Rack-A1
-device_serial: LAB-SERIAL-001   # Placeholder for lab
+device_serial: LAB-SERIAL-001
 
 # --- Management ---
 ansible_host: 172.16.0.11
 
-# --- Loopback Interface (Router ID, BGP peer address) ---
+# --- Loopback Interface ---
 loopback0:
   ip: 10.255.0.1
   mask: 255.255.255.255
   description: "Loopback0 | Router-ID"
 
-# --- WAN Interface (connects to simulated ISP / FW) ---
+# --- WAN Interface ---
 interfaces:
   GigabitEthernet1:
     description: "WAN | To FW-01 eth1"
@@ -806,7 +787,7 @@ ospf_interfaces:
 bgp_as: 65100
 bgp_router_id: 10.255.0.1
 bgp_neighbors:
-  - neighbor_ip: 10.10.10.2    # fw-01 outside interface
+  - neighbor_ip: 10.10.10.2
     remote_as: 65200
     description: "eBGP to FW-01"
 
@@ -823,7 +804,7 @@ acls:
         action: deny
         source: any
 
-# --- NTP (overrides global if needed) ---
+# --- NTP ---
 ntp_source_interface: Loopback0
 
 # --- SNMP ---
@@ -881,7 +862,7 @@ ospf_interfaces:
 bgp_as: 65100
 bgp_router_id: 10.255.0.2
 bgp_neighbors:
-  - neighbor_ip: 10.10.11.2    # fw-01 second outside interface
+  - neighbor_ip: 10.10.11.2
     remote_as: 65200
     description: "eBGP to FW-01"
 
@@ -917,13 +898,13 @@ security_zones:
   - name: untrust
     mode: layer3
     interfaces:
-      - ethernet1/1    # To WAN-R1
-      - ethernet1/2    # To WAN-R2
+      - ethernet1/1
+      - ethernet1/2
   - name: trust
     mode: layer3
     interfaces:
-      - ethernet1/3    # To SPINE-01
-      - ethernet1/4    # To SPINE-02
+      - ethernet1/3
+      - ethernet1/4
   - name: mgmt
     mode: layer3
     interfaces: []
@@ -951,7 +932,7 @@ interfaces:
     mask: 255.255.255.252
     zone: trust
 
-# --- Address Objects (used in security policies) ---
+# --- Address Objects ---
 address_objects:
   - name: RFC1918-10
     type: ip-netmask
@@ -997,7 +978,7 @@ device_serial: LAB-SERIAL-021
 
 ansible_host: 172.16.0.21
 
-# --- Loopback (Router-ID, BGP, VTEP) ---
+# --- Loopback ---
 loopback0:
   ip: 10.255.1.1
   mask: 255.255.255.255
@@ -1008,7 +989,7 @@ loopback1:
   mask: 255.255.255.255
   description: "Loopback1 | VTEP NVE source"
 
-# --- Fabric Interfaces (to leaf switches) ---
+# --- Fabric Interfaces ---
 interfaces:
   Ethernet1/1:
     description: "Fabric | To FW-01 eth3"
@@ -1035,23 +1016,23 @@ interfaces:
     mtu: 9216
     state: up
 
-# --- BGP (eBGP spine-leaf model) ---
+# --- BGP ---
 bgp_as: 65000
 bgp_router_id: 10.255.1.1
 bgp_neighbors:
-  - neighbor_ip: 10.20.0.1      # fw-01
+  - neighbor_ip: 10.20.0.1
     remote_as: 65200
     description: "eBGP to FW-01"
-  - neighbor_ip: 10.20.2.2      # leaf-01
+  - neighbor_ip: 10.20.2.2
     remote_as: 65001
     description: "eBGP to LEAF-01"
-  - neighbor_ip: 10.20.3.2      # leaf-02
+  - neighbor_ip: 10.20.3.2
     remote_as: 65002
     description: "eBGP to LEAF-02"
 
 # --- NX-OS VPC Domain ---
 vpc_domain_id: 1
-vpc_peer_ip: 172.16.0.22    # spine-02 mgmt IP for keepalive
+vpc_peer_ip: 172.16.0.22
 
 snmp_location: "HQ-DC-Rack-B1-U20"
 snmp_contact: "netops@lab.local"
@@ -1125,14 +1106,11 @@ local_vlans:
 
 # --- VPC ---
 vpc_domain_id: 10
-vpc_peer_ip: 172.16.0.24    # leaf-02
+vpc_peer_ip: 172.16.0.24
 
 snmp_location: "HQ-DC-Rack-C1-U18"
 snmp_contact: "netops@lab.local"
 ```
-
->[!Tip]
-> I keep `host_vars` files focused on data, not logic. They describe what a device is and what it has like IPs, interface names, VLAN assignments, BGP AS numbers. They don't contain conditional logic or task definitions. If I find myself putting `when:` conditions or complex Jinja2 in a `host_vars` file, that's a sign the logic belongs in a playbook or template instead.
 
 {{% /steps %}}
 
@@ -1476,6 +1454,6 @@ git commit -m "feat(inventory): expand inventory with full group_vars and host_v
 ---
 
 
-The inventory is now a proper data source. Not just a list of IPs but a structured representation of the entire network with per-device variables, platform groups, logical groups, and the foundation for future dynamic inventory.
+The inventory is now a proper data source.
 
 

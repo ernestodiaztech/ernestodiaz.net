@@ -22,7 +22,7 @@ This is me documenting my journey of learning Ansible that is focused on network
 
 ## Python Virtual Environments
 
-In Part 2 I used `--break-system-packages` every time I installed something with pip. That flag exists because Ubuntu 22.04 protects its system Python from being polluted by random packages. The right solution isn't to force past that protection, it's to stop installing things into the system Python altogether. Virtual environments are how I do that. This part sets up the isolated Python environment that everything else in this guide runs inside.
+In Part 2 I used `--break-system-packages` every time I installed something with pip. That flag exists because Ubuntu 22.04 protects its system Python from being polluted by random packages. The right solution isn't to force past that protection, it's to stop installing things into the system Python altogether. Virtual environments are how I do that.
 
 ---
 
@@ -47,16 +47,16 @@ A virtual environment solves this by creating a completely isolated Python insta
 ```
 /home/ansible/
 ├── venvs/
-│   ├── ansible-network/      ← Isolated Python for this guide's project
-│   │   ├── bin/python3       ← Its own Python interpreter
-│   │   ├── bin/pip           ← Its own pip
-│   │   ├── bin/ansible       ← Ansible installed HERE, not system-wide
-│   │   └── lib/              ← All packages installed here
-│   └── legacy-scripts/       ← Completely separate environment
+│   ├── ansible-network/      # Isolated Python for this guide's project
+│   │   ├── bin/python3       # Its own Python interpreter
+│   │   ├── bin/pip           # Its own pip
+│   │   ├── bin/ansible       # Ansible installed HERE, not system-wide
+│   │   └── lib/              # All packages installed here
+│   └── legacy-scripts/       # Completely separate environment
 │       ├── bin/python3
 │       └── lib/
 └── projects/
-    └── ansible-network/      ← My project code lives here (not inside venvs/)
+    └── ansible-network/      # My project code lives here (not inside venvs/)
 ```
 
 When I activate a virtual environment, my shell uses that environment's Python and pip instead of the system ones. When I deactivate it, the system Python comes back. Nothing ever collides.
@@ -116,9 +116,6 @@ virtualenv --version
 | CI/CD pipelines and testing with `tox` | `virtualenv` |
 | This guide's main project | `venv` - simple, built-in, sufficient |
 
->[!TIP]
-> There is also a tool called `pipenv` and another called `poetry` that combine virtual environment management with dependency resolution. I won't use them here, but they're worth knowing about. For network automation work, plain `venv` with a `requirements.txt` file is the industry standard and what I'll see on most Ansible control nodes.
-
 {{% /steps %}}
 
 ---
@@ -174,9 +171,6 @@ pip has its own updates. Before creating any environments, I upgrade pip:
 pip3 install --upgrade pip --break-system-packages
 ```
 
->[!WARNING]
-> On Ubuntu 22.04, pip will sometimes show a yellow warning: `WARNING: Running pip as the 'root' user can result in broken permissions...` This appears when I run pip with `sudo`. The fix is to never run `pip` with `sudo` (always run it as my regular user, either in a virtual environment) or with `--user` flag for one-off system-level installs.
-
 ---
 
 #### Installing virtualenv
@@ -216,8 +210,6 @@ python3 -m venv ~/venvs/ansible-network
 - `python3 -m venv` - runs the venv module using Python 3
 - `~/venvs/ansible-network` - the path where the environment will be created
 
-That's it. Python creates a complete, isolated Python installation at `~/venvs/ansible-network/`.
-
 ---
 
 #### What Gets Created
@@ -229,17 +221,17 @@ tree ~/venvs/ansible-network/ -L 3
 ```
 /home/ansible/venvs/ansible-network/
 ├── bin/
-│   ├── activate            ← The activation script I'll source
-│   ├── activate.fish       ← Activation script for Fish shell
-│   ├── pip                 ← pip linked to this environment
-│   ├── pip3                ← Same as pip
-│   ├── python              ← Python interpreter for this environment
-│   └── python3             ← Same as python
-├── include/                ← C headers for compiling extensions
+│   ├── activate            # The activation script I'll source
+│   ├── activate.fish       # Activation script for Fish shell
+│   ├── pip                 # pip linked to this environment
+│   ├── pip3                # Same as pip
+│   ├── python              # Python interpreter for this environment
+│   └── python3             # Same as python
+├── include/                # C headers for compiling extensions
 ├── lib/
 │   └── python3.10/
-│       └── site-packages/  ← Installed packages go here
-└── pyvenv.cfg              ← Environment configuration file
+│       └── site-packages/  # Installed packages go here
+└── pyvenv.cfg              # Environment configuration file
 ```
 
 **`pyvenv.cfg`** is worth looking at:
@@ -320,7 +312,7 @@ python3 -m venv ~/venvs/python-env
 **When to use this:** When I have one general-purpose environment for all Ansible work, or on a dedicated Ansible control node that only ever runs one type of workload.
 
 **Pros:**
-- Simple — one environment to rule them all
+- Simple, one environment to rule them all
 - Common in CI/CD pipelines where the environment name doesn't matter
 
 **Cons:**
@@ -432,10 +424,7 @@ Expected output:
 # /usr/bin/python3  ← back to system Python
 ```
 
->[!Warning]
-> A very common mistake is opening a new terminal tab or reconnecting via SSH and forgetting to reactivate the virtual environment before running Ansible commands. If I type `ansible-playbook` and get "command not found" it almost always means I forgot to activate the virtualenv.
-
-#### Automating Activation (Optional)
+#### Automating Activation
 
 I can add the activation command to my `~/.bashrc` so it activates automatically on every new shell:
 
@@ -444,7 +433,7 @@ echo "source ~/venvs/ansible-network/bin/activate" >> ~/.bashrc
 source ~/.bashrc
 ```
 
->[!Tip]
+>[!Note]
 > Auto-activating in `.bashrc` is convenient for a dedicated Ansible control node where I always want this environment active. But if I use the Ubuntu VM for multiple Python projects, auto-activating one environment means I always have to manually deactivate it before working on another project. For a single-purpose Ansible VM, auto-activation in `.bashrc` is fine. For a general-purpose dev machine, activate manually per session.
 
 {{% /steps %}}
@@ -580,9 +569,6 @@ python3 -c "import napalm; print(napalm.__version__)"
 python3 -c "import paramiko; print(paramiko.__version__)"
 ```
 
->[!Info]
-> `ansible` (the pip package) installs `ansible-core` plus a curated set of collections. `ansible-core` alone is a much smaller install with just the engine with no collections bundled. For this lab I install the full `ansible` package because it includes collections I'll use.
-
 ---
 
 #### Installing Ansible Collections
@@ -616,10 +602,6 @@ ansible-galaxy collection list
 >[!Info]
 > Collections installed with `ansible-galaxy` go to `~/.ansible/collections/` by default (outside the virtualenv). This is intentional since collections are Ansible-level packages, not Python-level packages. They stay in place even if I recreate the virtualenv. I can change the install path with `--collections-path` or by setting `collections_paths` in `ansible.cfg`.
 
-
-{{< callout type="info" >}}
-In enterprise environments, direct internet access from the Ansible control node is often blocked by a corporate proxy or firewall. In those cases, pip packages are served from an internal PyPI mirror (like Nexus or Artifactory) and Ansible collections come from an internal Ansible Automation Hub rather than the public Galaxy.
-{{< /callout >}}
 
 {{% /steps %}}
 
@@ -704,10 +686,10 @@ paramiko>=3.0.0
 ```
 Use this for open-source or shared projects where I want to allow newer compatible versions. Less strict, but more likely to get the latest bug fixes.
 
-**My recommendation for this lab:** Use pinned versions from `pip freeze` for the actual project environment, and keep a separate loose `requirements-dev.txt` for quick new environment setups where exact versions matter less.
+For this lab I use pinned versions from `pip freeze` for the actual project environment, and keep a separate loose `requirements-dev.txt` for quick new environment setups where exact versions matter less.
 
 >[!Tip]
-> I commit `requirements.txt` to Git every time I add or upgrade a package. The git history then shows exactly when each package was added or updated and by whom. This is invaluable for debugging: "Ansible started failing on Thursday let me check what changed in `requirements.txt` on Thursday."
+> I commit `requirements.txt` to Git every time I add or upgrade a package. The git history then shows exactly when each package was added or updated and by whom. This is helps for debugging: "Ansible started failing on Thursday let me check what changed in `requirements.txt` on Thursday."
 
 ---
 
@@ -795,9 +777,6 @@ Install from this file:
 ```bash
 ansible-galaxy collection install -r collections/requirements.yml
 ```
-
->[!Warning]
-> When recreating an environment from `requirements.txt`, if I get errors about conflicting package versions, the most common cause is that a package in `requirements.txt` has been yanked from PyPI (the author removed it for a critical bug) or my Python version differs from the one used to generate the file. The fix is to relax the version pin for the problematic package: change `==9.8.0` to `>=9.0.0` and let pip resolve a compatible version.
 
 {{% /steps %}}
 
@@ -900,13 +879,17 @@ Expected output:
 
 #### One Virtual Environment Per Project
 
-```bash
-# ✅ Correct — separate environments for separate projects
+**Correct - separate environments for separate projects**
+
+```
 ~/venvs/ansible-network/       ← This guide's project
 ~/venvs/legacy-nornir-scripts/ ← Older project using different library versions
 ~/venvs/netbox-api-tools/      ← Standalone Netbox scripts
+```
 
-# ❌ Wrong — one environment for everything
+**Wrong - one environment for everything**
+
+```
 ~/venvs/python-env/            ← All projects crammed in here, dependency chaos
 ```
 
@@ -1048,9 +1031,6 @@ Then freeze and commit:
 pip freeze > requirements.txt
 ```
 
->[!Caution]
-> Upgrading all packages at once with no testing is risky. Ansible minor version upgrades occasionally deprecate or change module behavior. My recommendation: upgrade packages one at a time or in small groups, run a test playbook against a Containerlab device after each upgrade, and only freeze `requirements.txt` once I've confirmed nothing broke.
-
 ---
 
 #### Deleting and Recreating a Broken Environment
@@ -1089,4 +1069,4 @@ This takes about 2-3 minutes and produces a perfectly clean environment. The vir
 
 ---
 
-The environment is now fully set up and reproducible. Everything runs inside an isolated, documented, version-controlled Python environment. Next, I put the project under Git version control so every change to my playbooks, inventory, and configuration is tracked, reversible, and shareable.
+The environment is now fully set up and reproducible. Everything runs inside an isolated, documented, version-controlled Python environment.

@@ -101,9 +101,6 @@ Check installed collections
 ansible-galaxy collection list
 ```
 
->[!Caution]
-> If `ansible --version` shows the executable location as `/usr/bin/ansible` instead of the virtualenv path, the virtualenv is not activated. Run `source ~/venvs/ansible-network/bin/activate` and try again. Running Ansible from the system Python instead of the virtualenv means I'm using whatever version Ubuntu installed (if any), not the pinned version in `requirements.txt`. This causes subtle version mismatch bugs that are hard to track down.
-
 {{% /steps %}}
 
 ---
@@ -179,9 +176,6 @@ There are two types:
 - **External collections** - installed separately with `ansible-galaxy collection install`
 
 The network vendor collections (`cisco.ios`, `cisco.nxos`, etc.) are external, they're maintained by the vendors themselves and updated independently of Ansible's release cycle.
-
->[!Info]
-> The version numbering between `ansible` and `ansible-core` is deliberately misaligned and causes confusion. `ansible` 9.x ships with `ansible-core` 2.16.x. `ansible` 10.x ships with `ansible-core` 2.17.x. When reading documentation or bug reports, the relevant version is always `ansible-core`. That's what determines which features and syntax are available. The `ansible` package version just tells me which bundle of collections I got. I can check the compatibility matrix at `docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html`.
 
 ---
 
@@ -332,9 +326,8 @@ python3 -c "import paramiko; print(f'Paramiko version: {paramiko.__version__}')"
 To switch a specific host or group from Paramiko to OpenSSH:
 
 ```yaml
-# In host_vars or group_vars
 ansible_connection: network_cli
-ansible_network_cli_ssh_type: openssh    # Use OpenSSH instead of Paramiko
+ansible_network_cli_ssh_type: openssh
 ```
 
 I only do this if I have a specific reason since Paramiko is the right default for network devices.
@@ -634,7 +627,7 @@ By default, collections install to `~/.ansible/collections/ansible_collections/`
 └── ansible_collections/
     ├── cisco/
     │   ├── ios/
-    │   │   ├── plugins/modules/     ← ios_config.py, ios_facts.py, etc.
+    │   │   ├── plugins/modules/     #ios_config.py, ios_facts.py, etc.
     │   │   ├── roles/
     │   │   └── README.md
     │   └── nxos/
@@ -657,7 +650,7 @@ This installs into `./collections/ansible_collections/` relative to the project.
 
 ---
 
-#### The Six Collections I Use Throughout This Guide
+#### The Six Collections I Use Throughout This Project
 
 #### `cisco.ios` {class="no-step-marker"}
 
@@ -761,7 +754,7 @@ paloaltonetworks.panos.panos_commit         # Commit configuration changes
 
 #### `ansible.netcommon` {class="no-step-marker"}
 
-This collection provides shared networking modules and plugins used across all vendor collections. I rarely call its modules directly, but the vendor collections depend on it, and some of its modules are genuinely useful.
+This collection provides shared networking modules and plugins used across all vendor collections.
 
 ```bash
 ansible-galaxy collection install ansible.netcommon
@@ -788,7 +781,7 @@ httpapi       # HTTP/HTTPS API connection (used by PAN-OS, some IOS-XE)
 
 #### `ansible.utils` {class="no-step-marker"}
 
-This collection provides utility modules and Jinja2 filters that are invaluable for network automation (particularly for working with IP addresses and validating data).
+This collection provides utility modules and Jinja2 filters that are helpful for network automation (particularly for working with IP addresses and validating data).
 
 ```bash
 ansible-galaxy collection install ansible.utils
@@ -983,9 +976,6 @@ exclude_paths:
 ```
 
 - `profile: moderate` - Bash, moderate, safety, shared, production
-
->[!Info]
-> The `pre-commit` hooks I set up in Part 4 run `yamllint` and `ansible-lint` automatically before every `git commit`. This means I get linting feedback the moment I try to commit, not after I've pushed and a CI pipeline fails.
 
 ---
 

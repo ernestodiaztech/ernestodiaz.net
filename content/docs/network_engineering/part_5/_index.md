@@ -113,27 +113,7 @@ When I ran `pip install ansible` in Part 3, I didn't just install one thing. I n
 
 #### The Three Layers
 
-```
-┌─────────────────────────────────────────────────────┐
-│             ansible (pip package)                   │
-│  ┌───────────────────────────────────────────────┐  │
-│  │              ansible-core                     │  │
-│  │  The engine: playbook runner, task executor,  │  │
-│  │  inventory parser, variable system, Jinja2    │  │
-│  └───────────────────────────────────────────────┘  │
-│  ┌───────────────────────────────────────────────┐  │
-│  │           Bundled Collections                 │  │
-│  │  ansible.builtin, community.general, and      │  │
-│  │  ~85 other curated collections                │  │
-│  └───────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────┐
-│          Separately Installed Collections           │
-│  cisco.ios, cisco.nxos, junipernetworks.junos,      │
-│  paloaltonetworks.panos, ansible.netcommon, etc.    │
-└─────────────────────────────────────────────────────┘
-```
+![](threelayers.png)
 
 #### ansible-core
 
@@ -202,38 +182,7 @@ Understanding this diagram saves hours of debugging. When something goes wrong, 
 
 #### The Big Picture
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                    CONTROL NODE (Ubuntu VM)                      │
-│                                                                  │
-│  ┌──────────┐    ┌──────────────┐    ┌────────────────────────┐  │
-│  │Inventory │    │   Playbook   │    │    ansible.cfg         │  │
-│  │hosts.yml │───▶│   site.yml   │───▶│  (configuration)      │  │
-│  └──────────┘    └──────────────┘    └────────────────────────┘  │
-│         │                │                        │              │
-│         ▼                ▼                        ▼              │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │                    Ansible Engine                           │ │
-│  │  • Parses inventory → builds host list                      │ │
-│  │  • Parses playbook → builds task list                       │ │
-│  │  • Resolves variables (host_vars, group_vars, play vars)    │ │
-│  │  • Renders Jinja2 templates                                 │ │
-│  │  • Calls connection plugin → opens SSH session              │ │
-│  │  • Executes module → receives result dict                   │ │
-│  │  • Evaluates changed/failed → updates play recap            │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│                              │                                   │
-│                   SSH / NETCONF / HTTPS API                      │
-└──────────────────────────────────────────────────────────────────┘
-                               │
-              ┌────────────────┼────────────────┐
-              ▼                ▼                ▼
-    ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-    │  Cisco IOS   │  │  Cisco NX-OS │  │   Juniper    │
-    │  R1, R2, R3  │  │  SW1, SW2    │  │  vJunos-1    │
-    └──────────────┘  └──────────────┘  └──────────────┘
-         MANAGED NODES (network devices, no agent installed)
-```
+![](bigpicture.png)
 
 #### The Key Components
 

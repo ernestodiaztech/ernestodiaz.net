@@ -1,6 +1,8 @@
 ---
-draft: false
+draft: true
 title: 'Ansible Network Automation Lab'
+sidebar:
+  exclude: true
 ---
 
 {{< cards cols="2">}}

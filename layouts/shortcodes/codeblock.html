@@ -1,0 +1,92 @@
+{{/*
+  Code block with header bar — shows language or filename + copy button.
+  Supports syntax highlighting via Hugo's built-in Chroma highlighter.
+
+  Usage (with syntax highlighting):
+    {{< codeblock lang="Bash" syntax="bash" >}}
+    sudo apt update && sudo apt upgrade -y
+    {{< /codeblock >}}
+
+  Usage (filename — with syntax):
+    {{< codeblock file="ansible.cfg" syntax="ini" >}}
+    [defaults]
+    inventory = inventory/
+    {{< /codeblock >}}
+
+  Usage (no highlighting — plain text):
+    {{< codeblock lang="Expected Output" >}}
+    On branch main
+    ...
+    {{< /codeblock >}}
+
+  Usage (with line numbers):
+    {{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+    sudo apt update && sudo apt upgrade -y
+    {{< /codeblock >}}
+
+  The "lang" parameter is the DISPLAY LABEL in the header bar.
+  The "syntax" parameter is the Chroma language for highlighting.
+  If syntax is omitted, content renders as plain uncolored text.
+*/}}
+
+{{ $lang   := .Get "lang"   | default "" }}
+{{ $file   := .Get "file"   | default "" }}
+{{ $copy   := .Get "copy" }}
+{{ $lines  := .Get "lines" }}
+{{ $syntax := .Get "syntax" | default "" }}
+{{ $showLines := false }}
+{{ if $lines }}{{ $showLines = true }}{{ end }}
+
+<div class="lab-code-block">
+  <div class="lab-code-header">
+    {{ if $file }}
+      <span class="lab-code-filename">{{ $file }}</span>
+    {{ else if $lang }}
+      <span class="lab-code-lang">{{ $lang }}</span>
+    {{ else }}
+      <span class="lab-code-lang"></span>
+    {{ end }}
+    {{ if ne (printf "%v" ($copy | default "true")) "false" }}
+      <button class="lab-copy-btn" onclick="labCopyCode(this)">Copy</button>
+    {{ end }}
+  </div>
+  {{ $trimmed := trim .Inner "\n\r\t " }}
+  {{ if $syntax }}
+    {{ if $showLines }}
+      <div class="lab-chroma-wrap lab-chroma-lines">{{ highlight $trimmed $syntax "linenos=table,linenostart=1" }}</div>
+    {{ else }}
+      <div class="lab-chroma-wrap">{{ highlight $trimmed $syntax "" }}</div>
+    {{ end }}
+  {{ else }}
+    <pre><code>{{ $trimmed }}</code></pre>
+  {{ end }}
+</div>
+
+<script>
+function labCopyCode(btn) {
+  var block = btn.closest('.lab-code-block');
+  var text = '';
+
+  // Chroma table layout (line numbers enabled): code is in the last td
+  var codeTd = block.querySelector('.lntable .lntd:last-child');
+  if (codeTd) {
+    text = codeTd.textContent;
+  } else {
+    // Chroma without line numbers, or plain text: just grab the pre
+    var pre = block.querySelector('pre');
+    if (pre) text = pre.textContent;
+  }
+
+  // Strip prompt characters and trailing whitespace
+  var lines = text.split('\n');
+  // Remove trailing empty lines
+  while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+  var cleaned = lines.map(function(l) { return l.replace(/^(\(.venv\) )?\$ /, ''); }).join('\n');
+
+  navigator.clipboard.writeText(cleaned).then(function() {
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>

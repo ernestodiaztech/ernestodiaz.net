@@ -1,0 +1,19 @@
+{{/*
+  Line Explanation — grid of line labels and descriptions.
+  Place directly after a {{< codeblock >}} for seamless visual connection.
+
+  Usage:
+    {{< line-explain >}}
+    Line 1:
+    : Updates the package list and upgrades all installed packages.
+
+    Line 2:
+    : `python3-venv` provides the `venv` module. `git` is for version control.
+    {{< /line-explain >}}
+
+  This uses Markdown definition list syntax (term + `: description`).
+*/}}
+
+<div class="lab-line-explain">
+  {{ .Inner | markdownify }}
+</div>

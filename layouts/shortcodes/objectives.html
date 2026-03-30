@@ -1,0 +1,18 @@
+{{/*
+  Objectives box — list of goals for the current part.
+
+  Usage:
+    {{< objectives title="What I'll accomplish in this part" >}}
+    - Provision an Ubuntu 22.04 VM as the dedicated Ansible control node
+    - Create an isolated Python virtual environment for Ansible
+    - Install Ansible and verify the installation
+    {{< /objectives >}}
+*/}}
+
+{{ $title := .Get "title" | default "What I'll accomplish in this part" }}
+{{ $id    := .Get "id"    | default "objectives" }}
+
+<div class="lab-objectives" id="{{ $id }}">
+  <h3>{{ $title }}</h3>
+  {{ .Inner | markdownify }}
+</div>

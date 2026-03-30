@@ -1,0 +1,16 @@
+{{/*
+  Directory tree — preserves whitespace, supports .dir / .file / .desc spans.
+
+  Usage (raw HTML inside):
+    {{< dir-tree >}}
+    <span class="dir">network-automation-lab/</span>
+    ├── <span class="dir">inventory/</span>            <span class="desc"># Device inventory</span>
+    │   ├── <span class="dir">group_vars/</span>      <span class="desc"># Variables scoped to groups</span>
+    │   └── <span class="dir">host_vars/</span>       <span class="desc"># Variables scoped to hosts</span>
+    ├── <span class="dir">playbooks/</span>            <span class="desc"># Task playbooks</span>
+    ├── <span class="file">ansible.cfg</span>           <span class="desc"># Project configuration</span>
+    └── <span class="file">README.md</span>             <span class="desc"># Project overview</span>
+    {{< /dir-tree >}}
+*/}}
+
+<div class="lab-dir-tree">{{ trim .Inner "\n\r\t " | safeHTML }}</div>

@@ -1,0 +1,26 @@
+{{/*
+  Part navigation — prev/next links at bottom of page.
+
+  Usage:
+    {{< part-nav next="/docs/parts/part-02" next-title="Part 02 — Gitea: Version Control" >}}
+
+  Or with both:
+    {{< part-nav
+        prev="/docs/parts/part-01" prev-title="← Part 01 — Control Node"
+        next="/docs/parts/part-02" next-title="Part 02 — Gitea →"
+    >}}
+*/}}
+
+{{ $prev      := .Get "prev" }}
+{{ $prevTitle := .Get "prev-title" }}
+{{ $next      := .Get "next" }}
+{{ $nextTitle := .Get "next-title" }}
+
+<div class="lab-part-nav">
+  {{ with $prev }}
+    <a href="{{ . }}" class="lab-nav-link">{{ $prevTitle | default "← Previous" }}</a>
+  {{ end }}
+  {{ with $next }}
+    <a href="{{ . }}" class="lab-nav-link">{{ $nextTitle | default "Next →" }}</a>
+  {{ end }}
+</div>

@@ -1,0 +1,27 @@
+{{/*
+  Phase Header — renders a phase badge, title, and description.
+
+  Usage:
+    {{< phase num="1" title="Foundation" >}}
+    Build the control node, version control, lab topology, and core Ansible skills.
+    {{< /phase >}}
+
+  With custom color:
+    {{< phase num="2" title="The Network Fabric" color="#4dabce" >}}
+    Deploy NetBox, register devices via Ansible.
+    {{< /phase >}}
+*/}}
+
+{{ $num   := .Get "num"   | default "1" }}
+{{ $title := .Get "title" | default "" }}
+{{ $color := .Get "color" | default "" }}
+
+<div class="lab-phase-header" {{ with $color }}style="--lab-num-color: {{ . }}"{{ end }}>
+  <div class="lab-phase-title-row">
+    <span class="lab-phase-badge">Phase {{ $num }}</span>
+    {{ with $title }}<h2 class="lab-phase-title">{{ . }}</h2>{{ end }}
+  </div>
+  {{ with .Inner }}
+  <p class="lab-phase-desc">{{ . | markdownify }}</p>
+  {{ end }}
+</div>

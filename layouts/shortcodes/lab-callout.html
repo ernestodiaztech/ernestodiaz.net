@@ -1,0 +1,34 @@
+{{/*
+  Custom callout — matches the original HTML design.
+
+  Usage:
+    {{< lab-callout type="tip" >}}
+    Your tip text here. Supports **markdown**.
+    {{< /lab-callout >}}
+
+  Types: tip, info, warning, danger
+*/}}
+
+{{ $type := .Get "type" | default "info" }}
+
+{{ $icon := "ℹ" }}
+{{ $label := "Info" }}
+
+{{ if eq $type "tip" }}
+  {{ $icon = "✦" }}
+  {{ $label = "Tip" }}
+{{ else if eq $type "warning" }}
+  {{ $icon = "⚠" }}
+  {{ $label = "Warning" }}
+{{ else if eq $type "danger" }}
+  {{ $icon = "✖" }}
+  {{ $label = "Danger" }}
+{{ end }}
+
+<div class="lab-callout {{ $type }}">
+  <span class="lab-callout-icon">{{ $icon }}</span>
+  <div class="lab-callout-body">
+    <span class="lab-callout-label">{{ $label }}</span>
+    {{ .Inner | markdownify }}
+  </div>
+</div>

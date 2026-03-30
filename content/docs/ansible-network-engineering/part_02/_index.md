@@ -278,3 +278,259 @@ Then clicked on 'Install Gitea'.
 
 ## <span class="section-num">06</span> SSH Key Authentication
 
+To make it so I can run `git push` and `git pull` over SSH without prompting for a password I setup SSH key authentication.
+
+On `ansible-ctrl` I genereated an ed25519 key pair.
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+ssh-keygen -t ed25519 -C "ansible-ctrl > gitea" -f ~/.ssh/gitea
+{{< /codeblock >}}
+
+{{< line-explain >}}
+-t ed25519:
+: Ed25519 is the modern default for SSH keys.
+
+-C:
+: A comment embedded in the public key.
+
+-f:
+: Output file path.
+{{< /line-explain >}}
+
+I started `ssh-agent` and added the key so the passphrase only needs to be entered once per session
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+(.venv) $ eval "$(ssh-agent -s)"
+Agent pid 12345
+(.venv) $ ssh-add ~/.ssh/gitea
+Enter passphrase for /home/nesto/.ssh/gitea:
+Identity added: /home/nesto/.ssh/gitea
+{{< /codeblock >}}
+
+{{< line-explain >}}
+Line 1:
+: Starts the ssh-agent daemon and sets the necessary environment variables in the current shell. The `eval` wrapper ensures the `SSH_AUTH_SOCK` and `SSH_AGENT_PID` variables are exported.
+
+Line 3:
+: Adds the Gitea private key to the agent.
+{{< /line-explain >}}
+
+I set a strong passphrase when prompted since a key without a passphrase is equivalent to a password written on a sticky note.
+
+So I didn't have to start the ssh-agent manually on every login, I added the following to `~/.bashrc`:
+
+{{< codeblock file="~/.bashrc" >}}
+# Start ssh-agent if not already running
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" > /dev/null
+    ssh-add ~/.ssh/gitea 2>/dev/null
+fi
+{{< /codeblock >}}
+
+This will start the agent and load the key on login. The passphrase prompt will appear once, and then all following Git and SSH operations will use the cached key.
+
+---
+
+Next, I configured SSH to use this specific key when conencting to Gitea:
+
+{{< codeblock file="~/.bashrc" >}}
+Host gitea
+    HostName      gitea
+    Port          2222
+    User          git
+    IdentityFile  ~/.ssh/gitea
+{{< /codeblock >}}
+
+{{< line-explain >}}
+Host gitea:
+: This is the alias that SSH (and Git) will match on.
+
+HostName:
+: The actual hostname or IP address to connect to.
+
+Port 2222:
+: Maps to the Docker port I configured in the Compose file.
+
+User git:
+: Gitea handles all SSH Git operations under the `git` user.
+
+IdentityFile:
+: Points SSH to the specific private key for this host.
+{{< /line-explain >}}
+
+I then set the proper permissions on `ansible-ctrl`.
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+chmod 600 ~/.ssh/config
+chmod 600 ~/.ssh/gitea
+chmod 644 ~/.ssh/gitea.pub
+{{< /codeblock >}}
+
+{{< line-explain >}}
+Lines 1-2:
+: The SSH config and private key must be readable only by the owner.
+
+Line 3:
+: The public key can be readable by anyone.
+{{< /line-explain >}}
+
+I then copied the public key conent and added it to Gitea.
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+cat ~/.ssh/gitea.pub
+{{< /codeblock >}}
+
+I made sure I copied the output, then went to Gitea's web UI. From there I went to **Settings** > **SSH/GPG Keys** > **Add Key**.
+
+Then verified the SSH connection works:
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+ssh -T git@gitea
+{{< /codeblock>}}
+
+{{< codeblock lang="Expected Output" copy=false >}}
+Hi there, git! You've successfully authenticated with the key named ansible-ctrl, but Gitea does not provide shell access.
+{{< /codeblock >}}
+
+The 'does not provide shell access' message is normal since Git hosting platforms don't offer interactive shells.
+
+---
+
+## <span class="section-num">07</span> Creating the Repository
+
+In the Gitea web UI, I clicked the + button in the top right and selected **New Repository**:
+
+{{< codeblock lang="REPOSITORY SETTINGS" copy=false >}}
+Repository Name:    network-automation-lab
+Visibility:         Private
+Description:        Ansible network automation
+Initialize Repo:    (unchecked)
+.gitignore:         None
+License:            None
+README:             None
+Default Branch:     main
+{{< /codeblock >}}
+
+---
+
+Back on `ansible-ctrl` I added the Gitea repo as a remote and pushed the existing history.
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+cd ~/network-automation-lab
+git remote add origin git@gitea:nesto/network-automation-lab.git
+git push -u origin main
+{{< /codeblock >}}
+
+{{< line-explain >}}
+Line 2:
+: Added the Gitea repo as the `origin` remote.
+
+Line 3:
+: Pushed the `main` branch.
+{{< /line-explain >}}
+
+I confirmed the push by refreshing the Gitea web UI. The repository should show all the files committed.
+
+---
+
+## <span class="section-num">08</span> Branch Protection
+
+I configured branch protection on `main` to enforce a pull request workflow. Even though I'm the only user right now, this builds the habit of never pushing directly to `main`.
+
+In the Gitea web UI, I went to **Repository Settings** > **Branches** > **Add Branch Protection Rule** and configured it this way:
+
+{{< codeblock lang="REPOSITORY SETTINGS" copy=false >}}
+Branch Name Pattern:              main
+Enable Branch Protection:          Checked
+Disable Push:                      Checked
+Enable Push Whitelist:             Unchecked
+Require Approvals:                 Checked
+Required Approvals:                1
+Block Merge on Rejected Reviews:   Checked
+Block Merge on Outdated Branch:    Checked
+Block Merge on Official Review:    Unchecked
+Enable Status Checks:              Unchecked (for now)
+{{< /codeblock >}}
+
+{{< lab-callout type="info" >}}
+**Disable Push** prevents anyone (including the admin) from pushing directly to `main`. All changes must come through a pull request. This guarantees that every change to `main` is deliberate, reviewed, and traceable.
+
+**Block Merge on Outdated Branch** means that if `main` has changed sign the PR branch was created, the PR branch much be rebased or merged with the latest `main` before the PR can be merged. This prevents situations where a PR was valid against an old version of `main` but conflicts with recent changes.
+{{< /lab-callout >}}
+
+---
+
+The daily workflow for making changes will look like this:
+
+1. Create a feature branch from main
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+git checkout -b feat/add-ntp-role
+{{< /codeblock >}}
+
+2. Make changes, stage, commit
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+git add -A
+git commit -m "feat: add NTP configuration role"
+{{< /codeblock >}}
+
+3. Push the feature branch to Gitea
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+git push -u origin feat/add-ntp-role
+{{< /codeblock >}}
+
+4. Open a Pull Request in the Gitea UI
+5. Review the diff, approve, merge
+6. Delete the feature branch after merge
+
+7. Return to main locally
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+git checkout main
+git pull origin main
+{{< /codeblock >}}
+
+- Created a new branch and switched to it.
+- Pushed the feature branch to Gitea (the PR workflow handles the merge).
+- After the PR is merged, I switch back to `main` locally and pull the latest changes.
+
+---
+
+## <span class="section-num">09</span> Verification
+
+I ran through a final checklist to confirm everything is working.
+
+---
+
+Gitea containers running:
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+docker compose -f /opt/gitea/docker-compose.yml ps
+{{< /codeblock >}}
+
+Both `gitea` and `gitea-db` should show status of `Up`.
+
+---
+
+SSH connectivity from ansible-ctrl:
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+ssh -T git@gitea
+{{< /codeblock >}}
+
+---
+
+I verified branch protection is active by attempting a direct push to `main`:
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+echo "test" >> README.md
+git add README.md
+git commit -m "test: verify branch protection"
+git push origin main
+{{< /codeblock >}}
+
+---
+
+Now I have a self-hosted Gitea instance running on a dedicated VM with PostgresSQL backend, SSH key authentication configured between `ansible-ctrl` and Gitea.

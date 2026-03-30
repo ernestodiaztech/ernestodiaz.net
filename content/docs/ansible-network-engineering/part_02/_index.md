@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: 'Gitea'
 description: "Part 2 of my Ansible learning geared towards Network Engineering."
 tags:

@@ -1034,6 +1034,91 @@ a.lab-part-card-title:hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   12d. TOOL CARDS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.lab-tool-card {
+  background: var(--lab-bg-card);
+  border: 1px solid var(--lab-border);
+  border-left: 3px solid var(--lab-num-color, var(--lab-accent-dim));
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin: 12px 0;
+  transition: all 0.15s ease;
+}
+
+.lab-tool-card:hover {
+  background: var(--lab-bg-card-hover);
+  border-left-color: var(--lab-num-color, var(--lab-accent));
+}
+
+.lab-tool-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.lab-tool-card-title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.lab-tool-card-title {
+  font-family: var(--lab-sans) !important;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lab-accent) !important;
+  text-decoration: none;
+}
+
+a.lab-tool-card-title:hover {
+  color: var(--lab-accent-bright) !important;
+}
+
+.lab-tool-card-badge {
+  font-family: var(--lab-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--lab-badge-color, var(--lab-accent));
+  background: color-mix(in srgb, var(--lab-badge-color, var(--lab-accent)) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lab-badge-color, var(--lab-accent)) 30%, transparent);
+  padding: 3px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lab-tool-card-subtitle {
+  font-family: var(--lab-mono);
+  font-size: 12px;
+  color: var(--lab-text-muted);
+  margin-bottom: 10px;
+}
+
+.lab-tool-card-body {
+  font-size: 14px;
+  color: var(--lab-text);
+  line-height: 1.6;
+}
+
+.lab-tool-card-body p {
+  margin: 0;
+}
+
+.lab-tool-card-body code {
+  font-family: var(--lab-mono) !important;
+  font-size: 12px !important;
+  background: rgba(82,183,136,0.08) !important;
+  color: var(--lab-accent-bright) !important;
+  padding: 1px 5px !important;
+  border-radius: 3px !important;
+  border: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    13. PART NAVIGATION
    ═══════════════════════════════════════════════════════════════════════════ */
 .lab-part-nav {

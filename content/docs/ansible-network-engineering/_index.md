@@ -5,12 +5,18 @@ sidebar:
   exclude: false
 ---
 
+---
+
 {{< phase num="1" title="Foundation" >}}
 Build the control node, version control, lab topology, core Ansible skills and everything else needed before scaling.
 {{< /phase >}}
 
 {{< part-card num="01" title="Project Structure" href="/docs/ansible-network-engineering/part_01/" >}}
 Proxmox VM, Python venv, Ansible install, directory layout, local Git init.
+{{< /part-card >}}
+
+{{< part-card num="" title="Workstation Setup" href="/docs/ansible-network-engineering/part_00/" >}}
+VSCode with Remote-SSH, extensions for Ansible and Jinja2, SSH key setup for Windows and other tools for this project.
 {{< /part-card >}}
 
 {{< part-card num="02" title="Gitea" href="/docs/ansible-network-engineering/part_02/" >}}

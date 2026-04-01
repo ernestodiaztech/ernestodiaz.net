@@ -1,0 +1,51 @@
+{{/*
+  Tool Card — card with title, subtitle, badge, and description.
+
+  Usage:
+    {{< tool-card title="Ansible" subtitle="redhat.ansible" badge="ESSENTIAL" >}}
+    Official Red Hat extension. Provides syntax highlighting, autocompletion, hover documentation, and linting for Ansible playbooks.
+    {{< /tool-card >}}
+
+  With custom badge color:
+    {{< tool-card title="Better Jinja" subtitle="samuelcolvin.jinjahtml" badge="RECOMMENDED" badge-color="#e5c07b" >}}
+    Improved Jinja2 highlighting that understands Jinja inside YAML, HTML, and other file types.
+    {{< /tool-card >}}
+
+  With link:
+    {{< tool-card title="GitLens" subtitle="eamodio.gitlens" badge="RECOMMENDED" badge-color="#e5c07b" href="https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens" >}}
+    Supercharges VSCode's built-in Git support.
+    {{< /tool-card >}}
+
+  No badge:
+    {{< tool-card title="Docker" subtitle="ms-azuretools.vscode-docker" >}}
+    Docker file support and container management.
+    {{< /tool-card >}}
+*/}}
+
+{{ $title      := .Get "title"       | default "" }}
+{{ $subtitle   := .Get "subtitle"    | default "" }}
+{{ $badge      := .Get "badge"       | default "" }}
+{{ $badgeColor := .Get "badge-color" | default "" }}
+{{ $href       := .Get "href"        | default "" }}
+{{ $color      := .Get "color"       | default "" }}
+
+<div class="lab-tool-card" {{ with $color }}style="--lab-num-color: {{ . }}"{{ end }}>
+  <div class="lab-tool-card-header">
+    <div class="lab-tool-card-title-group">
+      {{ if $href }}
+        <a href="{{ $href }}" class="lab-tool-card-title" target="_blank" rel="noopener">{{ $title }}</a>
+      {{ else }}
+        <span class="lab-tool-card-title">{{ $title }}</span>
+      {{ end }}
+    </div>
+    {{ with $badge }}
+    <span class="lab-tool-card-badge" {{ with $badgeColor }}style="--lab-badge-color: {{ . }}"{{ end }}>{{ . }}</span>
+    {{ end }}
+  </div>
+  {{ with $subtitle }}
+  <div class="lab-tool-card-subtitle">{{ . }}</div>
+  {{ end }}
+  {{ with .Inner }}
+  <div class="lab-tool-card-body">{{ . | markdownify }}</div>
+  {{ end }}
+</div>

@@ -260,17 +260,12 @@ docker compose logs db
 
 I went to `http://gitea:3000` and was presented with the initial configuration page. Most of the database settings should already be populated.
 
-**Settings I Changed:**
-
-**Site Title:** Network Automation Lab
-
-**SSH Server Domain:** 10.33.99.62
-
-**SSH Server Port:** 2222
-
-**Gitea Base URL:** http://gitea:3000/
-
----
+{{< kv title="Settings I Changed" >}}
+Site Title | Network Automation Lab
+SSH Server Domain       | 10.33.99.62
+SSH Server Port           | 2222
+Gitea Base URL  |  http://gitea:3000/
+{{< /kv >}}
 
 Then clicked on 'Install Gitea'.
 

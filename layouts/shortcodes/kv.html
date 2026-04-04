@@ -1,0 +1,47 @@
+{{/*
+  Key-Value List — clean two-column display for settings, specs, or properties.
+
+  Usage:
+    {{< kv >}}
+    Site Title         | Network Automation Lab
+    SSH Server Domain  | 10.33.99.62
+    SSH Server Port    | 2222
+    Gitea Base URL     | http://gitea:3000/
+    {{< /kv >}}
+
+  With a title:
+    {{< kv title="Settings I Changed" >}}
+    Site Title         | Network Automation Lab
+    SSH Server Port    | 2222
+    {{< /kv >}}
+
+  With custom accent color:
+    {{< kv title="VM Specifications" color="#4dabce" >}}
+    OS       | Ubuntu Server 22.04 LTS
+    Hostname | ansible-ctrl
+    CPU      | 2 vCPU
+    RAM      | 4 GB
+    {{< /kv >}}
+*/}}
+
+{{ $title := .Get "title" | default "" }}
+{{ $color := .Get "color" | default "" }}
+
+<div class="lab-kv" {{ with $color }}style="--lab-kv-color: {{ . }}"{{ end }}>
+  {{ with $title }}<div class="lab-kv-title">{{ . }}</div>{{ end }}
+  <dl class="lab-kv-list">
+    {{ $raw := trim .Inner "\n\r\t " }}
+    {{ range split $raw "\n" }}
+      {{ $line := trim . " \t" }}
+      {{ if $line }}
+        {{ $parts := split $line "|" }}
+        {{ if ge (len $parts) 2 }}
+          <div class="lab-kv-row">
+            <dt>{{ trim (index $parts 0) " \t" }}</dt>
+            <dd>{{ trim (index $parts 1) " \t" | markdownify }}</dd>
+          </div>
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  </dl>
+</div>

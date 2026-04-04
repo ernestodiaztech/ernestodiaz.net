@@ -1034,7 +1034,85 @@ a.lab-part-card-title:hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   12d. TOOL CARDS
+   12d. KEY-VALUE LISTS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.lab-kv {
+  background: transparent;
+  border: 1px solid var(--lab-border);
+  border-radius: 6px;
+  padding: 18px 24px;
+  margin: 16px 0 20px;
+}
+
+.lab-kv-title {
+  font-family: var(--lab-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--lab-kv-color, var(--lab-accent));
+  margin-bottom: 14px;
+}
+
+.lab-kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 !important;
+}
+
+.lab-kv-row {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--lab-border);
+}
+
+.lab-kv-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.lab-kv-row:first-child {
+  padding-top: 0;
+}
+
+.lab-kv-row dt {
+  font-family: var(--lab-mono) !important;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lab-kv-color, var(--lab-accent));
+  white-space: nowrap;
+  min-width: 160px;
+  flex-shrink: 0;
+  margin: 0 !important;
+  padding: 0;
+}
+
+.lab-kv-row dd {
+  font-size: 14px;
+  color: var(--lab-text);
+  margin: 0 !important;
+  padding: 0;
+  line-height: 1.5;
+}
+
+.lab-kv-row dd p {
+  margin: 0 !important;
+}
+
+.lab-kv-row dd code {
+  font-family: var(--lab-mono) !important;
+  font-size: 12px !important;
+  background: rgba(82,183,136,0.08) !important;
+  color: var(--lab-accent-bright) !important;
+  padding: 1px 5px !important;
+  border-radius: 3px !important;
+  border: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   12e. TOOL CARDS
    ═══════════════════════════════════════════════════════════════════════════ */
 .lab-tool-card {
   background: var(--lab-bg-card);

@@ -1,8 +1,9 @@
 ---
 draft: true
-title: 'Ansible Network Automation Lab'
+title: '1st Ansible Network Automation Project'
 sidebar:
-  exclude: true
+  exclude: false
+weight: 1
 ---
 
 {{< cards cols="2">}}

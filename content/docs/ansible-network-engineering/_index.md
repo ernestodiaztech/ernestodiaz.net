@@ -1,8 +1,9 @@
 ---
 draft: false
-title: 'Ansible for Network Engineering'
+title: '2nd Ansible for Network Automation Project'
 sidebar:
   exclude: false
+weight: 2
 ---
 
 ---

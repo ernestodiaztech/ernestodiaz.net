@@ -1,0 +1,16 @@
+{{/*
+  Pill Item — single item inside pill-grid.
+
+  Optional:
+    wide="true"  -> span full width
+
+  Usage:
+    {{< pill-item >}}Signed commits, secrets scanning, SBOM generation{{< /pill-item >}}
+    {{< pill-item wide="true" >}}This item spans both columns{{< /pill-item >}}
+*/}}
+
+{{ $wide := .Get "wide" | default "false" }}
+
+<div class="lab-pill-item {{ if eq (printf "%v" $wide) "true" }}is-wide{{ end }}">
+  <div class="lab-pill-item-text">{{ .Inner | markdownify }}</div>
+</div>

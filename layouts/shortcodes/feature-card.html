@@ -1,0 +1,26 @@
+{{/*
+  Feature Card — Apple-style content card for principles / capabilities.
+
+  Params:
+    title = heading
+    mono  = true|false   (optional; makes title uppercase/mono-ish)
+    wide  = true|false   (optional; span full width inside the grid)
+
+  Usage:
+    {{< feature-card title="Structured IPAM" >}}
+    A `10.33.0.0/16` supernet where the third octet encodes function...
+    {{< /feature-card >}}
+
+    {{< feature-card title="GitOps change pipeline" mono="true" wide="true" >}}
+    Feature branch → PR in Gitea → Ansible lint...
+    {{< /feature-card >}}
+*/}}
+
+{{ $title := .Get "title" | default "" }}
+{{ $mono  := .Get "mono"  | default "false" }}
+{{ $wide  := .Get "wide"  | default "false" }}
+
+<div class="lab-feature-card {{ if eq (printf "%v" $wide) "true" }}is-wide{{ end }} {{ if eq (printf "%v" $mono) "true" }}is-mono-title{{ end }}">
+  {{ with $title }}<h3 class="lab-feature-card-title">{{ . }}</h3>{{ end }}
+  <div class="lab-feature-card-body">{{ .Inner | markdownify }}</div>
+</div>

@@ -1,0 +1,29 @@
+{{/*
+  Pipeline Flow — Apple-style inline sequence for workflow/pipeline steps.
+
+  Usage:
+    {{< pipeline-flow >}}
+    Feature branch | PR in Gitea | Ansible lint | Batfish analysis | Peer review | Merge | AWX webhook | Playbook run | pyATS validation | Oxidized backup
+    {{< /pipeline-flow >}}
+
+  Optional:
+    {{< pipeline-flow compact="true" >}}
+    Drift detected | Graylog alert | EDA rulebook | AWX workflow | Approval gate | Remediation | Backup + verify
+    {{< /pipeline-flow >}}
+*/}}
+
+{{ $compact := .Get "compact" | default "false" }}
+{{ $raw := trim .Inner "\n\r\t " }}
+{{ $steps := split $raw "|" }}
+
+<div class="lab-pipeline-flow {{ if eq (printf "%v" $compact) "true" }}is-compact{{ end }}">
+  {{ range $i, $step := $steps }}
+    {{ $clean := trim $step " \t" }}
+    {{ if $clean }}
+      <span class="lab-pipeline-step">{{ $clean | markdownify }}</span>
+      {{ if lt $i (sub (len $steps) 1) }}
+        <span class="lab-pipeline-sep" aria-hidden="true">→</span>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+</div>

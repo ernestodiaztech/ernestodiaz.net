@@ -1,0 +1,18 @@
+{{/*
+  Phase List — Apple Docs styled overview list for phases.
+
+  Usage:
+    {{< phase-list >}}
+      {{< phase-row num="1" title="Foundation" parts="Parts 01–06" >}}
+      Control node, Gitea, Ansible Vault, Containerlab with first devices, playbook fundamentals, Jinja2 deep dive, reusable roles.
+      {{< /phase-row >}}
+
+      {{< phase-row num="2" title="The network fabric" parts="Parts 07–15" >}}
+      NetBox as source of truth, IPAM plan, multi-vendor automation (IOS-XE, NX-OS, PAN-OS), BGP fabric, VM provisioning, monitoring, config backup.
+      {{< /phase-row >}}
+    {{< /phase-list >}}
+*/}}
+
+<div class="lab-phase-list">
+  {{ .Inner }}
+</div>

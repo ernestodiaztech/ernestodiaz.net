@@ -1,447 +1,292 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   Hextra Custom Theme — Dark green terminal aesthetic
-   Drop this file into: assets/css/custom.css
-   Hextra auto-loads it — no config changes needed.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* ── Fonts ── */
-/* Loaded via layouts/partials/custom/head-end.html as <link> tags.
-   @import doesn't work here because Hextra concatenates this file
-   with its own CSS, pushing the @import to the middle where browsers ignore it. */
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   1. COLOR PALETTE
-   Light mode defaults, then dark mode overrides.
+   STYLE: "Apple Docs" — safer Chroma rendering
+   Keeps the Apple palette, but uses a more conservative codeblock layer
+   so Hugo/Chroma output does not produce phantom highlight bars.
    ═══════════════════════════════════════════════════════════════════════════ */
+
 :root {
-  /* ── Light mode palette ── */
-  /* Base surfaces */
-  --lab-bg:             #ffffff;
-  --lab-bg-surface:     #f6f7f9;
-  --lab-bg-card:        #eef0f4;
-  --lab-bg-card-hover:  #e4e7ed;
-  --lab-border:         #d4d8e1;
+  --lab-bg: #ffffff;
+  --lab-surface: #ffffff;
+  --lab-surface-subtle: #f7f7f8;
+  --lab-border: #e7e7ea;
 
-  /* Accent */
-  --lab-accent:         #2d6a4f;
-  --lab-accent-dim:     #40916c;
-  --lab-accent-bright:  #2d6a4f;
+  --lab-text: #1d1d1f;
+  --lab-text-muted: #6e6e73;
+  --lab-text-soft: #8e8e93;
 
-  /* Text */
-  --lab-text:           #374151;
-  --lab-text-muted:     #6b7280;
-  --lab-text-heading:   #111827;
+  --lab-accent: #0071e3;
+  --lab-accent-soft: rgba(0, 113, 227, 0.08);
 
-  /* Code tokens */
-  --lab-code-bg:        #f5f6f8;
-  --lab-code-border:    #dce0e8;
-  --lab-code-comment:   #8b95a5;
-  --lab-code-keyword:   #a626a4;
-  --lab-code-string:    #50a14f;
-  --lab-code-command:   #4078f2;
-  --lab-code-flag:      #c18401;
-  --lab-code-path:      #0184bc;
-  --lab-code-variable:  #e45649;
-  --lab-code-output:    #8b95a5;
-  --lab-code-number:    #b76b01;
+  --lab-code-bg: #f6f6f7;
+  --lab-code-border: #e3e4e8;
 
-  /* Callout colors */
-  --lab-tip-bg:         rgba(45,106,79,0.06);
-  --lab-tip-border:     #40916c;
-  --lab-tip-icon:       #2d6a4f;
-  --lab-info-bg:        rgba(64,120,242,0.06);
-  --lab-info-border:    #4078f2;
-  --lab-info-icon:      #4078f2;
-  --lab-warn-bg:        rgba(193,132,1,0.06);
-  --lab-warn-border:    #c18401;
-  --lab-warn-icon:      #c18401;
-  --lab-danger-bg:      rgba(228,86,73,0.06);
-  --lab-danger-border:  #e45649;
-  --lab-danger-icon:    #e45649;
+  --lab-shadow: 0 1px 2px rgba(0,0,0,0.04);
 
-  /* Fonts */
-  --lab-mono: 'JetBrains Mono', monospace;
-  --lab-sans: 'DM Sans', sans-serif;
+  --lab-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --lab-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif;
 }
 
-/* ── Dark mode overrides ── */
-html.dark {
-  --lab-bg:             #0c0e13;
-  --lab-bg-surface:     #12151c;
-  --lab-bg-card:        #181c26;
-  --lab-bg-card-hover:  #1e2330;
-  --lab-border:         #252a38;
-
-  --lab-accent:         #52b788;
-  --lab-accent-dim:     #2d6a4f;
-  --lab-accent-bright:  #74d4a4;
-
-  --lab-text:           #c8cdd8;
-  --lab-text-muted:     #6b7394;
-  --lab-text-heading:   #e8ecf4;
-
-  --lab-code-bg:        #0f1117;
-  --lab-code-border:    #1e2230;
-  --lab-code-comment:   #555e7e;
-  --lab-code-keyword:   #c678dd;
-  --lab-code-string:    #98c379;
-  --lab-code-command:   #61afef;
-  --lab-code-flag:      #e5c07b;
-  --lab-code-path:      #56b6c2;
-  --lab-code-variable:  #e06c75;
-  --lab-code-output:    #5c6370;
-  --lab-code-number:    #d19a66;
-
-  --lab-tip-bg:         rgba(82,183,136,0.06);
-  --lab-tip-border:     #2d6a4f;
-  --lab-tip-icon:       #52b788;
-  --lab-info-bg:        rgba(77,171,206,0.06);
-  --lab-info-border:    #2a5f7a;
-  --lab-info-icon:      #4dabce;
-  --lab-warn-bg:        rgba(232,180,77,0.06);
-  --lab-warn-border:    #7a6028;
-  --lab-warn-icon:      #e8b44d;
-  --lab-danger-bg:      rgba(199,95,123,0.06);
-  --lab-danger-border:  #7a2e42;
-  --lab-danger-icon:    #c75f7b;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   2. MAP TO HEXTRA'S CSS VARIABLES
-   Override Hextra's own CSS variables so Tailwind utilities inherit our fonts.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Both modes get our fonts */
 html {
-  --hx-font-family-sans: 'DM Sans', sans-serif;
-  --hx-font-family-mono: 'JetBrains Mono', monospace;
-}
-
-html.dark {
-  --primary-hue:   152deg;
-  --primary-sat:   46%;
+  --hx-font-family-sans: var(--lab-sans);
+  --hx-font-family-mono: var(--lab-mono);
 }
 
 body {
-  font-family: var(--lab-sans) !important;
-  -webkit-font-smoothing: antialiased;
-}
-
-.dark body {
-  background-color: var(--lab-bg) !important;
-  color: var(--lab-text) !important;
-}
-
-/* ── Noise overlay ── */
-.dark body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  opacity: 0.022;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 128px;
-  z-index: 9999;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   3. SIDEBAR / NAV
-   ═══════════════════════════════════════════════════════════════════════════ */
-.dark nav.hextra-sidebar {
   background: var(--lab-bg);
-  border-color: var(--lab-border);
-}
-
-.dark .hextra-sidebar-container {
-  scrollbar-width: thin;
-  scrollbar-color: var(--lab-border) transparent;
-}
-
-/* Sidebar links */
-.dark .hextra-sidebar a {
-  color: var(--lab-text-muted);
-  font-size: 13px;
-}
-
-.dark .hextra-sidebar a:hover {
   color: var(--lab-text);
-  background: rgba(255,255,255,0.03);
+  font-family: var(--lab-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.dark .hextra-sidebar a.active,
-.dark .hextra-sidebar li.active > a {
-  color: var(--lab-accent);
-  background: rgba(82,183,136,0.06);
-}
-
-/* TOC (right sidebar) */
-.dark .hextra-toc a {
-  color: var(--lab-text-muted);
-  font-size: 12.5px;
-  border-left: 2px solid transparent;
-  transition: all 0.15s ease;
-}
-
-.dark .hextra-toc a:hover {
+/* Typography */
+h1, h2, h3, h4 {
   color: var(--lab-text);
-  border-left-color: var(--lab-accent-dim);
+  font-family: var(--lab-sans);
+  letter-spacing: -0.025em;
+}
+h1 { font-weight: 700; }
+h2 { font-weight: 650; }
+h3 { font-weight: 600; }
+
+p, li, dd, dt {
+  color: var(--lab-text);
+  line-height: 1.75;
 }
 
-.dark .hextra-toc a.active-toc {
-  color: var(--lab-accent);
-  border-left-color: var(--lab-accent);
+small,
+.lab-part-meta,
+.lab-phase-desc,
+.lab-tool-card-subtitle,
+.lab-kv-title,
+.lab-callout-label {
+  color: var(--lab-text-muted);
 }
 
-.dark .hextra-toc .hx-text-xs {
-  font-family: var(--lab-mono);
-  font-size: 9.5px;
-  letter-spacing: 2.5px;
+/* Rhythm */
+.lab-objectives,
+.lab-code-block,
+.lab-callout,
+.lab-dir-tree,
+.lab-kv,
+.lab-table,
+.lab-part-card,
+.lab-tool-card,
+.lab-phase-header {
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+
+/* Mostly invisible structure */
+.lab-kv,
+.lab-table,
+.lab-part-card,
+.lab-tool-card,
+.lab-phase-header {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Badges */
+.lab-part-badge,
+.lab-phase-badge,
+.lab-part-card-badge,
+.lab-tool-card-badge {
+  background: #f3f4f6;
+  color: var(--lab-text-muted);
+  border: 1px solid #ebedf0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--lab-accent);
+  font-weight: 600;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   4. CONTENT TYPOGRAPHY
-   ═══════════════════════════════════════════════════════════════════════════ */
-.dark .hextra-content,
-.dark .content,
-.dark article {
-  font-family: var(--lab-sans) !important;
-  font-size: 15.5px !important;
-  line-height: 1.72 !important;
-  color: var(--lab-text) !important;
+/* Part/tool cards */
+.lab-part-card,
+.lab-tool-card {
+  padding: 0;
 }
 
-.dark .hextra-content p,
-.dark .content p,
-.dark article p {
-  font-family: var(--lab-sans) !important;
-  color: var(--lab-text) !important;
-}
-
-.dark .hextra-content h1,
-.dark .content h1,
-.dark article h1 {
-  font-family: var(--lab-sans) !important;
-  font-size: clamp(26px, 4vw, 34px) !important;
-  font-weight: 700 !important;
-  color: var(--lab-text-heading) !important;
-  letter-spacing: -0.4px !important;
-  line-height: 1.25 !important;
-}
-
-.dark .hextra-content h2,
-.dark .content h2,
-.dark article h2 {
-  font-family: var(--lab-sans) !important;
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  color: var(--lab-text-heading) !important;
-  letter-spacing: -0.2px !important;
-  border-bottom: none !important;
+.lab-part-card + .lab-part-card,
+.lab-tool-card + .lab-tool-card {
+  border-top: 1px solid var(--lab-border);
   padding-top: 20px;
 }
 
-.dark .hextra-content h3,
-.dark .content h3,
-.dark article h3 {
-  font-family: var(--lab-sans) !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  color: var(--lab-text-heading) !important;
-}
-
-/* Section numbers in headings */
-.section-num {
-  font-family: var(--lab-mono) !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  color: var(--lab-num-color, var(--lab-accent-dim)) !important;
-  margin-right: 10px !important;
-}
-
-/* Lists and other prose elements */
-.dark .hextra-content li,
-.dark .content li,
-.dark article li,
-.dark .hextra-content dd,
-.dark .hextra-content dt,
-.dark .hextra-content blockquote {
-  font-family: var(--lab-sans) !important;
-  color: var(--lab-text) !important;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   5. INLINE CODE
-   Override Hextra's Tailwind prose code styles which add borders and
-   different backgrounds. Use high-specificity selectors + !important.
-   ═══════════════════════════════════════════════════════════════════════════ */
-.dark code:not(pre code):not(.hextra-code-block code),
-.dark .hextra-content code:not(pre code),
-.dark .content code:not(pre code),
-.dark article code:not(pre code) {
-  font-family: var(--lab-mono) !important;
-  font-size: 12.5px !important;
-  background: rgba(82,183,136,0.08) !important;
-  background-color: rgba(82,183,136,0.08) !important;
-  color: var(--lab-accent-bright) !important;
-  padding: 2px 6px !important;
-  border-radius: 3px !important;
-  border: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   6. CODE BLOCKS (Hextra default fenced blocks)
-   ═══════════════════════════════════════════════════════════════════════════ */
-.dark .hextra-content pre,
-.dark .content pre,
-.dark article pre {
-  background: var(--lab-code-bg) !important;
-  border: 1px solid var(--lab-code-border) !important;
-  border-radius: 6px !important;
-}
-
-.dark .hextra-content pre code,
-.dark .content pre code,
-.dark article pre code {
-  font-family: var(--lab-mono) !important;
-  font-size: 13px !important;
-  line-height: 1.65 !important;
-  background: none !important;
-  color: var(--lab-text) !important;
-  border: none !important;
-}
-
-/* Hextra's copy button */
-.dark .hextra-content .hextra-code-copy-btn {
-  font-family: var(--lab-mono);
-  font-size: 10.5px;
-  color: var(--lab-text-muted);
-  border: 1px solid var(--lab-border);
-  border-radius: 3px;
-}
-
-.dark .hextra-content .hextra-code-copy-btn:hover {
+.lab-part-card-title,
+.lab-tool-card-title {
   color: var(--lab-text);
-  border-color: var(--lab-accent-dim);
-  background: rgba(82,183,136,0.06);
+  text-decoration: none;
+  font-weight: 600;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   7. CUSTOM CODE BLOCK — with file header
-   Used by the {{< codeblock >}} shortcode
-   ═══════════════════════════════════════════════════════════════════════════ */
+.lab-part-card-title:hover,
+.lab-tool-card-title:hover {
+  color: var(--lab-accent);
+}
+
+.lab-part-card-num,
+.lab-tool-card-subtitle {
+  color: var(--lab-text-soft);
+}
+
+/* Phase header */
+.lab-phase-header {
+  padding-top: 12px;
+}
+
+.lab-phase-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lab-phase-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+/* Objectives */
+.lab-objectives {
+  background: var(--lab-surface-subtle);
+  border: 1px solid var(--lab-border);
+  border-radius: 18px;
+  padding: 24px 28px;
+  box-shadow: var(--lab-shadow);
+}
+
+.lab-objectives h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  color: var(--lab-text-muted);
+}
+
+.lab-objectives ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.lab-objectives li {
+  padding: 4px 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CODE BLOCKS — conservative Chroma-safe styling
+   ═══════════════════════════════════════════════════════════════════════ */
+
 .lab-code-block {
   position: relative;
   background: var(--lab-code-bg);
   border: 1px solid var(--lab-code-border);
-  border-radius: 6px;
-  margin: 16px 0 20px;
+  border-radius: 18px;
+  margin: 28px 0;
   overflow: hidden;
+  box-shadow: var(--lab-shadow);
 }
 
 .lab-code-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
-  background: rgba(0,0,0,0.03);
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.6);
   border-bottom: 1px solid var(--lab-code-border);
+  backdrop-filter: blur(8px);
 }
 
-html.dark .lab-code-header {
-  background: rgba(255,255,255,0.02);
-}
-
-.lab-code-lang {
-  font-family: var(--lab-mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.lab-code-lang,
+.lab-code-filename {
   color: var(--lab-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-family: var(--lab-sans);
 }
 
 .lab-code-filename {
-  font-family: var(--lab-mono);
-  font-size: 11.5px;
-  color: var(--lab-accent);
-  font-weight: 500;
+  color: var(--lab-text);
 }
 
+.lab-copy-btn,
 .lab-code-block .lab-copy-btn {
-  font-family: var(--lab-mono);
-  font-size: 10.5px;
+  appearance: none;
+  background: #ffffff;
   color: var(--lab-text-muted);
-  background: transparent;
   border: 1px solid var(--lab-border);
-  border-radius: 3px;
-  padding: 3px 10px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  line-height: 1;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
+.lab-copy-btn:hover,
 .lab-code-block .lab-copy-btn:hover {
   color: var(--lab-text);
-  border-color: var(--lab-accent-dim);
-  background: rgba(82,183,136,0.06);
+  border-color: #d5d7dc;
+  background: #fbfbfc;
 }
 
 .lab-code-block .lab-copy-btn.copied {
   color: var(--lab-accent);
-  border-color: var(--lab-accent-dim);
+  border-color: #cfe2f7;
+  background: #f7fbff;
 }
 
+/* Plain pre/code */
 .lab-code-block pre {
-  padding: 16px 18px;
+  padding: 20px 22px;
   margin: 0;
   overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--lab-border) transparent;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
 }
 
 .lab-code-block pre code {
-  font-family: var(--lab-mono);
-  font-size: 13px;
-  line-height: 1.65;
+  font-family: var(--lab-mono) !important;
+  font-size: 13px !important;
+  line-height: 1.72 !important;
   background: none !important;
   background-color: transparent !important;
   border: none !important;
-  border-color: transparent !important;
-  padding: 0;
-  border-radius: 0;
+  padding: 0 !important;
+  border-radius: 0 !important;
 }
 
-/* Prevent Hextra prose styles from leaking borders into code blocks */
-.lab-code-block pre code *,
-.lab-code-block pre .lab-line {
-  background: none !important;
-  background-color: transparent !important;
+/* Chroma wrapper reset */
+.lab-chroma-wrap,
+.lab-chroma-wrap .highlight,
+.lab-chroma-wrap .chroma,
+.lab-chroma-wrap table,
+.lab-chroma-wrap tbody,
+.lab-chroma-wrap tr,
+.lab-chroma-wrap td,
+.lab-chroma-wrap pre,
+.lab-chroma-wrap code {
+  background: transparent !important;
   border: none !important;
-  border-color: transparent !important;
-}
-
-/* ── Chroma syntax highlighting inside codeblock shortcode ── */
-.lab-chroma-wrap {
-  overflow: hidden;
+  box-shadow: none !important;
 }
 
 .lab-chroma-wrap .highlight {
   margin: 0 !important;
-  background: transparent !important;
 }
 
 .lab-chroma-wrap .highlight pre {
-  padding: 16px 18px;
-  margin: 0;
+  margin: 0 !important;
+  padding: 20px 22px;
   overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--lab-border) transparent;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
@@ -450,191 +295,38 @@ html.dark .lab-code-header {
 .lab-chroma-wrap .highlight pre code {
   font-family: var(--lab-mono) !important;
   font-size: 13px !important;
-  line-height: 1.65 !important;
-  background: none !important;
+  line-height: 1.72 !important;
+  background: transparent !important;
   border: none !important;
   padding: 0 !important;
 }
 
-.lab-chroma-wrap .highlight pre code span {
-  border: none !important;
-  background: none !important;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   7b. CHROMA SYNTAX TOKEN COLORS — One Dark / One Light palette
-   Uses .lab-code-block .lab-chroma-wrap .chroma for max specificity
-   to override Hextra's built-in Chroma theme.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Reset ALL chroma backgrounds */
-.lab-code-block .lab-chroma-wrap .chroma,
-.lab-code-block .lab-chroma-wrap .chroma *,
-.lab-code-block .lab-chroma-wrap .chroma td,
-.lab-code-block .lab-chroma-wrap .chroma tr,
-.lab-code-block .lab-chroma-wrap .chroma .hl,
-.lab-code-block .lab-chroma-wrap .chroma .lnt,
-.lab-code-block .lab-chroma-wrap .chroma .ln {
+/* Critical: do NOT force display:block on .line/.cl/.hl
+   That is what tends to create phantom bars with some Chroma outputs. */
+.lab-chroma-wrap .chroma,
+.lab-chroma-wrap .chroma *,
+.lab-chroma-wrap .chroma .hl,
+.lab-chroma-wrap .chroma .lnt,
+.lab-chroma-wrap .chroma .ln {
   background: transparent !important;
   background-color: transparent !important;
+}
+
+/* Token spans should never look highlighted unless Chroma explicitly does it */
+.lab-chroma-wrap .chroma span {
+  box-shadow: none !important;
   border: none !important;
 }
 
-/* ── Dark mode tokens ── */
-.dark .lab-code-block .lab-chroma-wrap .chroma { color: #c8cdd8 !important; }
+/* Preserve pre formatting */
+.lab-code-block pre,
+.lab-code-block pre code,
+.lab-chroma-wrap .highlight pre,
+.lab-chroma-wrap .highlight pre code {
+  white-space: pre !important;
+}
 
-/* Comments */
-.dark .lab-code-block .lab-chroma-wrap .chroma .c,
-.dark .lab-code-block .lab-chroma-wrap .chroma .c1,
-.dark .lab-code-block .lab-chroma-wrap .chroma .cm,
-.dark .lab-code-block .lab-chroma-wrap .chroma .cs,
-.dark .lab-code-block .lab-chroma-wrap .chroma .cp,
-.dark .lab-code-block .lab-chroma-wrap .chroma .cpf,
-.dark .lab-code-block .lab-chroma-wrap .chroma .ch { color: #555e7e !important; font-style: italic; }
-
-/* Keywords */
-.dark .lab-code-block .lab-chroma-wrap .chroma .k,
-.dark .lab-code-block .lab-chroma-wrap .chroma .kc,
-.dark .lab-code-block .lab-chroma-wrap .chroma .kd,
-.dark .lab-code-block .lab-chroma-wrap .chroma .kn,
-.dark .lab-code-block .lab-chroma-wrap .chroma .kp,
-.dark .lab-code-block .lab-chroma-wrap .chroma .kr,
-.dark .lab-code-block .lab-chroma-wrap .chroma .kt { color: #c678dd !important; }
-
-/* Strings */
-.dark .lab-code-block .lab-chroma-wrap .chroma .s,
-.dark .lab-code-block .lab-chroma-wrap .chroma .sa,
-.dark .lab-code-block .lab-chroma-wrap .chroma .sb,
-.dark .lab-code-block .lab-chroma-wrap .chroma .sc,
-.dark .lab-code-block .lab-chroma-wrap .chroma .dl,
-.dark .lab-code-block .lab-chroma-wrap .chroma .sd,
-.dark .lab-code-block .lab-chroma-wrap .chroma .s2,
-.dark .lab-code-block .lab-chroma-wrap .chroma .se,
-.dark .lab-code-block .lab-chroma-wrap .chroma .sh,
-.dark .lab-code-block .lab-chroma-wrap .chroma .si,
-.dark .lab-code-block .lab-chroma-wrap .chroma .sx,
-.dark .lab-code-block .lab-chroma-wrap .chroma .sr,
-.dark .lab-code-block .lab-chroma-wrap .chroma .s1,
-.dark .lab-code-block .lab-chroma-wrap .chroma .ss { color: #98c379 !important; }
-
-/* Names — functions, builtins, commands */
-.dark .lab-code-block .lab-chroma-wrap .chroma .nf,
-.dark .lab-code-block .lab-chroma-wrap .chroma .nb,
-.dark .lab-code-block .lab-chroma-wrap .chroma .nx { color: #61afef !important; }
-
-/* Names — classes, decorators, namespaces */
-.dark .lab-code-block .lab-chroma-wrap .chroma .nc,
-.dark .lab-code-block .lab-chroma-wrap .chroma .nd,
-.dark .lab-code-block .lab-chroma-wrap .chroma .nn { color: #e5c07b !important; }
-
-/* Names — tags (YAML keys, HTML tags) */
-.dark .lab-code-block .lab-chroma-wrap .chroma .nt,
-.dark .lab-code-block .lab-chroma-wrap .chroma .na { color: #e06c75 !important; }
-
-/* Names — variables */
-.dark .lab-code-block .lab-chroma-wrap .chroma .nv,
-.dark .lab-code-block .lab-chroma-wrap .chroma .no,
-.dark .lab-code-block .lab-chroma-wrap .chroma .ni,
-.dark .lab-code-block .lab-chroma-wrap .chroma .ne { color: #e06c75 !important; }
-
-/* Numbers */
-.dark .lab-code-block .lab-chroma-wrap .chroma .m,
-.dark .lab-code-block .lab-chroma-wrap .chroma .mb,
-.dark .lab-code-block .lab-chroma-wrap .chroma .mf,
-.dark .lab-code-block .lab-chroma-wrap .chroma .mh,
-.dark .lab-code-block .lab-chroma-wrap .chroma .mi,
-.dark .lab-code-block .lab-chroma-wrap .chroma .mo,
-.dark .lab-code-block .lab-chroma-wrap .chroma .il { color: #d19a66 !important; }
-
-/* Operators */
-.dark .lab-code-block .lab-chroma-wrap .chroma .o,
-.dark .lab-code-block .lab-chroma-wrap .chroma .ow { color: #56b6c2 !important; }
-
-/* Punctuation */
-.dark .lab-code-block .lab-chroma-wrap .chroma .p { color: #c8cdd8 !important; }
-
-/* Section headers (INI [sections]) */
-.dark .lab-code-block .lab-chroma-wrap .chroma .gh,
-.dark .lab-code-block .lab-chroma-wrap .chroma .gu { color: #c678dd !important; }
-
-/* Generic — inserted, deleted, output, prompt */
-.dark .lab-code-block .lab-chroma-wrap .chroma .gi { color: #98c379 !important; }
-.dark .lab-code-block .lab-chroma-wrap .chroma .gd { color: #e06c75 !important; }
-.dark .lab-code-block .lab-chroma-wrap .chroma .go { color: #5c6370 !important; }
-.dark .lab-code-block .lab-chroma-wrap .chroma .gp { color: #555e7e !important; }
-
-/* ── Light mode tokens ── */
-.lab-code-block .lab-chroma-wrap .chroma { color: #374151 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .c,
-.lab-code-block .lab-chroma-wrap .chroma .c1,
-.lab-code-block .lab-chroma-wrap .chroma .cm,
-.lab-code-block .lab-chroma-wrap .chroma .cs,
-.lab-code-block .lab-chroma-wrap .chroma .cp,
-.lab-code-block .lab-chroma-wrap .chroma .cpf,
-.lab-code-block .lab-chroma-wrap .chroma .ch { color: #8b95a5 !important; font-style: italic; }
-
-.lab-code-block .lab-chroma-wrap .chroma .k,
-.lab-code-block .lab-chroma-wrap .chroma .kc,
-.lab-code-block .lab-chroma-wrap .chroma .kd,
-.lab-code-block .lab-chroma-wrap .chroma .kn,
-.lab-code-block .lab-chroma-wrap .chroma .kp,
-.lab-code-block .lab-chroma-wrap .chroma .kr,
-.lab-code-block .lab-chroma-wrap .chroma .kt { color: #a626a4 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .s,
-.lab-code-block .lab-chroma-wrap .chroma .sa,
-.lab-code-block .lab-chroma-wrap .chroma .sb,
-.lab-code-block .lab-chroma-wrap .chroma .sc,
-.lab-code-block .lab-chroma-wrap .chroma .dl,
-.lab-code-block .lab-chroma-wrap .chroma .sd,
-.lab-code-block .lab-chroma-wrap .chroma .s2,
-.lab-code-block .lab-chroma-wrap .chroma .se,
-.lab-code-block .lab-chroma-wrap .chroma .sh,
-.lab-code-block .lab-chroma-wrap .chroma .si,
-.lab-code-block .lab-chroma-wrap .chroma .sx,
-.lab-code-block .lab-chroma-wrap .chroma .sr,
-.lab-code-block .lab-chroma-wrap .chroma .s1,
-.lab-code-block .lab-chroma-wrap .chroma .ss { color: #50a14f !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .nf,
-.lab-code-block .lab-chroma-wrap .chroma .nb,
-.lab-code-block .lab-chroma-wrap .chroma .nx { color: #4078f2 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .nc,
-.lab-code-block .lab-chroma-wrap .chroma .nd,
-.lab-code-block .lab-chroma-wrap .chroma .nn { color: #c18401 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .nt,
-.lab-code-block .lab-chroma-wrap .chroma .na { color: #e45649 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .nv,
-.lab-code-block .lab-chroma-wrap .chroma .no,
-.lab-code-block .lab-chroma-wrap .chroma .ni,
-.lab-code-block .lab-chroma-wrap .chroma .ne { color: #e45649 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .m,
-.lab-code-block .lab-chroma-wrap .chroma .mb,
-.lab-code-block .lab-chroma-wrap .chroma .mf,
-.lab-code-block .lab-chroma-wrap .chroma .mh,
-.lab-code-block .lab-chroma-wrap .chroma .mi,
-.lab-code-block .lab-chroma-wrap .chroma .mo,
-.lab-code-block .lab-chroma-wrap .chroma .il { color: #b76b01 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .o,
-.lab-code-block .lab-chroma-wrap .chroma .ow { color: #0184bc !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .p { color: #374151 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .gh,
-.lab-code-block .lab-chroma-wrap .chroma .gu { color: #a626a4 !important; }
-
-.lab-code-block .lab-chroma-wrap .chroma .gi { color: #50a14f !important; }
-.lab-code-block .lab-chroma-wrap .chroma .gd { color: #e45649 !important; }
-.lab-code-block .lab-chroma-wrap .chroma .go { color: #8b95a5 !important; }
-.lab-code-block .lab-chroma-wrap .chroma .gp { color: #8b95a5 !important; }
-
-/* ── Line numbers (Chroma table layout via linenos=table) ── */
+/* Chroma line numbers */
 .lab-chroma-lines .highlight {
   margin: 0 !important;
   background: transparent !important;
@@ -647,83 +339,409 @@ html.dark .lab-code-header {
 .lab-chroma-lines .lntable {
   width: 100%;
   border-spacing: 0;
-  border: none !important;
+  border-collapse: collapse !important;
   margin: 0;
   background: transparent !important;
 }
 
 .lab-chroma-lines .lntable td {
-  padding: 0;
+  padding: 0 !important;
   border: none !important;
   background: transparent !important;
   vertical-align: top;
 }
 
-/* Line number column */
 .lab-chroma-lines .lntd:first-child {
-  width: 40px;
-  min-width: 40px;
+  width: 52px;
+  min-width: 52px;
   user-select: none;
   -webkit-user-select: none;
 }
 
 .lab-chroma-lines .lntd:first-child pre {
-  padding: 16px 0 16px 18px !important;
+  padding: 20px 10px 20px 16px !important;
   margin: 0;
   text-align: right;
 }
 
 .lab-chroma-lines .lnt,
 .lab-chroma-lines .ln {
-  color: var(--lab-code-comment) !important;
-  opacity: 0.6;
-  margin-right: 16px;
+  color: var(--lab-text-soft) !important;
+  opacity: 1;
+  margin-right: 0;
   font-size: 12px;
 }
 
-/* Code column */
 .lab-chroma-lines .lntd:last-child pre {
-  padding: 16px 18px 16px 8px !important;
+  padding: 20px 22px 20px 12px !important;
   margin: 0;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   8. LINE EXPLANATIONS
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* Inline code */
+code:not(pre code):not(.hextra-code-block code),
+.hextra-content code:not(pre code),
+.content code:not(pre code),
+article code:not(pre code) {
+  font-family: var(--lab-mono) !important;
+  font-size: 0.92em !important;
+  background: #f3f4f6 !important;
+  color: var(--lab-text) !important;
+  border: 1px solid #ececf0 !important;
+  border-radius: 8px !important;
+  padding: 0.14em 0.42em !important;
+  box-shadow: none !important;
+}
+
+/* Line explanations */
 .lab-line-explain {
-  margin: -16px 0 20px;
-  padding: 14px 18px;
-  background: var(--lab-bg-surface);
+  margin-top: -10px;
+  padding: 18px 22px;
+  background: #fbfbfc;
   border: 1px solid var(--lab-border);
   border-top: none;
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 18px 18px;
+}
+
+.lab-line-explain dl {
+  gap: 8px 18px;
+}
+
+.lab-line-explain dt {
+  color: var(--lab-text-soft);
+  font-family: var(--lab-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lab-line-explain dd {
+  color: var(--lab-text);
+  font-size: 14px;
+}
+
+/* Callouts */
+.lab-callout {
+  display: flex;
+  gap: 14px;
+  background: #fafafa;
+  border: 1px solid var(--lab-border);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: var(--lab-shadow);
+}
+
+.lab-callout-icon {
+  color: var(--lab-text-soft);
+  width: 20px;
+  text-align: center;
+  margin-top: 1px;
+}
+
+.lab-callout-body {
+  flex: 1;
+}
+
+.lab-callout-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.lab-callout.tip {
+  background: #f7fbff;
+  border-color: #dce9f8;
+}
+.lab-callout.tip .lab-callout-label,
+.lab-callout.tip .lab-callout-icon {
+  color: var(--lab-accent);
+}
+
+.lab-callout.info {
+  background: #fafafa;
+}
+
+.lab-callout.warning {
+  background: #fffaf2;
+  border-color: #f3e3bf;
+}
+.lab-callout.warning .lab-callout-label,
+.lab-callout.warning .lab-callout-icon {
+  color: #9a6b00;
+}
+
+.lab-callout.danger {
+  background: #fff6f6;
+  border-color: #f3d6d6;
+}
+.lab-callout.danger .lab-callout-label,
+.lab-callout.danger .lab-callout-icon {
+  color: #b3261e;
+}
+
+/* Directory tree */
+.lab-dir-tree {
+  background: var(--lab-code-bg);
+  border: 1px solid var(--lab-code-border);
+  border-radius: 18px;
+  padding: 20px 22px;
+  font-family: var(--lab-mono);
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--lab-text);
+  box-shadow: var(--lab-shadow);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.lab-dir-tree .dir {
+  color: var(--lab-text);
+  font-weight: 600;
+}
+
+.lab-dir-tree .file {
+  color: var(--lab-text-muted);
+}
+
+.lab-dir-tree .desc {
+  color: var(--lab-text-soft);
+}
+
+/* KV */
+.lab-kv-title {
+  margin-bottom: 14px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.lab-kv-list {
+  border-top: 1px solid var(--lab-border);
+}
+
+.lab-kv-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) 1fr;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--lab-border);
+}
+
+.lab-kv dt {
+  color: var(--lab-text-muted);
+  font-weight: 500;
+}
+
+.lab-kv dd {
+  color: var(--lab-text);
+  margin: 0;
+}
+
+/* Tables */
+.lab-table {
+  overflow-x: auto;
+}
+
+.lab-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lab-table thead {
+  border-bottom: 1px solid var(--lab-border);
+}
+
+.lab-table th {
+  color: var(--lab-text-soft);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: left;
+  padding: 12px 14px;
+}
+
+.lab-table tbody tr {
+  border-bottom: 1px solid var(--lab-border);
+}
+
+.lab-table td {
+  padding: 16px 14px;
+  color: var(--lab-text);
+  vertical-align: top;
+}
+
+.lab-table .lab-table-key {
+  font-weight: 600;
+  color: var(--lab-text);
+}
+
+/* Navigation */
+.lab-part-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 24px;
+  margin-top: 40px;
+  border-top: 1px solid var(--lab-border);
+}
+
+.lab-nav-link {
+  color: var(--lab-text-muted);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.lab-nav-link:hover {
+  color: var(--lab-accent);
+}
+
+/* Dark mode */
+html.dark {
+  --lab-bg: #111214;
+  --lab-surface: #16171a;
+  --lab-surface-subtle: #17181b;
+  --lab-border: #2a2c31;
+
+  --lab-text: #f5f5f7;
+  --lab-text-muted: #a1a1a6;
+  --lab-text-soft: #8b8b91;
+
+  --lab-accent: #2997ff;
+  --lab-accent-soft: rgba(41, 151, 255, 0.12);
+
+  --lab-code-bg: #17181c;
+  --lab-code-border: #2a2d33;
+
+  --lab-shadow: none;
+}
+
+html.dark body {
+  background: var(--lab-bg);
+  color: var(--lab-text);
+}
+
+html.dark .lab-objectives,
+html.dark .lab-code-block,
+html.dark .lab-callout,
+html.dark .lab-dir-tree {
+  box-shadow: none;
+}
+
+html.dark .lab-code-header {
+  background: rgba(255,255,255,0.02);
+}
+
+html.dark .lab-copy-btn,
+html.dark .lab-code-block .lab-copy-btn {
+  background: #1b1c20;
+  border-color: #30333a;
+  color: var(--lab-text-muted);
+}
+
+html.dark .lab-copy-btn:hover,
+html.dark .lab-code-block .lab-copy-btn:hover {
+  background: #202228;
+  color: var(--lab-text);
+}
+
+html.dark code:not(pre code):not(.hextra-code-block code),
+html.dark .hextra-content code:not(pre code),
+html.dark .content code:not(pre code),
+html.dark article code:not(pre code) {
+  background: #1b1c20 !important;
+  border-color: #30333a !important;
+  color: var(--lab-text) !important;
+}
+
+html.dark .lab-part-badge,
+html.dark .lab-phase-badge,
+html.dark .lab-part-card-badge,
+html.dark .lab-tool-card-badge {
+  background: #1b1c20;
+  border-color: #30333a;
+  color: var(--lab-text-muted);
+}
+
+html.dark .lab-line-explain {
+  background: #15161a;
+}
+
+html.dark .lab-callout.info {
+  background: #15161a;
+}
+
+html.dark .lab-callout.tip {
+  background: rgba(41, 151, 255, 0.08);
+  border-color: rgba(41, 151, 255, 0.2);
+}
+
+html.dark .lab-callout.warning {
+  background: rgba(255, 159, 10, 0.08);
+  border-color: rgba(255, 159, 10, 0.2);
+}
+
+html.dark .lab-callout.danger {
+  background: rgba(255, 69, 58, 0.08);
+  border-color: rgba(255, 69, 58, 0.2);
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LINE EXPLAIN — true two-column layout
+   Makes labels behave like a table left column and explanations sit in a
+   consistent right column.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.lab-line-explain {
+  margin-top: -10px;
+  padding: 18px 22px;
+  background: #fbfbfc;
+  border: 1px solid var(--lab-border);
+  border-top: none;
+  border-radius: 0 0 18px 18px;
 }
 
 .lab-line-explain dl {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 4px 14px;
+  grid-template-columns: 112px minmax(0, 1fr);
+  column-gap: 18px;
+  row-gap: 18px;
   align-items: start;
   margin: 0;
 }
 
 .lab-line-explain dt {
+  grid-column: 1;
+  margin: 0 !important;
+  padding: 0;
+  color: var(--lab-text-soft);
   font-family: var(--lab-mono);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--lab-accent);
+  line-height: 1.8;
   white-space: nowrap;
-  line-height: 1.55;
-  padding-top: 1px;
-  margin-top: 0 !important;
 }
 
 .lab-line-explain dd {
-  font-size: 13px;
+  grid-column: 2;
+  margin: 0 !important;
+  padding: 0;
   color: var(--lab-text);
-  line-height: 1.55;
-  margin-left: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  min-width: 0;
+}
+
+.lab-line-explain dd > *:first-child {
   margin-top: 0 !important;
+}
+
+.lab-line-explain dd > *:last-child {
+  margin-bottom: 0 !important;
 }
 
 .lab-line-explain dd p {
@@ -733,127 +751,78 @@ html.dark .lab-code-header {
 .lab-line-explain dd code {
   font-family: var(--lab-mono);
   font-size: 12px;
-  background: rgba(82,183,136,0.08);
-  color: var(--lab-accent-bright);
-  padding: 1px 5px;
-  border-radius: 3px;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   9. CALLOUT BOXES
-   ═══════════════════════════════════════════════════════════════════════════ */
-.lab-callout {
-  border-radius: 5px;
-  padding: 16px 20px;
-  margin: 18px 0;
-  border-left: 3px solid;
-  display: flex;
-  gap: 12px;
-}
-
-.lab-callout-icon {
-  font-size: 14px;
-  flex-shrink: 0;
-  margin-top: 2px;
-  width: 20px;
-  text-align: center;
-}
-
-.lab-callout-body {
-  flex: 1;
-}
-
-.lab-callout-label {
-  font-family: var(--lab-mono);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-  display: block;
-}
-
-.lab-callout-body p {
-  font-size: 13.5px;
-  margin-bottom: 6px;
-}
-.lab-callout-body p:last-child {
-  margin-bottom: 0;
-}
-
-/* Tip */
-.lab-callout.tip {
-  background: var(--lab-tip-bg);
-  border-color: var(--lab-tip-border);
-}
-.lab-callout.tip .lab-callout-label { color: var(--lab-tip-icon); }
-.lab-callout.tip .lab-callout-icon  { color: var(--lab-tip-icon); }
-
-/* Info */
-.lab-callout.info {
-  background: var(--lab-info-bg);
-  border-color: var(--lab-info-border);
-}
-.lab-callout.info .lab-callout-label { color: var(--lab-info-icon); }
-.lab-callout.info .lab-callout-icon  { color: var(--lab-info-icon); }
-
-/* Warning */
-.lab-callout.warning {
-  background: var(--lab-warn-bg);
-  border-color: var(--lab-warn-border);
-}
-.lab-callout.warning .lab-callout-label { color: var(--lab-warn-icon); }
-.lab-callout.warning .lab-callout-icon  { color: var(--lab-warn-icon); }
-
-/* Danger */
-.lab-callout.danger {
-  background: var(--lab-danger-bg);
-  border-color: var(--lab-danger-border);
-}
-.lab-callout.danger .lab-callout-label { color: var(--lab-danger-icon); }
-.lab-callout.danger .lab-callout-icon  { color: var(--lab-danger-icon); }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   10. DIRECTORY TREE
-   ═══════════════════════════════════════════════════════════════════════════ */
-.lab-dir-tree {
-  font-family: var(--lab-mono);
-  font-size: 13px;
-  line-height: 1.7;
-  background: var(--lab-code-bg);
-  border: 1px solid var(--lab-code-border);
-  border-radius: 6px;
-  padding: 18px 22px;
-  margin: 16px 0 20px;
+  background: #f3f4f6;
   color: var(--lab-text);
-  white-space: pre;
-  overflow-x: auto;
+  border: 1px solid #ececf0;
+  border-radius: 8px;
+  padding: 0.14em 0.42em;
+  box-shadow: none;
 }
 
-.lab-dir-tree .dir  { color: var(--lab-code-command); }
-.lab-dir-tree .file { color: var(--lab-text); }
-.lab-dir-tree .desc { color: var(--lab-code-comment); }
+/* Optional subtle row separation for readability */
+.lab-line-explain dt:not(:first-of-type),
+.lab-line-explain dd:not(:first-of-type) {
+  padding-top: 2px;
+}
+
+@media (max-width: 700px) {
+  .lab-line-explain dl {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+
+  .lab-line-explain dt,
+  .lab-line-explain dd {
+    grid-column: 1;
+  }
+
+  .lab-line-explain dd {
+    margin-bottom: 12px !important;
+  }
+
+  .lab-line-explain dd:last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+html.dark .lab-line-explain {
+  background: #15161a;
+}
+
+html.dark .lab-line-explain dd code {
+  background: #1b1c20;
+  border-color: #30333a;
+  color: var(--lab-text);
+}
+
+
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   11. OBJECTIVES BOX
+   OBJECTIVES — tighter Apple Docs version
+   - less top whitespace
+   - no default bullets
+   - subtle arrow markers like a structured checklist
+   - matches Apple Docs spacing and typography
    ═══════════════════════════════════════════════════════════════════════════ */
+
 .lab-objectives {
-  background: var(--lab-bg-surface);
+  background: var(--lab-surface-subtle);
   border: 1px solid var(--lab-border);
-  border-radius: 6px;
-  padding: 22px 26px;
-  margin-bottom: 32px;
+  border-radius: 18px;
+  padding: 16px 24px 18px;
+  box-shadow: var(--lab-shadow);
+  margin: 20px 0 28px;
 }
 
 .lab-objectives h3 {
-  font-family: var(--lab-mono);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--lab-accent);
-  margin: 0 0 14px;
-  border-bottom: none;
+  margin: 0 0 10px;
   padding: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--lab-text-muted);
+  border: none !important;
 }
 
 .lab-objectives ul {
@@ -863,431 +832,647 @@ html.dark .lab-code-header {
 }
 
 .lab-objectives li {
-  font-size: 14px;
-  color: var(--lab-text);
-  padding: 4px 0;
-  padding-left: 20px;
   position: relative;
+  margin: 0;
+  padding: 10px 0 10px 18px;
+  color: var(--lab-text);
+  line-height: 1.7;
 }
 
 .lab-objectives li::before {
-  content: '›';
+  content: "›";
   position: absolute;
-  left: 4px;
-  color: var(--lab-accent-dim);
+  left: 0;
+  top: 10px;
+  color: var(--lab-text-soft);
   font-weight: 700;
+  line-height: 1.7;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   12. PART BADGE + META
-   (Hextra's auto h1 is hidden by an inline style in the part-header shortcode)
-   ═══════════════════════════════════════════════════════════════════════════ */
+.lab-objectives li + li {
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
 
-.lab-part-badge {
-  font-family: var(--lab-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+.lab-objectives li code {
+  font-family: var(--lab-mono) !important;
+  font-size: 12px !important;
+  background: #f3f4f6 !important;
+  color: var(--lab-text) !important;
+  border: 1px solid #ececf0 !important;
+  border-radius: 8px !important;
+  padding: 0.14em 0.42em !important;
+  box-shadow: none !important;
+}
+
+html.dark .lab-objectives {
+  background: var(--lab-surface-subtle);
+}
+
+html.dark .lab-objectives li + li {
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+html.dark .lab-objectives li::before {
   color: var(--lab-accent);
-  background: rgba(82,183,136,0.1);
-  padding: 5px 12px;
-  border-radius: 4px;
-  display: inline-block;
-  margin-bottom: 16px;
 }
 
-.lab-part-meta {
-  font-size: 14px;
-  color: var(--lab-text-muted);
-  margin-bottom: 36px;
-  padding-bottom: 28px;
-  border-bottom: 1px solid var(--lab-border);
+html.dark .lab-objectives li code {
+  background: #1b1c20 !important;
+  border-color: #30333a !important;
+  color: var(--lab-text) !important;
+}
+
+/* Remove separators between objective items */
+.lab-objectives li + li {
+  border-top: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   12b. PHASE HEADER
+   PHASE + PART CARDS — Apple Docs structured version
    ═══════════════════════════════════════════════════════════════════════════ */
-.lab-phase-header {
-  margin: 48px 0 32px;
-}
 
-.lab-phase-title-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
+/* Phase badge */
 .lab-phase-badge {
-  font-family: var(--lab-mono);
+  background: rgba(0, 113, 227, 0.08);
+  color: var(--lab-accent);
+  border: 1px solid rgba(0, 113, 227, 0.18);
+  border-radius: 999px;
+  padding: 4px 12px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--lab-num-color, var(--lab-accent));
-  background: color-mix(in srgb, var(--lab-num-color, var(--lab-accent)) 10%, transparent);
-  padding: 5px 12px;
-  border-radius: 4px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  letter-spacing: 0.08em;
 }
 
-.lab-phase-title {
-  font-family: var(--lab-sans) !important;
-  font-size: 24px !important;
-  font-weight: 700 !important;
-  color: var(--lab-text-heading) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  line-height: 1.3;
-}
-
+/* Phase description */
 .lab-phase-desc {
-  font-size: 14px;
-  color: var(--lab-text-muted);
   font-style: italic;
-  margin: 0;
-  line-height: 1.6;
+  margin-top: 8px;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   12c. PART CARDS
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* Part cards (main fix) */
 .lab-part-card {
-  background: var(--lab-bg-card);
+  background: var(--lab-surface-subtle);
   border: 1px solid var(--lab-border);
-  border-left: 3px solid var(--lab-num-color, var(--lab-accent-dim));
-  border-radius: 6px;
-  padding: 20px 24px;
-  margin: 12px 0;
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin: 16px 0;
   transition: all 0.15s ease;
 }
 
-.lab-part-card:hover {
-  background: var(--lab-bg-card-hover);
-  border-left-color: var(--lab-num-color, var(--lab-accent));
+/* Left accent line */
+.lab-part-card {
+  position: relative;
 }
 
+.lab-part-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--lab-accent-soft);
+}
+
+/* Hover (very subtle) */
+.lab-part-card:hover {
+  background: #f4f6f8;
+  border-color: #dcdfe4;
+}
+
+/* Header row */
 .lab-part-card-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
+/* Part number */
 .lab-part-card-num {
   font-family: var(--lab-mono);
   font-size: 12px;
-  font-weight: 500;
-  color: var(--lab-num-color, var(--lab-accent));
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.lab-part-card-title {
-  font-family: var(--lab-sans) !important;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--lab-text-heading);
-  text-decoration: none;
-}
-
-a.lab-part-card-title:hover {
-  color: var(--lab-accent-bright);
-}
-
-.lab-part-card-badge {
-  font-family: var(--lab-mono);
-  font-size: 10px;
+  color: var(--lab-accent);
   font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--lab-warn-icon);
-  background: var(--lab-warn-bg);
-  border: 1px solid var(--lab-warn-border);
-  padding: 2px 8px;
-  border-radius: 3px;
-  white-space: nowrap;
 }
 
+/* Title */
+.lab-part-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lab-text);
+}
+
+/* Body text */
 .lab-part-card-body {
   font-size: 14px;
-  color: var(--lab-text);
-  line-height: 1.6;
+  color: var(--lab-text-muted);
+  line-height: 1.65;
 }
 
-.lab-part-card-body p {
-  margin: 0;
+/* Remove old flat separator behavior */
+.lab-part-card + .lab-part-card {
+  border-top: none;
+  padding-top: 0;
 }
 
-.lab-part-card-body code {
-  font-family: var(--lab-mono) !important;
-  font-size: 12px !important;
-  background: rgba(82,183,136,0.08) !important;
-  color: var(--lab-accent-bright) !important;
-  padding: 1px 5px !important;
-  border-radius: 3px !important;
-  border: none !important;
+/* Dark mode tuning */
+html.dark .lab-part-card {
+  background: #16181c;
+  border-color: #2a2c31;
+}
+
+html.dark .lab-part-card:hover {
+  background: #1b1d22;
+}
+
+html.dark .lab-part-card::before {
+  background: rgba(41, 151, 255, 0.35);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   12d. KEY-VALUE LISTS
+   SHOWCASE GRID + CARD — Apple Docs style
+   Screenshot/portfolio cards with image area on top and text below.
    ═══════════════════════════════════════════════════════════════════════════ */
-.lab-kv {
-  background: transparent;
-  border: 1px solid var(--lab-border);
-  border-radius: 6px;
-  padding: 18px 24px;
-  margin: 16px 0 20px;
-}
 
-.lab-kv-title {
-  font-family: var(--lab-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--lab-kv-color, var(--lab-accent));
-  margin-bottom: 14px;
-}
-
-.lab-kv-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 0 !important;
-}
-
-.lab-kv-row {
-  display: flex;
+.lab-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  padding: 8px 0;
+  margin: 24px 0 32px;
+}
+
+.lab-showcase-card {
+  background: var(--lab-surface-subtle);
+  border: 1px solid var(--lab-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--lab-shadow);
+}
+
+.lab-showcase-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background:
+    radial-gradient(circle at top center, rgba(0, 113, 227, 0.08), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    var(--lab-code-bg);
+  border-bottom: 1px solid var(--lab-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.lab-showcase-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lab-showcase-placeholder {
+  padding: 24px;
+  text-align: center;
+  font-family: var(--lab-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lab-text-soft);
+}
+
+.lab-showcase-body {
+  padding: 18px 20px 20px;
+}
+
+.lab-showcase-badge {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: 1px solid #ebedf0;
+  color: var(--lab-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lab-showcase-title {
+  margin: 0 0 6px !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+  font-weight: 650 !important;
+  color: var(--lab-text) !important;
+  letter-spacing: -0.02em !important;
+}
+
+.lab-showcase-desc {
+  margin: 0 !important;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--lab-text-muted);
+}
+
+.lab-showcase-card:hover {
+  border-color: #dcdfe4;
+  background: #f8f8f9;
+}
+
+@media (max-width: 900px) {
+  .lab-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dark mode */
+html.dark .lab-showcase-card {
+  background: var(--lab-surface-subtle);
+  border-color: var(--lab-border);
+  box-shadow: none;
+}
+
+html.dark .lab-showcase-media {
+  background:
+    radial-gradient(circle at top center, rgba(41, 151, 255, 0.10), transparent 58%),
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    var(--lab-code-bg);
+  border-bottom-color: var(--lab-border);
+}
+
+html.dark .lab-showcase-badge {
+  background: #1b1c20;
+  border-color: #30333a;
+  color: var(--lab-text-muted);
+}
+
+html.dark .lab-showcase-card:hover {
+  background: #1a1b1f;
+  border-color: #30333a;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHASE LIST — Apple Docs style
+   Overview rows with left phase pill, center text, right parts label.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.lab-phase-list {
+  margin: 28px 0 40px;
+}
+
+.lab-phase-row {
+  --lab-phase-row-accent: var(--lab-accent);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 18px 20px;
+  align-items: start;
+  padding: 18px 0 20px;
   border-bottom: 1px solid var(--lab-border);
 }
 
-.lab-kv-row:last-child {
+.lab-phase-row:first-child {
+  padding-top: 0;
+}
+
+.lab-phase-row:last-child {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.lab-kv-row:first-child {
-  padding-top: 0;
-}
-
-.lab-kv-row dt {
-  font-family: var(--lab-mono) !important;
-  font-size: 13px;
+.lab-phase-row-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--lab-phase-row-accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lab-phase-row-accent) 22%, transparent);
+  color: var(--lab-phase-row-accent);
+  font-family: var(--lab-mono);
+  font-size: 11px;
   font-weight: 600;
-  color: var(--lab-kv-color, var(--lab-accent));
+  letter-spacing: 0.08em;
+  text-transform: none;
   white-space: nowrap;
-  min-width: 160px;
-  flex-shrink: 0;
-  margin: 0 !important;
-  padding: 0;
 }
 
-.lab-kv-row dd {
-  font-size: 14px;
-  color: var(--lab-text);
-  margin: 0 !important;
-  padding: 0;
-  line-height: 1.5;
-}
-
-.lab-kv-row dd p {
-  margin: 0 !important;
-}
-
-.lab-kv-row dd code {
-  font-family: var(--lab-mono) !important;
-  font-size: 12px !important;
-  background: rgba(82,183,136,0.08) !important;
-  color: var(--lab-accent-bright) !important;
-  padding: 1px 5px !important;
-  border-radius: 3px !important;
-  border: none !important;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   12e. TOOL CARDS
-   ═══════════════════════════════════════════════════════════════════════════ */
-.lab-tool-card {
-  background: var(--lab-bg-card);
-  border: 1px solid var(--lab-border);
-  border-left: 3px solid var(--lab-num-color, var(--lab-accent-dim));
-  border-radius: 6px;
-  padding: 20px 24px;
-  margin: 12px 0;
-  transition: all 0.15s ease;
-}
-
-.lab-tool-card:hover {
-  background: var(--lab-bg-card-hover);
-  border-left-color: var(--lab-num-color, var(--lab-accent));
-}
-
-.lab-tool-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 4px;
-}
-
-.lab-tool-card-title-group {
-  flex: 1;
+.lab-phase-row-main {
   min-width: 0;
 }
 
-.lab-tool-card-title {
-  font-family: var(--lab-sans) !important;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--lab-accent) !important;
-  text-decoration: none;
+.lab-phase-row-title {
+  margin: 0 0 6px !important;
+  font-size: 18px !important;
+  line-height: 1.25 !important;
+  font-weight: 650 !important;
+  color: var(--lab-text) !important;
+  letter-spacing: -0.02em !important;
 }
 
-a.lab-tool-card-title:hover {
-  color: var(--lab-accent-bright) !important;
+.lab-phase-row-desc {
+  margin: 0 !important;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--lab-text-muted);
 }
 
-.lab-tool-card-badge {
-  font-family: var(--lab-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--lab-badge-color, var(--lab-accent));
-  background: color-mix(in srgb, var(--lab-badge-color, var(--lab-accent)) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--lab-badge-color, var(--lab-accent)) 30%, transparent);
-  padding: 3px 10px;
-  border-radius: 3px;
+.lab-phase-row-parts {
+  justify-self: end;
   white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.lab-tool-card-subtitle {
+  color: var(--lab-text-soft);
   font-family: var(--lab-mono);
   font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  padding-top: 4px;
+}
+
+/* Optional preset color helpers if you want inline style alternatives later */
+.lab-phase-row[data-color="blue"]   { --lab-phase-row-accent: #2997ff; }
+.lab-phase-row[data-color="green"]  { --lab-phase-row-accent: #34c759; }
+.lab-phase-row[data-color="orange"] { --lab-phase-row-accent: #ff9f0a; }
+.lab-phase-row[data-color="purple"] { --lab-phase-row-accent: #bf5af2; }
+.lab-phase-row[data-color="pink"]   { --lab-phase-row-accent: #ff375f; }
+
+/* Dark mode refinement */
+html.dark .lab-phase-row-badge {
+  background: color-mix(in srgb, var(--lab-phase-row-accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--lab-phase-row-accent) 20%, transparent);
+  color: var(--lab-phase-row-accent);
+}
+
+@media (max-width: 900px) {
+  .lab-phase-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .lab-phase-row-badge {
+    min-width: 0;
+    width: fit-content;
+  }
+
+  .lab-phase-row-parts {
+    justify-self: start;
+    padding-top: 0;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FEATURE GRID + FEATURE CARD — Apple Docs style
+   Clean structured cards for concepts, pipelines, principles.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.lab-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0 32px;
+}
+
+.lab-feature-card {
+  background: var(--lab-surface-subtle);
+  border: 1px solid var(--lab-border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: var(--lab-shadow);
+  min-width: 0;
+}
+
+.lab-feature-card.is-wide {
+  grid-column: 1 / -1;
+}
+
+.lab-feature-card-title {
+  margin: 0 0 12px !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+  font-weight: 650 !important;
+  color: var(--lab-text) !important;
+  letter-spacing: -0.02em !important;
+}
+
+.lab-feature-card.is-mono-title .lab-feature-card-title {
+  font-family: var(--lab-mono) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase;
+  color: var(--lab-accent) !important;
+}
+
+.lab-feature-card-body {
   color: var(--lab-text-muted);
-  margin-bottom: 10px;
+  font-size: 15px;
+  line-height: 1.72;
 }
 
-.lab-tool-card-body {
-  font-size: 14px;
-  color: var(--lab-text);
-  line-height: 1.6;
+.lab-feature-card-body > *:first-child {
+  margin-top: 0 !important;
 }
 
-.lab-tool-card-body p {
+.lab-feature-card-body > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+.lab-feature-card-body p {
   margin: 0;
 }
 
-.lab-tool-card-body code {
+.lab-feature-card:hover {
+  background: #f8f8f9;
+  border-color: #dcdfe4;
+}
+
+/* Inline code inside cards */
+.lab-feature-card-body code {
   font-family: var(--lab-mono) !important;
   font-size: 12px !important;
-  background: rgba(82,183,136,0.08) !important;
-  color: var(--lab-accent-bright) !important;
-  padding: 1px 5px !important;
-  border-radius: 3px !important;
-  border: none !important;
+  background: #f3f4f6 !important;
+  color: var(--lab-text) !important;
+  border: 1px solid #ececf0 !important;
+  border-radius: 8px !important;
+  padding: 0.14em 0.42em !important;
+  box-shadow: none !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   13. PART NAVIGATION
-   ═══════════════════════════════════════════════════════════════════════════ */
-.lab-part-nav {
-  margin-top: 64px;
-  padding-top: 32px;
-  border-top: 1px solid var(--lab-border);
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.lab-nav-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--lab-mono);
-  font-size: 12.5px;
-  color: var(--lab-accent);
-  text-decoration: none;
-  padding: 10px 18px;
-  border: 1px solid var(--lab-accent-dim);
-  border-radius: 5px;
-  transition: all 0.15s ease;
-}
-
-.lab-nav-link:hover {
-  background: rgba(82,183,136,0.08);
-  border-color: var(--lab-accent);
-  text-decoration: none;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   14. SEPARATOR
-   ═══════════════════════════════════════════════════════════════════════════ */
-.dark .hextra-content hr {
-  border: none;
-  border-top: 1px solid var(--lab-border);
-  margin: 40px 0;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   15. GLOBAL HEXTRA OVERRIDES — navbar, search, footer
-   ═══════════════════════════════════════════════════════════════════════════ */
-.dark nav.hextra-navbar {
-  background: var(--lab-bg);
-  border-color: var(--lab-border);
-}
-
-.dark footer {
-  background: var(--lab-bg);
-  border-color: var(--lab-border);
-}
-
-/* Search */
-.dark .hextra-search input {
-  background: var(--lab-bg-surface);
-  border-color: var(--lab-border);
+/* Optional arrow-chain feel for pipeline cards */
+.lab-feature-card.is-mono-title .lab-feature-card-body {
   color: var(--lab-text);
 }
 
-/* Content footer — "Edit this page" + "Scroll to top" */
-.dark .hextra-content-footer,
-.dark .hx-mt-16,
-.dark nav[class*="pagination"],
-.dark .hx-flex.hx-justify-between,
-.dark article + nav,
-.dark .hextra-scrolltop {
-  background: transparent;
+@media (max-width: 900px) {
+  .lab-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lab-feature-card.is-wide {
+    grid-column: auto;
+  }
+}
+
+/* Dark mode */
+html.dark .lab-feature-card {
+  background: var(--lab-surface-subtle);
   border-color: var(--lab-border);
+  box-shadow: none;
 }
 
-/* Catch-all for any remaining off-color panels in the content area */
-.dark main,
-.dark article,
-.dark .hx-w-full.hx-break-words {
-  background: transparent;
+html.dark .lab-feature-card:hover {
+  background: #1a1b1f;
+  border-color: #30333a;
 }
 
-/*
-  Override Hextra's "Edit this page" / "Scroll to top" sticky footer bar.
-  Target the specific element: it has hx:sticky + hx:bottom-0 alongside bg classes.
-  Don't blanket-override all hx:dark:bg-dark or it kills dropdown menus too.
-  Also kill the shadow that creates a visible band above the bar.
-*/
-.dark .hx\:sticky.hx\:bottom-0.hx\:dark\:bg-dark {
-  background-color: var(--lab-bg) !important;
-  box-shadow: none !important;
-  border-color: var(--lab-border) !important;
+html.dark .lab-feature-card-body code {
+  background: #1b1c20 !important;
+  border-color: #30333a !important;
+  color: var(--lab-text) !important;
 }
-.hx\:sticky.hx\:bottom-0.hx\:bg-white {
-  background-color: var(--lab-bg) !important;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PILL GRID — Apple Docs style
+   Clean structured grid for safeguards, principles, requirements, etc.
+   No icons so it reads more editorial and less AI-generated.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.lab-pill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0 32px;
+}
+
+.lab-pill-item {
+  background: var(--lab-surface-subtle);
+  border: 1px solid var(--lab-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: var(--lab-shadow);
+  min-width: 0;
+}
+
+.lab-pill-item.is-wide {
+  grid-column: 1 / -1;
+}
+
+.lab-pill-item-text {
+  color: var(--lab-text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.lab-pill-item-text > *:first-child {
+  margin-top: 0 !important;
+}
+
+.lab-pill-item-text > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+.lab-pill-item-text p {
+  margin: 0 !important;
+}
+
+.lab-pill-item:hover {
+  background: #f8f8f9;
+  border-color: #dcdfe4;
+}
+
+.lab-pill-item-text code {
+  font-family: var(--lab-mono) !important;
+  font-size: 12px !important;
+  background: #f3f4f6 !important;
+  color: var(--lab-text) !important;
+  border: 1px solid #ececf0 !important;
+  border-radius: 8px !important;
+  padding: 0.14em 0.42em !important;
   box-shadow: none !important;
-  border-color: var(--lab-border) !important;
+}
+
+@media (max-width: 900px) {
+  .lab-pill-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lab-pill-item.is-wide {
+    grid-column: auto;
+  }
+}
+
+/* Dark mode */
+html.dark .lab-pill-item {
+  background: var(--lab-surface-subtle);
+  border-color: var(--lab-border);
+  box-shadow: none;
+}
+
+html.dark .lab-pill-item:hover {
+  background: #1a1b1f;
+  border-color: #30333a;
+}
+
+html.dark .lab-pill-item-text code {
+  background: #1b1c20 !important;
+  border-color: #30333a !important;
+  color: var(--lab-text) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACCENT LABEL — title-like text with left bar, not a heading
+   Apple-style adaptation
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.lab-accent-label {
+  --lab-accent-label-color: var(--lab-accent);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 14px;
+}
+
+.lab-accent-label-bar {
+  width: 32px;
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lab-accent-label-color) 85%, white 15%);
+  flex: 0 0 auto;
+}
+
+.lab-accent-label-text {
+  color: var(--lab-text);
+  font-size: clamp(24px, 3vw, 28px);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.lab-accent-label-text > * {
+  margin: 0 !important;
+}
+
+.lab-accent-label-text p {
+  margin: 0 !important;
+}
+
+html.dark .lab-accent-label-bar {
+  background: color-mix(in srgb, var(--lab-accent-label-color) 78%, white 22%);
+}
+
+@media (max-width: 640px) {
+  .lab-accent-label {
+    gap: 12px;
+  }
+
+  .lab-accent-label-bar {
+    width: 24px;
+  }
+
+  .lab-accent-label-text {
+    font-size: clamp(20px, 5vw, 24px);
+  }
 }

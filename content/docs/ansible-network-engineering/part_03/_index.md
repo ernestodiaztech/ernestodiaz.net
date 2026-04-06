@@ -1,6 +1,6 @@
 ---
 draft: false
-title: 'Ansible Vault'
+title: '3. Ansible Vault'
 description: "Part 3 of my Ansible learning geared towards Network Engineering."
 tags:
   - ansible

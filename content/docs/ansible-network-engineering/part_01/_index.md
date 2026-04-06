@@ -1,6 +1,6 @@
 ---
 draft: false
-title: 'Project Structure'
+title: '1. Project Structure'
 description: "Part 1 of my Ansible learning geared towards Network Engineering."
 tags:
   - ansible

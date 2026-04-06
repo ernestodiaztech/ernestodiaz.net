@@ -1,0 +1,43 @@
+{{/*
+  Showcase Card — Apple Docs styled screenshot card
+  Use for portfolio-style screenshots with title + description.
+
+  Usage:
+    {{< showcase-card
+        title="Grafana: Fabric health"
+        desc="Unified dashboard with device availability, interface utilization, and BGP session states."
+        image="/images/grafana-fabric-health.png"
+        alt="Grafana fabric dashboard"
+    >}}
+
+  Placeholder usage (no image yet):
+    {{< showcase-card
+        title="Grafana: Fabric health"
+        desc="Unified dashboard with device availability, interface utilization, and BGP session states."
+    >}}
+
+  Optional:
+    badge="Optional small label"
+*/}}
+
+{{ $title := .Get "title" | default "" }}
+{{ $desc  := .Get "desc"  | default "" }}
+{{ $image := .Get "image" | default "" }}
+{{ $alt   := .Get "alt"   | default $title }}
+{{ $badge := .Get "badge" | default "" }}
+
+<div class="lab-showcase-card">
+  <div class="lab-showcase-media">
+    {{ if $image }}
+      <img src="{{ $image }}" alt="{{ $alt }}" loading="lazy" />
+    {{ else }}
+      <div class="lab-showcase-placeholder">Screenshot pending</div>
+    {{ end }}
+  </div>
+
+  <div class="lab-showcase-body">
+    {{ with $badge }}<div class="lab-showcase-badge">{{ . }}</div>{{ end }}
+    {{ with $title }}<h3 class="lab-showcase-title">{{ . }}</h3>{{ end }}
+    {{ with $desc }}<p class="lab-showcase-desc">{{ . }}</p>{{ end }}
+  </div>
+</div>

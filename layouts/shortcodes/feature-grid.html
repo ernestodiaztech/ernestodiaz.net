@@ -1,0 +1,18 @@
+{{/*
+  Feature Grid — wrapper for feature-card items.
+
+  Usage:
+    {{< feature-grid >}}
+      {{< feature-card title="Intent-based configuration" >}}
+      Device configs generated from Jinja2 templates driven by NetBox data.
+      {{< /feature-card >}}
+
+      {{< feature-card title="Dynamic inventory" >}}
+      No static hosts file. The NetBox plugin queries the API at runtime.
+      {{< /feature-card >}}
+    {{< /feature-grid >}}
+*/}}
+
+<div class="lab-feature-grid">
+  {{ .Inner }}
+</div>

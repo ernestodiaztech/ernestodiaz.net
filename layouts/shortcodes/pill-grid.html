@@ -1,0 +1,16 @@
+{{/*
+  Pill Grid — clean two-column benefit / principle list
+  Apple-style, no icons/checkmarks.
+
+  Usage:
+    {{< pill-grid >}}
+      {{< pill-item >}}Ansible Vault with multiple vault IDs per trust boundary{{< /pill-item >}}
+      {{< pill-item >}}Pre-commit hooks blocking secrets, unencrypted vaults{{< /pill-item >}}
+      {{< pill-item >}}Branch protection with required PR approval{{< /pill-item >}}
+      {{< pill-item >}}Passphrase-protected Ed25519 SSH keys with ssh-agent{{< /pill-item >}}
+    {{< /pill-grid >}}
+*/}}
+
+<div class="lab-pill-grid">
+  {{ .Inner }}
+</div>

@@ -1,0 +1,50 @@
+{{/*
+  Styled Table — clean table with colored headers and row dividers.
+
+  Usage:
+    {{< table >}}
+    Service | Purpose | Integration
+    NetBox | Source of truth (IPAM, DCIM) | Dynamic inventory for Ansible
+    Gitea | Self-hosted Git | PR pipeline, Oxidized backend
+    {{< /table >}}
+
+  With custom header color:
+    {{< table color="#4dabce" >}}
+    Host | IP | Role
+    ansible-ctrl | 10.33.99.60 | Control node
+    {{< /table >}}
+*/}}
+
+{{ $color := .Get "color" | default "" }}
+
+<div class="lab-table" {{ with $color }}style="--lab-table-color: {{ . }}"{{ end }}>
+  <table>
+    {{ $raw := trim .Inner "\n\r\t " }}
+    {{ $rows := split $raw "\n" }}
+    {{ range $i, $row := $rows }}
+      {{ $row = trim $row " \t" }}
+      {{ if $row }}
+        {{ $cells := split $row "|" }}
+        {{ if eq $i 0 }}
+        <thead>
+          <tr>
+            {{ range $cells }}<th>{{ trim . " \t" }}</th>{{ end }}
+          </tr>
+        </thead>
+        <tbody>
+        {{ else }}
+          <tr>
+            {{ range $j, $cell := $cells }}
+              {{ if eq $j 0 }}
+              <td class="lab-table-key">{{ trim $cell " \t" | markdownify }}</td>
+              {{ else }}
+              <td>{{ trim $cell " \t" | markdownify }}</td>
+              {{ end }}
+            {{ end }}
+          </tr>
+        {{ end }}
+      {{ end }}
+    {{ end }}
+        </tbody>
+  </table>
+</div>

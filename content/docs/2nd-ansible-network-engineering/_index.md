@@ -92,22 +92,25 @@ Service | Purpose | Integration
 {{< showcase-grid >}}
   {{< showcase-card
       title="Grafana: Fabric health"
-      image="/docs/network_engineering/part_1/ansiblebyredhat.jpg"
+      image="grafana.jpg"
       desc="Unified dashboard with device availability, interface utilization, and BGP session states."
   >}}
 
   {{< showcase-card
       title="NetBox: Device inventory"
+      image="netbox.jpg"
       desc="All 8 devices with sites, roles, platforms, and primary IPs populated."
   >}}
 
   {{< showcase-card
       title="AWX: Workflow execution"
+      image="awx.jpg"
       desc="Multi-step workflow with validation, deployment, and approval gates."
   >}}
 
   {{< showcase-card
       title="Gitea: PR with CI checks"
+      image="gitea.jpg"
       desc="Pull request showing lint, syntax, and pre-change analysis passing."
   >}}
 {{< /showcase-grid >}}

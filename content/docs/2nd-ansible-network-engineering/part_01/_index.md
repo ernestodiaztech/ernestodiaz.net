@@ -31,7 +31,7 @@ Setting up the Ansible control node, Python environment, project layout, and loc
 
 ---
 
-## <span class="section-num">01</span> VM Specification
+## VM Specification
 
 I created a new VM in my Proxmox server with the following specifications. This VM will be dedicated as the Ansible control node.
 
@@ -48,7 +48,7 @@ Network:   1 NIC (bridged to management network)
 
 ---
 
-## <span class="section-num">02</span> System Setup
+## System Setup
 
 After installing the OS I ran a full system update and installed the base dependencies that Ansible and the Python virtual environment will need.
 
@@ -71,7 +71,7 @@ Line 2:
 
 ---
 
-## <span class="section-num">03</span> Python Virtual Environment
+## Python Virtual Environment
 
 Creating a dedicated Python virtual environment is best practice because it prevents version conflicts with system Python packages. It also makes the Ansible installation reproducible, and it lets me pin specific versions of Ansible and its dependencies without affecting other tools on the VM.
 
@@ -107,7 +107,7 @@ On a shared machine, I would use `direnv` or a wrapper script instead, that way 
 
 ---
 
-## <span class="section-num">04</span> Installing Ansible
+## Installing Ansible
 
 After activating the virtual environement, I installed Ansible using `pip`. I installed the full `ansible` package because it includes community collections that I'll need for network device modules.
 
@@ -163,7 +163,7 @@ collections:
 
 ---
 
-## <span class="section-num">05</span> Directory Structure
+## Directory Structure
 
 I like to setup the directory structure before writing playbooks, that way everything is layed out beforehand.
 
@@ -202,7 +202,7 @@ This follows Ansible's recommended directory layout for a single project repo.
 
 ---
 
-## <span class="section-num">06</span> Ansible Configuration
+## Ansible Configuration
 
 While in the project root I created an `ansible.cfg` file. When Ansible runs it searched for this configuration in this order: `ANSIBLE_CONFIG` environment variable, `ansible.cfg` in the current directory, `~/.ansible.cfg`, `/etc/ansible/ansible.cfg`.
 
@@ -257,7 +257,7 @@ Lines 13–15:
 
 ---
 
-## <span class="section-num">07</span> Git Initialisation
+## Git Initialisation
 
 I then initialized a local Git repo at the project root. I will be setting up Gitea later on.
 
@@ -277,7 +277,7 @@ Lines 2–3:
 
 ---
 
-### <span class="section-num">07a</span> .gitignore
+### .gitignore
 
 Before commiting anything I created the `.gitignore` file. This file will ommit any file or directory from being pushed to the repo.
 
@@ -310,7 +310,7 @@ The `.vault/` directory and vault password files are the most important since th
 
 ---
 
-### <span class="section-num">07b</span> First Commit
+### First Commit
 
 After creating the directory structure, configuration files, and `.gitingore`, I staged everything and made the first commit.
 
@@ -347,7 +347,7 @@ The empty directories won't appear in `git status` because Git doesn't track emp
 
 ---
 
-## <span class="section-num">07</span> Verification
+## Verification
 
 I then ran a few checks to verify that everything is working correctly.
 

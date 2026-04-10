@@ -1,5 +1,5 @@
 ---
-draft: false
+draft: true
 title: '3 - Git'
 description: "Part 3 of my Ansible learning geared towards Network Engineering."
 tags:

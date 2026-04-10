@@ -1,5 +1,5 @@
 ---
-draft: false
+draft: true
 title: '7 - Inventory'
 description: "Part 7 of my Ansible learning geared towards Network Engineering."
 tags:

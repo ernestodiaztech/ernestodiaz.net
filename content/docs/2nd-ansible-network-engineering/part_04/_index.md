@@ -31,7 +31,7 @@ Here I will setup a dedicated VM for Containerlab, install vrnetlab to build ima
 
 ---
 
-## <span class="section-num">01</span> VM Specifications
+## VM Specifications
 
 Containerlab runs network device images as containers, but vrnetlab images boot a full virtual machine inside each container using QEMU/KVM. This requires a lot of resources, so I need to add enough RAM and CPU to the Containerlab VM.
 
@@ -49,7 +49,7 @@ I assigned the VM a static IP and added a DNS entry for `clab`.
 
 ---
 
-## <span class="section-num">02</span> Docker Installation
+## Docker Installation
 
 I installed Docker the same I installed it on my Gitea VM.
 
@@ -96,7 +96,7 @@ docker version
 
 ---
 
-## <span class="section-num">03</span> Containerlab Installation
+## Containerlab Installation
 
 I used the provided script from the official website to install Containerlab.
 
@@ -106,7 +106,7 @@ bash -c "$(curl -sL https://get.containerlab.dev)"
 
 ---
 
-### <span class="section-num">03a</span> Cat9kv Image
+### Cat9kv Image
 
 I created a directory on the `clab` VM to store the images.
 
@@ -117,7 +117,7 @@ sudo chown $USER:$USER /opt/vrnetlab-images
 
 Then I used WinSCP to transfer the image to that directory.
 
-### <span class="section-num">03b</span> VRNetLab
+### VRNetLab
 
 vrnetlab is a project that packages network OS images into Docker containers. Each container runs QEMU internally to boot the actual network OS, but Containerlab manages it like any other container.
 
@@ -169,7 +169,7 @@ vrnetlab/vr-cat9kv   17.15.01   abc123def456   2 minutes ago   1.8GB
 
 ---
 
-## <span class="section-num">04</span> Topology File
+## Topology File
 
 Next, I created a directory for the topology files and wrote the first one that will deploy 2 Cat9kv nodes as WAN routers.
 
@@ -294,7 +294,7 @@ Make sure the credentials in the startup configs match what's in the Ansible vau
 
 ---
 
-### <span class="section-num">04a</span> Deploying the Topology
+### Deploying the Topology
 
 {{< codeblock lang="Bash" syntax="bash" >}}
 cd /opt/clab/topologies
@@ -323,7 +323,7 @@ sudo clab inspect -t wan.clab.yml
 
 ---
 
-## <span class="section-num">05</span> Accessing Devices
+## Accessing Devices
 
 I verified console and SSH access from the `clab` host directly before setting up cross-VM connectivity.
 
@@ -356,7 +356,7 @@ After accepting the host key and entering the password, I should land on the IOS
 
 ---
 
-## <span class="section-num">06</span> Management Network Connectivity
+## Management Network Connectivity
 
 Now to make routing between 2 subnets possible, since I need the Docker network inside the `clab` VM to be able to communicate with the Ansible control VM.
 
@@ -435,7 +435,7 @@ sudo netplan apply
 
 ---
 
-### <span class="section-num">06a</span> Verification
+### Verification
 
 I then verified connectivity from the Ansible control node.
 
@@ -461,7 +461,7 @@ wan-r1#
 
 ---
 
-## <span class="section-num">07</span> Commit & Push
+## Commit & Push
 
 The Containerlab topology and startup configs are infrastructure-as-code so they belong in the Git repo. I copied them to the project directory on `ansible-ctrl` and committed them.
 

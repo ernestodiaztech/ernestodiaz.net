@@ -32,7 +32,7 @@ Here I will create a static inventory, (for now), go over read-only show command
 
 ---
 
-## <span class="section-num">01</span> Static Inventory
+## Static Inventory
 
 I decided on YAML when creating the static inventory file. This file defines the hosts and groups that Ansible targets when running playbooks. 
 
@@ -73,7 +73,7 @@ This will print the full inventory as Ansible sees it.
 
 ---
 
-### <span class="section-num">01a</span> Connectivity Test
+### Connectivity Test
 
 I confirmed that Ansible can reach both devices using an ad-hoc command.
 
@@ -119,9 +119,9 @@ wan-r2 | SUCCESS => {
 
 ---
 
-## <span class="section-num">02</span> Playbook
+## Playbook
 
-### <span class="section-num">02a</span> Show Commands
+### Show Commands
 
 I wrote a read-only playbook that runs several show commands and displays the output.
 
@@ -172,7 +172,7 @@ The results will be formatted in YAML.
 
 ---
 
-### <span class="section-num">02b</span> Gathering Facts
+### Gathering Facts
 
 The `ios_facts` module collects structured data about devices. The data is returned as Ansible facts, which means it's accessible as variables in subsequent tasks without needing to parse show command output manually.
 
@@ -217,7 +217,7 @@ Then tested the playbook:
 
 ---
 
-### <span class="section-num">03b</span> Pushing Configuration
+### Pushing Configuration
 
 I used `ios_config` to push a simple change: adding a login banner and disabling DNS lookups.
 
@@ -256,7 +256,7 @@ The 1st run should show `changed=3` for each device. To check idempotency I ran 
 
 ---
 
-### <span class="section-num">03c</span> Saving Configuration
+### Saving Configuration
 
 Next, I wrote a playbook that saves the running configuration to startup.
 
@@ -285,7 +285,7 @@ I then tested the playbook:
 
 ---
 
-### <span class="section-num">03d</span> Structured Backup
+### Structured Backup
 
 I then made a playbook that retrieves the full running configuration from each device and saves it to a local file on the control node, with a timestamp. This is the manual way of doing it, later on I'll setup Oxidized which does it automatically.
 
@@ -357,7 +357,7 @@ Then ran the playbook:
 
 ---
 
-## <span class="section-num">04</span> Updating .gitignore
+## Updating .gitignore
 
 The `backups/` directory contains device running configurations which may include sensitive information. I added it to the `.gitignore` so backup files are not committed to the repo.
 
@@ -367,7 +367,7 @@ backups/
 
 ---
 
-## <span class="section-num">05</span> Commit and Push
+## Commit and Push
 
 Lastly, I committed the inventory file, all four playbooks, and updated the `.gitignore` using the feature branch workflow:
 

@@ -36,7 +36,7 @@ Keeping Git and PostgresSQL off the Ansible control node means Ansible always ha
 
 ---
 
-## <span class="section-num">01</span> VM Specifications
+## VM Specifications
 
 {{< codeblock lang="Specs" copy=false >}}
 OS:        Ubuntu Server 22.04 LTS
@@ -51,7 +51,7 @@ As I did with the control node VM, I also assigned a static IP and added a DNS e
 
 ---
 
-## <span class="section-num">02</span> System Setup
+## System Setup
 
 After the OS installation, I ran system updates and installed Docker Engine and Docker Compose.
 
@@ -126,7 +126,7 @@ docker compose version
 
 ---
 
-## <span class="section-num">03</span> Docker Compose File
+## Docker Compose File
 
 I created a directory structure for Gitea's Docker Compose deployment and created the Compose file. Keeping all Docker service deployments in `/opt/` makes things predictable across all VMs.
 
@@ -221,7 +221,7 @@ Docker Compose automatically reads a `.env` file in the same directory as the `d
 
 ---
 
-## <span class="section-num">04</span> Deploying Gitea
+## Deploying Gitea
 
 After creating the compose and `.env` files, I brought the stack up.
 
@@ -256,7 +256,7 @@ docker compose logs db
 
 ---
 
-## <span class="section-num">05</span> Initial Configuration
+## Initial Configuration
 
 I went to `http://gitea:3000` and was presented with the initial configuration page. Most of the database settings should already be populated.
 
@@ -271,7 +271,7 @@ Then clicked on 'Install Gitea'.
 
 ---
 
-## <span class="section-num">06</span> SSH Key Authentication
+## SSH Key Authentication
 
 To make it so I can run `git push` and `git pull` over SSH without prompting for a password I setup SSH key authentication.
 
@@ -391,7 +391,7 @@ The 'does not provide shell access' message is normal since Git hosting platform
 
 ---
 
-## <span class="section-num">07</span> Creating the Repository
+## Creating the Repository
 
 In the Gitea web UI, I clicked the + button in the top right and selected **New Repository**:
 
@@ -428,7 +428,7 @@ I confirmed the push by refreshing the Gitea web UI. The repository should show 
 
 ---
 
-## <span class="section-num">08</span> Branch Protection
+## Branch Protection
 
 I configured branch protection on `main` to enforce a pull request workflow. Even though I'm the only user right now, this builds the habit of never pushing directly to `main`.
 
@@ -493,7 +493,7 @@ git pull origin main
 
 ---
 
-## <span class="section-num">09</span> Verification
+## Verification
 
 I ran through a final checklist to confirm everything is working.
 

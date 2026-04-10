@@ -35,7 +35,7 @@ If I were to not use Vault, I would need to keep credentials out of the repo ent
 
 ---
 
-## <span class="section-num">01</span> Vault ID
+## Vault ID
 
 I set up multiple vault IDs instead of just using a single vault password. Vault IDs let me use different encryption passwords for different categories of secrets.
 
@@ -51,7 +51,7 @@ Further explanation. The `network` vault holds credentials that Ansible uses to 
 
 ---
 
-## <span class="section-num">02</span> Directory Structure
+## Directory Structure
 
 I created a `.vault/` directory in the project root tohold the vault password files.
 
@@ -68,7 +68,7 @@ Line 3:
 
 ---
 
-## <span class="section-num">02</span> Password Files
+## Password Files
 
 I created one password file per vault ID. Each file contains a single line which is the vault password for that ID.
 
@@ -92,7 +92,7 @@ Each file should report exactly 1 line:
 
 ---
 
-## <span class="section-num">03</span> Configuring Ansible.CFG
+## Configuring Ansible.CFG
 
 Next, I updated the `ansible.cfg` file to tell Ansible where to find the vault password files for each vault ID. This eliminates having to type `--vault-id` flags.
 
@@ -127,7 +127,7 @@ The file is committed to Git and containers the paths to the vault password file
 
 ---
 
-## <span class="section-num">04</span> Encrypted Variables
+## Encrypted Variables
 
 Next, I created encrypted variable files for my network device credentials. These files will be added to the `inventory/group_vars/` directory.
 
@@ -188,7 +188,7 @@ The `all` group is a built-in Ansible group that includes every host in the inve
 
 ---
 
-## <span class="section-num">05</span> Plaintext/Vault Variable Pattern
+## Plaintext/Vault Variable Pattern
 
 This is the most important convention in the entire secrets management setup. I used the Ansible best practice of separating vault encrypted variables from the plaintext variables that reference them.
 
@@ -252,7 +252,7 @@ Line 4:
 
 ---
 
-## <span class="section-num">06</span> Encrypt, Decrypt, and Edit
+## Encrypt, Decrypt, and Edit
 
 These are useful commands that I use daily while working with vault encrypted files.
 
@@ -296,7 +296,7 @@ This encrypts a file in place. The original plaintext is overwritten with the en
 
 ---
 
-## <span class="section-num">07</span> Pre-Commit
+## Pre-Commit
 
 I then installed the `pre-commit` framework and configured hooks that prevent plaintext secrets from being committed to Git. This runs checks automatically before every `git commit`. If the check fails then the commit blocked and an error message appears.
 
@@ -395,7 +395,7 @@ Check for plaintext password patterns................Passed
 
 ---
 
-## <span class="section-num">08</span> Testing Hooks
+## Testing Hooks
 
 I tested the hooks just to see what errors I would get and familiarlize myself with them.
 
@@ -474,7 +474,7 @@ I then reset.
 
 ---
 
-## <span class="section-num">09</span> Commit & Push
+## Commit & Push
 
 After testing everything I committed the vault setup and pre-commit configurationg using the feature branch workflow.
 

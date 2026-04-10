@@ -1,5 +1,5 @@
 ---
-draft: false
+draft: true
 title: '9 - Adhoc'
 description: "Part 9 of my Ansible learning geared towards Network Engineering."
 tags:

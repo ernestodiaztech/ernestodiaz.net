@@ -20,7 +20,7 @@ This project is documented across 46 parts, starting from a bare control node an
 
 All devices run as Containerlab nodes using vrnetlab on a dedicated Proxmox VM. The topology file is version controller, validated by a 3 stage pipeline, and deployed via a diff-aware Gitea Actions job that adds or removes only what changed.
 
-![topology](2nd-topology.png)
+![topology](1st-topology.png)
 
 ----
 
@@ -91,14 +91,14 @@ Service | Purpose | Integration
 {{< accent-label >}}Security Practices{{< /accent-label >}}
 
 {{< pill-grid >}}
-  {{< pill-item >}}Ansible Vault with multiple vault IDs per trust boundary{{< /pill-item >}}
-  {{< pill-item >}}Pre-commit hooks blocking secrets, unencrypted vaults{{< /pill-item >}}
-  {{< pill-item >}}Branch protection with required PR approval{{< /pill-item >}}
-  {{< pill-item >}}Passphrase-protected Ed25519 SSH keys with `ssh-agent`{{< /pill-item >}}
-  {{< pill-item >}}TACACS+ with FreeIPA LDAP backend{{< /pill-item >}}
-  {{< pill-item >}}Internal CA (`step-ca`) with ACME certificate automation{{< /pill-item >}}
-  {{< pill-item >}}Signed commits, secrets scanning, SBOM generation{{< /pill-item >}}
-  {{< pill-item >}}SSH hardening, control plane policing, management ACLs{{< /pill-item >}}
+  {{< pill-item >}}GPG-signed commits enforced on protected main branch{{< /pill-item >}}
+  {{< pill-item >}}detect-secrets pre-commit hook; credentials blocked before reaching Git{{< /pill-item >}}
+  {{< pill-item >}}Ansible collections pinned with SHA256 checksums and private mirror{{< /pill-item >}}
+  {{< pill-item >}}Ansible Vault; separate vault IDs per trust boundary{{< /pill-item >}}
+  {{< pill-item >}}Branch protection; merge requires lint pipeline to pass{{< /pill-item >}}
+  {{< pill-item >}}TACACS+ with privilege levels and command authorisation per role{{< /pill-item >}}
+  {{< pill-item >}}SSH hardening, management ACLs, control plane policing on all devices{{< /pill-item >}}
+  {{< pill-item >}}Secrets remediation process documented; git-filter-repo purge procedure{{< /pill-item >}}
 {{< /pill-grid >}}
 
 ---
@@ -107,27 +107,27 @@ Service | Purpose | Integration
 
 {{< showcase-grid >}}
   {{< showcase-card
-      title="Grafana: Fabric health"
+      title="Grafana: Lab Operations Center"
       image="grafana.jpg"
-      desc="Unified dashboard with device availability, interface utilization, and BGP session states."
+      desc="BGP session states, interface traffic, VM health, and Loki log stream in a single dashboard."
   >}}
 
   {{< showcase-card
-      title="NetBox: Device inventory"
-      image="netbox.jpg"
-      desc="All 8 devices with sites, roles, platforms, and primary IPs populated."
+      title="Graylog: Structured Syslog"
+      image="graylog.jpg"
+      desc="IOS-XE config change event parsed into fields; device_name, event_type, cisco_mnemonic, enriched from NetBox."
   >}}
 
   {{< showcase-card
-      title="AWX: Workflow execution"
+      title="Gitea: PR Pipeline Passing"
       image="awx.jpg"
-      desc="Multi-step workflow with validation, deployment, and approval gates."
+      desc="Yamllint and ansible-lint checks passing on a campus VLAN change PR before merge to main."
   >}}
 
   {{< showcase-card
-      title="Gitea: PR with CI checks"
+      title="AWX: Self-headling Workflow"
       image="gitea.jpg"
-      desc="Pull request showing lint, syntax, and pre-change analysis passing."
+      desc="Three-stage remediation workflow: backup → diagnose → notify, triggered by a Graylog config-change alert."
   >}}
 {{< /showcase-grid >}}
 
@@ -136,24 +136,24 @@ Service | Purpose | Integration
 {{< accent-label >}}Build Sequence{{< /accent-label >}}
 
 {{< phase-list >}}
-  {{< phase-row num="1" title="Foundation" parts="Parts 01–06" color="#34c759" >}}
-  Control node, Gitea, Ansible Vault, Containerlab with first devices, playbook fundamentals, Jinja2 deep dive, reusable roles.
+  {{< phase-row num="1" title="Foundation" parts="Parts 01–16" color="#34c759" >}}
+  Control node, Ansible fundamentals, Vault secrets management, Containerlab topology, all 7 virtual devices, base IOS-XE / NX-OS / PAN-OS automation, BGP fabric brought up end to end.
   {{< /phase-row >}}
 
-  {{< phase-row num="2" title="The Network Fabric" parts="Parts 07–15" color="#2997ff" >}}
-  NetBox as source of truth, IPAM plan, multi-vendor automation (IOS-XE, NX-OS, PAN-OS), BGP fabric, VM provisioning, monitoring, config backup.
+  {{< phase-row num="2" title="Infrastructure Platform" parts="Parts 17–20" color="#2997ff" >}}
+  Proxmox VM provisioning, Gitea self-hosted Git, NetBox IPAM and dynamic inventory, AWX automation controller, infrastructure hardening.
   {{< /phase-row >}}
 
-  {{< phase-row num="3" title="Network Services" parts="Parts 16–25" color="#ff9f0a" >}}
-  BGP/OSPF production patterns, FreeIPA, TACACS+, security hardening, internal PKI, DNS/NTP, centralized logging, traffic flow visibility, unified observability.
+  {{< phase-row num="3" title="Enterprise Network Services" parts="Parts 21–34" color="#ff9f0a" >}}
+  Campus switching: VLANs, STP, LAG, port security, 802.1X, QoS. Routing;  OSPF, BGP policy, HSRP, WAN. Firewall policies, NAT, IPsec VPN, AAA, NTP, SNMP.
   {{< /phase-row >}}
 
-  {{< phase-row num="4" title="Automation Platform" parts="Parts 26–34" color="#bf5af2" >}}
-  AWX controller, GitOps pipeline, Batfish pre-change analysis, pyATS live validation, Molecule role testing, CI/CD hardening, drift detection, NetBox reconciliation.
+  {{< phase-row num="4" title="Observability Stack" parts="Parts 35–41" color="#bf5af2" >}}
+  Zabbix SNMP monitoring, Prometheus + Grafana + Loki, Graylog + OpenSearch structured logging, stack integration: NetBox → Zabbix sync, unified dashboard, self-healing workflows.
   {{< /phase-row >}}
 
-  {{< phase-row num="5" title="Advanced Automation" parts="Parts 35–38" color="#ff375f" >}}
-  AWX workflows with approval gates, Event-Driven Ansible, closed-loop self-healing, full-stack rebuild from scratch.
+  {{< phase-row num="5" title="GitOps, Hardening, and Automation" parts="Parts 42-52" color="#ff375f" >}}
+  Oxidized config backup, GitOps pipeline, Batfish pre-change analysis, CI/CD hardening, topology as code, Netdisco discovery, NetBox reconciliation, AWX workflows, Ansible EDA.
   {{< /phase-row >}}
 {{< /phase-list >}}
 
@@ -161,57 +161,58 @@ Service | Purpose | Integration
 
 {{< accent-label >}}Technologies{{< /accent-label >}}
 
-**AUTOMATION**
-
-{{< badge "Ansible" >}}
-{{< badge content="Ansible Vault" color="red" >}}
-{{< badge content="AWX" color="yellow" >}}
-{{< badge content="Ansible EDA" color="blue" >}}
-{{< badge content="Jinja2" color="green" >}}
-{{< badge content="Molecole" color="orange" >}}
-
-**NETWORK PLATFORMS**
+**NETWORKING**
 
 {{< badge "Cisco IOS-XE" >}}
 {{< badge content="Cisco NX-OS" color="red" >}}
 {{< badge content="Palo Alto PAN-OS" color="yellow" >}}
-{{< badge content="BGP" color="blue" >}}
-{{< badge content="OSPF" color="green" >}}
-{{< badge content="TACACS+" color="orange" >}}
+{{< badge content="FortiGate" color="blue" >}}
+{{< badge content="BGP" color="green" >}}
+{{< badge content="OSPF" color="orange" >}}
+{{< badge "VLANs" >}}
+{{< badge content="STP / RSTP" color="red" >}}
+{{< badge content="LACP" color="yellow" >}}
+{{< badge content="HSRP" color="blue" >}}
+{{< badge content="802.1X" color="green" >}}
+{{< badge content="ACLs" color="orange" >}}
+{{< badge "NAT" >}}
+{{< badge content="IPsec VPN" color="red" >}}
+{{< badge content="QoS" color="yellow" >}}
+{{< badge content="SNMP" color="blue" >}}
 
-**INFRASTRUCTURE**
+**AUTOMATION**
 
-{{< badge "NetBox" >}}
+{{< badge "Ansible" >}}
+{{< badge content="AWX" color="red" >}}
+{{< badge content="Ansible EDA" color="yellow" >}}
+{{< badge content="Jinja2" color="blue" >}}
+{{< badge content="Ansible Vault" color="green" >}}
+{{< badge content="Python" color="orange" >}}
+{{< badge "pybatfish" >}}
 {{< badge content="Containerlab" color="red" >}}
-{{< badge content="Proxmox VE" color="yellow" >}}
-{{< badge content="Docker" color="blue" >}}
-{{< badge content="FreeIPA" color="green" >}}
-{{< badge content="step-ca" color="orange" >}}
+{{< badge content="vrnetlab" color="yellow" >}}
 
 **OBSERVABILITY**
 
-{{< badge "Zabbix" >}}
-{{< badge content="Prometheus" color="red" >}}
-{{< badge content="Grafana" color="yellow" >}}
-{{< badge content="Graylog" color="blue" >}}
-{{< badge content="OpenSearch" color="green" >}}
-{{< badge content="ntopng" color="orange" >}}
-{{< badge content="Oxidized" color="brown" >}}
+{{< badge "Prometheus" >}}
+{{< badge content="Grafana" color="red" >}}
+{{< badge content="Loki" color="yellow" >}}
+{{< badge content="Zabbix" color="blue" >}}
+{{< badge content="Graylog" color="green" >}}
+{{< badge content="OpenSearch" color="orange" >}}
+{{< badge "Oxidized" >}}
+{{< badge content="Batfish" color="red" >}}
+{{< badge content="Netdisco" color="yellow" >}}
+{{< badge content="AlertManager" color="blue" >}}
 
-**DEVOPS**
+**INFRASTRUCTURE**
 
-{{< badge "Git" >}}
+{{< badge "Proxmox" >}}
 {{< badge content="Gitea" color="red" >}}
-{{< badge content="GitOps" color="yellow" >}}
-{{< badge content="CI/CD" color="blue" >}}
-{{< badge content="Batfish" color="green" >}}
-{{< badge content="pyATS" color="orange" >}}
-{{< badge content="Netdisco" color="brown" >}}
-
-**LANGUAGES**
-
-{{< badge "Python" >}}
-{{< badge content="YAML" color="red" >}}
-{{< badge content="Jinja2" color="yellow" >}}
-{{< badge content="Bash" color="blue" >}}
-{{< badge content="REST APIs" color="green" >}}
+{{< badge content="Gitea Actions" color="yellow" >}}
+{{< badge content="Docker" color="blue" >}}
+{{< badge content="NetBox" color="green" >}}
+{{< badge content="GPG" color="orange" >}}
+{{< badge content="detect-secrets" color="brown" >}}
+{{< badge "FreeRADIUS" >}}
+{{< badge content="TACACS+" color="red" >}}

@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '2 - Python'
 description: "Part 2 of my Ansible learning geared towards Network Engineering."
 tags:
@@ -16,7 +16,11 @@ weight: 2
 {{< badge content="Python" color="purple" >}}
 {{< badge content="Linux" color="red" >}}
 
+---
+
+{{< lab-callout type="info" >}}
 This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+{{< /lab-callout >}}
 
 ---
 
@@ -33,32 +37,37 @@ Here's where Python shows up:
 - **Netmiko and NAPALM**: the libraries that underpin many network automation workflows are Python
 - When Ansible throws an error, the traceback is Python. If I can't read a Python traceback, I can't debug effectively
 
-> [!Note]
-> Ansible modules are Python scripts that run on managed hosts (or locally for network devices). When I call `ios_config` in a playbook, Ansible is executing a Python script behind the scenes. Understanding Python helps me understand what those modules are actually doing.
+{{< lab-callout type="info" >}}
+Ansible modules are Python scripts that run on managed hosts (or locally for network devices). When I call `ios_config` in a playbook, Ansible is executing a Python script behind the scenes. Understanding Python helps me understand what those modules are actually doing.
+{{< /lab-callout >}}
 
 ---
-{{% steps %}}
 
-#### Ubuntu 22.04
+### Ubuntu 22.04
 
 Ubuntu 22.04 ships with Python 3 already installed. I confirm what I have:
 
-```bash {hl_lines=[2,3]}
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
 python3 --version
 pip3 --version
 which python3
-```
+{{< /codeblock >}}
 
-- `pip3 --version` - Pip is the package installer Python 3
-- `which python3` - Shows the path: /usr/bin/python3
+{{< line-explain >}}
+Line 2:
+: Pip is the package installer Python 3
+
+Line 3:
+: Shows the path: /usr/bin/python3
+{{< /line-explain >}}
 
 ---
 
-#### Variables
+### Variables
 
 Variables in Python do not need declaration, just assign.
 
-```python {linenos=table, hl_lines=[1,2,3,4]}
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
 hostname = "R1"
 mgmt_ip = "192.168.1.1"
 vlan_id = 10
@@ -67,56 +76,59 @@ is_enabled = True
 print(hostname)
 print(type(vlan_id))
 print(type(mgmt_ip))
-```
+{{< /codeblock >}}
 
-**Line 1-4:** Python variables have no type declaration. The type is inferred from the value. Strings use single or double quotes interchangeably. In Ansible, variable names follow the same rules. Letters, numbers, and underscores only, starting with a letter.
-
-> [!Note] 
-> In Ansible playbooks written in YAML, every variable is essentially a Python variable under the hood. When I write `vlan_id: 10` in a `vars:` block, Ansible stores it as a Python integer. When I write `hostname: "R1"`, it's a Python string. Understanding Python types helps me avoid subtle bugs like a VLAN ID being treated as a string when Ansible expects an integer.
+{{< line-explain >}}
+Lines 1-4:
+: Python variables have no type declaration. The type is inferred from the value. Strings use single or double quotes interchangeably. In Ansible, variable names follow the same rules. Letters, numbers, and underscores only, starting with a letter.
+{{< /line-explain >}}
+ 
+In Ansible playbooks written in YAML, every variable is essentially a Python variable under the hood. When I write `vlan_id: 10` in a `vars:` block, Ansible stores it as a Python integer. When I write `hostname: "R1"`, it's a Python string. Understanding Python types helps me avoid subtle bugs like a VLAN ID being treated as a string when Ansible expects an integer.
 
 ---
 
-#### Strings and F-Strings
+### Strings and F-Strings
 
-Old style.
-
-```python
+{{< codeblock file="Old Style" syntax="python" >}}
 hostname = "R1"
 interface = "GigabitEthernet0/1"
 ip_address = "10.0.0.1"
 
 print("Device: " + hostname)
-```
+{{< /codeblock >}}
 
-Modern style.
+---
 
-```python
+{{< codeblock file="Modern Style" syntax="python" >}}
 hostname = "R1"
 interface = "GigabitEthernet0/1"
 ip_address = "10.0.0.1"
 
 print(f"Device: {hostname}, Interface: {interface}, IP: {ip_address}")
-```
-
-F-string can include expressions.
-
-```python
-vlan = 100
-print(f"VLAN {vlan} is {'even' if vlan % 2 == 0 else 'odd'}")
-```
-
-F-strings (formatted string literals) start with `f` before the quote. Anything inside `{}` is evaluated as Python.
-
->[!Tip]
-> Jinja2 templating in Ansible uses `{{ variable_name }}` syntax. Which is conceptually identical to Python f-strings. Once I understand f-strings, Jinja2 templating feels familiar rather than foreign.
+{{< /codeblock >}}
 
 ---
 
-#### Lists
+F-string can include expressions.
+
+{{< codeblock lang="Python" syntax="python" >}}
+vlan = 100
+print(f"VLAN {vlan} is {'even' if vlan % 2 == 0 else 'odd'}")
+{{< /codeblock >}}
+
+F-strings (formatted string literals) start with `f` before the quote. Anything inside `{}` is evaluated as Python.
+
+{{< lab-callout type="info" >}}
+Jinja2 templating in Ansible uses `{{ variable_name }}` syntax. Which is conceptually identical to Python f-strings. Once I understand f-strings, Jinja2 templating feels familiar rather than foreign.
+{{< /lab-callout >}}
+
+---
+
+### Lists
 
 Lists are ordered collections. In Ansible, it can be lists of VLANs, lists of interfaces, lists of hosts.
 
-```python  {linenos=table, hl_lines=[5,6]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 vlans = [10, 20, 30, 40]
 interfaces = ["GigabitEthernet0/0", "GigabitEthernet0/1", "GigabitEthernet0/2"]
 nameservers = ["8.8.8.8", "8.8.4.4"]
@@ -134,18 +146,23 @@ if 20 in vlans:
     print("VLAN 20 is in the list")
 
 print(len(vlans))
-```
+{{< /codeblock >}}
 
-- **Line 5:** Python lists are zero-indexed, the first item is at index `[0]`, not `[1]`. This catches people off guard early.
-- **Line 6:** Negative indexing counts from the end. `[-1]` is always the last item.
+{{< line-explain >}}
+Line 5:
+: Python lists are zero-indexed, the first item is at index `[0]`, not `[1]`. This catches people off guard early.
+
+Line 6:
+: Negative indexing counts from the end. `[-1]` is always the last item.
+{{< /line-explain >}}
 
 ---
 
-#### Dictionaries
+### Dictionaries
 
 Dictionaries are key-value pairs. This is the most important Python data structure for Ansible: `host_vars`, `group_vars`, facts, and registered task output are all dictionaries.
 
-```python  {linenos=table, hl_lines=[18,19,21,22,23]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 router = {
     "hostname": "R1",
     "mgmt_ip": "192.168.1.1",
@@ -169,36 +186,45 @@ if "platform" in router:
 print(router.keys())
 print(router.values())
 print(router.items())
-```
+{{< /codeblock >}}
 
-{{< tabs >}}
+{{< line-explain >}}
+Line 18:
+: Checks whether the key "platform" exists in the dictionary using the `in` operator.
 
-  {{< tab name="Purpose" >}}This script demonstrates how Python dictionaries work by modeling a router as structured data. It shows how to define key–value pairs, retrieve values safely and unsafely, handle missing keys, update existing entries, add new ones, check for key existence, and inspect dictionary contents.{{< /tab >}}
-  {{< tab name="Line Explanation" >}}
-  - **Line 18** - Checks whether the key "platform" exists in the dictionary using the `in` operator.
-  - **Line 19** - Prints the value of "platform" using an f-string if the condition evaluates to `True`.
-  - **Line 21** - Prints all dictionary keyssing `.keys()`.
-  - **Line 22** - Prints all dictionary values using `.values()`.
-  - **Line 23** - Prints all key-value pairs using `.items()`.
-  {{< /tab >}}
+Line 19:
+: Prints the value of "platform" using an f-string if the condition evaluates to `True`.
 
-{{< /tabs >}}
+Line 21:
+: Prints all dictionary keyssing `.keys()`.
 
-> [!Note] Dictionary vs YAML Syntax
-> In Python I write `{"hostname": "R1", "platform": "ios"}`. In YAML (Ansible) I write the same data as:
-> ```yaml
-> hostname: R1
-> platform: ios
-> ```
-> They represent identical data structures. When Ansible reads my YAML file, it converts it into Python dictionaries internally. Knowing this makes the relationship between YAML playbooks and Python crystal clear.
+Line 22:
+: Prints all dictionary values using `.values()`.
+
+Line 23:
+: Prints all key-value pairs using `.items()`.
+{{< /line-explain >}}
 
 ---
 
-#### Nested Dictionaries
+**Dictionary vs YAML Syntax**
+
+In Python I write `{"hostname": "R1", "platform": "ios"}`. In YAML (Ansible) I write the same data as:
+
+{{< codeblock lang="YAML" syntax="yaml" >}}
+hostname: R1
+platform: ios
+{{< /codeblock >}}
+
+They represent identical data structures. When Ansible reads my YAML file, it converts it into Python dictionaries internally. Knowing this makes the relationship between YAML playbooks and Python crystal clear.
+
+---
+
+### Nested Dictionaries
 
 Real device data is nested (dictionaries inside dictionaries). Ansible facts look exactly like this.
 
-```python {linenos=table, hl_lines=[25,26,28,29]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 devices = {
     "R1": {
         "mgmt_ip": "192.168.1.1",
@@ -228,32 +254,24 @@ print(devices["R1"]["interfaces"]["GigabitEthernet0/0"]["ip"])
 
 state = devices.get("R1", {}).get("interfaces", {}).get("GigabitEthernet0/0", {}).get("state")
 print(state)
-```
+{{< /codeblock >}}
 
-{{< tabs >}}
+{{< line-explain >}}
+Line 25:
+: Retrieves R1's management IP.
 
-  {{< tab name="Purpose" >}}
-  This builds a nested dictionary to represent:
+Line 26:
+: Retrieves the IP address of R1's `GigabitEthernet0/0`.
 
-- Multiple network devices
-- Per-device attributes
-- Per-interface attributes
-- Safe vs unsafe nested access
-- The structure mirrors how real network inventory or API JSON data is modeled.
-  {{< /tab >}}
-  {{< tab name="Line Explanation" >}}
-  - **Line 25** - Retrieves R1's management IP.
-  - **Line26** - Retrieves the IP address of R1's `GigabitEthernet0/0`.
-  - **Lines 28-29** - This uses chained `.get()` calls with default empty dictionaries `{}`. Each level safely returns `{}` if the key does not exist. Returns "up" if everything exsists, or returns "none" if any level is missing.
-  {{< /tab >}}
-
-{{< /tabs >}}
+Lines 28-29:
+: This uses chained `.get()` calls with default empty dictionaries `{}`. Each level safely returns `{}` if the key does not exist. Returns "up" if everything exsists, or returns "none" if any level is missing.
+{{< /line-explain >}}
 
 ---
 
-#### Loops
+### Loops
 
-```python {linenos=table, hl_lines=[7,15]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 vlans = [10, 20, 30, 40, 50]
 devices = ["R1", "R2", "SW1", "SW2"]
 
@@ -270,16 +288,21 @@ for key, value in router.items():
 
 access_ports = [f"GigabitEthernet0/{i}" for i in range(0, 24)]
 print(access_ports)
-```
+{{< /codeblock >}}
 
-- **Line 7:** `enumerate()` gives me both the index and the value in a loop (useful when I need to know the position of an item).
-- **Line 15:** List comprehensions are a compact way to build lists. `range(0, 24)` generates numbers 0 through 23. This single line creates a list of 24 interface names.
+{{< line-explain >}}
+Line 7:
+: `enumerate()` gives me both the index and the value in a loop (useful when I need to know the position of an item).
+
+Line 15:
+: List comprehensions are a compact way to build lists. `range(0, 24)` generates numbers 0 through 23. This single line creates a list of 24 interface names.
+{{< /line-explain >}}
 
 ---
 
-#### Conditionals
+### Conditionals
 
-```python {linenos=table}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 interface_state = "down"
 vlan_id = 4094
 
@@ -299,41 +322,30 @@ if vlan_id in reserved_vlans:
 
 status = "active" if interface_state == "up" else "inactive"
 print(status)
-```
+{{< /codeblock >}}
 
-{{< tabs >}}
+{{< line-explain >}}
+Lines 1-2:
+: These variables drive the conditional checks that follow.
 
-  {{< tab name="Purpose" >}}
-  This shows:
+Lines 4-9:
+: If the interface is "up", it prints a success message. If the interface is "down", it prints a troubleshooting message. If the state is anything else, it prints an "Unknown state" message.
 
-  - Basic `if / elif / else` conditional logic.
-  - Range validation using comparison operators.
-  - Membership checks using `in`.
-  - A ternary expression for concise conditional assignment.
+Lines 11-12:
+: This validates that the VLAN falls within the standard IEEE VLAN range.
 
-  It models simple network validation logic for interface state and VLAN IDs.
-  {{< /tab >}}
-  {{< tab name="Line Explanation" >}}
-  - **Line 1-2** - These variables drive the conditional checks that follow.
-  - **Lines 4-9**:
-    - If the interface is "up", it prints a success message.
-    - If the interface is "down", it prints a troubleshooting message.
-    - If the state is anything else, it prints an "Unknown state" message.
-- **Lines 11-12** - This validates that the VLAN falls within the standard IEEE VLAN range.
-- **Lines 14-16** - This is a typical validation step in automation workflows.
-- **Lines 18-19**"
-    - Uses a one-line conditional expression.
-    - If the interface is "up", "status" becomes "active".
-    - Otherwise, it becomes "inactive".
-  {{< /tab >}}
+Lines 14-16:
+: This is a typical validation step in automation workflows.
 
-{{< /tabs >}}
+Lines 18-19:
+: Uses a one-line conditional expression. If the interface is "up", "status" becomes "active". Otherwise, it becomes "inactive".
+{{< /line-explain >}}
 
 ---
 
-#### Functions
+### Functions
 
-```python {linenos=table, hl_lines=[1]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 def build_description(device_name, interface_purpose, ticket_number):
     return f"{device_name} | {interface_purpose} | Ticket: {ticket_number}"
 
@@ -345,11 +357,12 @@ def get_vlan_name(vlan_id, name="unknown"):
 
 print(get_vlan_name(10, "MGMT"))
 print(get_vlan_name(20))
-```
+{{< /codeblock >}}
 
-- **Line 1:** `def` defines a function. `return` sends a value back to whoever called the function. Functions in Python are how I avoid writing the same logic in multiple places.
-
-{{% /steps %}}
+{{< line-explain >}}
+Line 1:
+: `def` defines a function. `return` sends a value back to whoever called the function. Functions in Python are how I avoid writing the same logic in multiple places.
+{{< /line-explain >}}
 
 ---
 
@@ -357,15 +370,13 @@ print(get_vlan_name(20))
 
 These two formats are everywhere in network automation. REST APIs return JSON. Ansible playbooks and inventory are YAML. I need to be able to read both formats in Python and convert between them.
 
-{{% steps %}}
-
 ---
 
-#### JSON in Python
+### JSON in Python
 
-JSON (JavaScript Object Notation) looks almost identical to Python dictionaries. Python's built-in `json` module handles it.
+JSON looks almost identical to Python dictionaries. Python's built-in `json` module handles it.
 
-```python {linenos=table, hl_lines=[1,15,25]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 import json
 
 json_string = '''
@@ -392,17 +403,24 @@ for interface in device_data["interfaces"]:
 
 output = json.dumps(device_data, indent=4)
 print(output)
-```
+{{< /codeblock >}}
 
-- **Line 1:** `import json` loads Python's built-in JSON module (no installation needed).
-- **Line 15:** `json.loads()` ("load string") parses a JSON string into a Python dictionary. The `s` matters, `json.load()` (without `s`) reads from a file.
-- **Line 25:** `json.dumps()` ("dump string") converts a Python dict back to a JSON string. `indent=4` pretty-prints it with 4-space indentation.
+{{< line-explain >}}
+Line 1:
+: `import json` loads Python's built-in JSON module (no installation needed).
+
+Line 15:
+: `json.loads()` ("load string") parses a JSON string into a Python dictionary. The `s` matters, `json.load()` (without `s`) reads from a file.
+
+Line 25:
+: `json.dumps()` ("dump string") converts a Python dict back to a JSON string. `indent=4` pretty-prints it with 4-space indentation.
+{{< /line-explain >}}
 
 ---
 
-#### Reading and Writing JSON Files
+### Reading and Writing JSON Files
 
-```python {linenos=table, hl_lines=[9,10]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 import json
 
 device_inventory = {
@@ -417,23 +435,28 @@ with open("inventory.json", "w") as f:
 with open("inventory.json", "r") as f:
     loaded_inventory = json.load(f)
 
-print(loaded_inventory["SW1"]["platform"])    # nxos
-```
+print(loaded_inventory["SW1"]["platform"])
+{{< /codeblock >}}
 
-- **Line 9:** `with open(...) as f:` is the correct way to open files in Python. The `with` block automatically closes the file when done, even if an error occurs. `"w"` means write mode, `"r"` means read mode.
-- **Line 10:** `json.dump()` (no `s`) writes to a file object. Contrast with `json.dumps()` which writes to a string.
+{{< line-explain >}}
+Line 9:
+: `with open(...) as f:` is the correct way to open files in Python. The `with` block automatically closes the file when done, even if an error occurs. `"w"` means write mode, `"r"` means read mode.
+
+Line 10:
+: `json.dump()` (no `s`) writes to a file object. Contrast with `json.dumps()` which writes to a string.
+{{< /line-explain >}}
 
 ---
 
-#### YAML in Python
+### YAML in Python
 
 Python doesn't include a YAML parser in its standard library, so I install `PyYAML`:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip3 install pyyaml
-```
+{{< /codeblock >}}
 
-```python {linenos=table}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 import yaml
 
 yaml_string = """
@@ -463,36 +486,35 @@ with open("group_vars/all.yml", "r") as f:
 
 with open("output.yml", "w") as f:
     yaml.dump(data, f, default_flow_style=False)
-```
+{{< /codeblock >}}
 
-{{< tabs >}}
+{{< line-explain >}}
+Line 3-18:
+: A structured YAML document.
 
-  {{< tab name="Purpose" >}}
-  This shows:
+Line 20:
+: Converts the YAML string into a Python dictionary.
 
-  - Parse YAML from a string.
-  - Convert YAML into a Python dictionary.
-  - Access nested YAML data.
-  - Load YAML from a file.
-  - Write structured data back to a YAML file.
-  {{< /tab >}}
-  {{< tab name="Line Explanation" >}}
-  - **Line 3-18** - A structured YAML document.
-  - **Line 20** - Converts the YAML string into a Python dictionary.
-  - **Line 22** - Prints "ios"
-  - **Line 23** - Prints "[10,20,30]"
-  - **Line 25** - Opens an external file, parses it into a Python dictionary, and stores it in `vars_data`.
-  - **Lines 28-29** - Opens `output.yml`, writes the `data` dictionary to YAML format. `default_flow_style=False` ensures block-style YAML.
-  {{< /tab >}}
+Line 22:
+: Prints "ios"
 
-{{< /tabs >}}
+Line 23:
+: Prints "[10,20,30]"
 
-> [!CAUTION]
-> Never use `yaml.load()` without a `Loader` argument in any script, and never use `yaml.load(data, Loader=yaml.FullLoader)` on YAML files from untrusted sources. The safe habit is `yaml.safe_load()` always, everywhere. This same principle applies when I see Ansible warning about unsafe YAML loading.
+Line 25:
+: Opens an external file, parses it into a Python dictionary, and stores it in `vars_data`.
+
+Lines 28-29:
+: Opens `output.yml`, writes the `data` dictionary to YAML format. `default_flow_style=False` ensures block-style YAML.
+{{< /line-explain >}}
+
+{{< lab-callout type="warning" >}}
+Never use `yaml.load()` without a `Loader` argument in any script, and never use `yaml.load(data, Loader=yaml.FullLoader)` on YAML files from untrusted sources. The safe habit is `yaml.safe_load()` always, everywhere. This same principle applies when I see Ansible warning about unsafe YAML loading.
+{{< /lab-callout >}}
 
 ---
 
-#### JSON vs YAML
+### JSON vs YAML
 
 | Situation | Format |
 |---|---|
@@ -503,17 +525,13 @@ with open("output.yml", "w") as f:
 | Jinja2 template variable files | YAML |
 | Network device RESTCONF responses | JSON or XML |
 
-{{% /steps %}}
-
 ---
 
 ## How Ansible Uses Python
 
 Understanding this demystifies a lot of Ansible's behavior and error messages.
 
-{{% steps %}}
-
-<h4>The Execution Flow</h4>
+### The Execution Flow
 
 When I run `ansible-playbook site.yml`, here's what actually happens:
 
@@ -524,17 +542,17 @@ When I run `ansible-playbook site.yml`, here's what actually happens:
 5. The module returns a Python dictionary with keys like `changed`, `failed`, `stdout`, `diff`
 6. Ansible evaluates the return dictionary to determine if the task passed or failed, and whether anything changed
 
+---
 
-> [!Note]
-> This is a key difference between network automation and server automation. When Ansible manages a Linux server, it copies the Python module to the server and runs it there. When Ansible manages a network device (a router or switch), the device doesn't run Python (Ansible runs the module locally on the control node and communicates with the device over SSH or NETCONF). This is why network modules require `connection: network_cli` or `connection: netconf` instead of the default `connection: ssh`.
+This is a key difference between network automation and server automation. When Ansible manages a Linux server, it copies the Python module to the server and runs it there. When Ansible manages a network device (a router or switch), the device doesn't run Python (Ansible runs the module locally on the control node and communicates with the device over SSH or NETCONF). This is why network modules require `connection: network_cli` or `connection: netconf` instead of the default `connection: ssh`.
 
 ---
 
-#### Python Tracebacks (Reading Error Messages)
+### Python Tracebacks
 
 When something goes wrong, Ansible often surfaces a Python traceback. Here's how to read one:
 
-```
+{{< codeblock lang="" copy="false" >}}
 TASK [ios_config] *************************************
 fatal: [R1]: FAILED! => {
     "msg": "Traceback (most recent call last):\n
@@ -544,14 +562,13 @@ fatal: [R1]: FAILED! => {
         raise AnsibleConnectionFailure('timed out')\n
     ansible.errors.AnsibleConnectionFailure: timed out"
 }
-```
+{{< /codeblock >}}
 
-Reading this from **bottom to top** is the trick. The last line is the actual error: `AnsibleConnectionFailure: timed out`. The lines above it are the call stack showing how the code got there. I almost always only need the last line to understand what went wrong.
+Reading this from bottom to top is the trick. The last line is the actual error: `AnsibleConnectionFailure: timed out`. The lines above it are the call stack showing how the code got there. I almost always only need the last line to understand what went wrong.
 
-> [!Tip]
-> When I get a cryptic Ansible error, I add `-vvv` to my `ansible-playbook` command. This verbose mode prints the full Python traceback and the exact SSH commands being sent to the device. It's the fastest way to go from "something failed" to "I know exactly why."
-
-{{% /steps %}}
+{{< lab-callout type="tip" >}}
+When I get a cryptic Ansible error, I add `-vvv` to my `ansible-playbook` command. This verbose mode prints the full Python traceback and the exact SSH commands being sent to the device. It's the fastest way to go from "something failed" to "I know exactly why."
+{{< /lab-callout >}}
 
 ---
 
@@ -561,26 +578,25 @@ These three libraries come up constantly in network automation. I don't need to 
 
 ---
 
-{{% steps %}}
-
-#### Installing Libraries
+### Installing Libraries
 
 All three go into my virtual environment. For now, I install them into the system Python just to experiment:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip3 install netmiko napalm requests --break-system-packages
-```
+{{< /codeblock >}}
 
-> [!Warning]
-> The `--break-system-packages` flag is needed on Ubuntu 22.04 because pip is restricted from modifying system packages by default. I use this flag only for quick experiments on a VM I control.
+{{< lab-callout type="warning" >}}
+The `--break-system-packages` flag is needed on Ubuntu 22.04 because pip is restricted from modifying system packages by default. I use this flag only for quick experiments on a VM I control.
+{{< /lab-callout >}}
 
 ---
 
-#### Talking to REST APIs
+### Talking to REST APIs
 
 `requests` is the standard Python HTTP library. I use it to interact with REST APIs (Netbox, AWX, Palo Alto, etc.).
 
-```python {linenos=table, hl_lines=[4,8,21]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 import requests
 import json
 
@@ -612,19 +628,26 @@ if response.status_code == 200:
 else:
     print(f"API call failed: {response.status_code}")
     print(response.text)
-```
+{{< /codeblock >}}
 
-- **Line 4:** `requests.get()` sends an HTTP GET request and returns a response object.
-- **Line 8:** `.json()` automatically parses the JSON response body into a Python dictionary (equivalent to calling `json.loads(response.text)`).
-- **Line 21:** `verify=False` disables SSL certificate verification.
+{{< line-explain >}}
+Line 4:
+: `requests.get()` sends an HTTP GET request and returns a response object.
+
+Line 8:
+: `.json()` automatically parses the JSON response body into a Python dictionary (equivalent to calling `json.loads(response.text)`).
+
+Line 21:
+: `verify=False` disables SSL certificate verification.
+{{< /line-explain >}}
 
 ---
 
-#### Netmiko
+### Netmiko
 
 Netmiko is a Python library built specifically for SSH connections to network devices. It handles all the quirks of different vendors' SSH implementations.
 
-```python {linenos=table, hl_lines=[3,4,5,6,7,8,9,11,13,16,17,18,19,20,21,22]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 from netmiko import ConnectHandler
 
 device = {
@@ -653,23 +676,31 @@ connection.save_config()
 
 # Always disconnect when done
 connection.disconnect()
-```
+{{< /codeblock >}}
 
-- **Line 3-9:** The device dictionary tells Netmiko exactly what kind of device I'm connecting to. The `device_type` field is critical, it tells Netmiko which SSH behavior patterns to expect. Common values: `cisco_ios`, `cisco_nxos`, `juniper_junos`, `paloalto_panos`.
-- **Line 11:** `**device` unpacks the dictionary as keyword arguments (equivalent to writing `ConnectHandler(device_type="cisco_ios", host="192.168.1.1", ...)`).
-- **Line 13:** `send_command()` sends a single show command and returns the output as a string.
-- **Line 16-22:** `send_config_set()` enters config mode, sends each command in the list, and exits config mode automatically.
+{{< line-explain >}}
+Lines 3-9:
+: The device dictionary tells Netmiko exactly what kind of device I'm connecting to. The `device_type` field is critical, it tells Netmiko which SSH behavior patterns to expect. Common values: `cisco_ios`, `cisco_nxos`, `juniper_junos`, `paloalto_panos`.
 
-> [!Info]
-> Ansible's `network_cli` connection plugin is built on top of Netmiko. When I configure an Ansible playbook with `connection: network_cli`, Ansible is using Netmiko under the hood to connect to devices. Understanding Netmiko directly helps me troubleshoot connectivity issues in Ansible, because the same parameters apply: `device_type` maps to `ansible_network_os`, `username` maps to `ansible_user`, and so on.
+Line 11:
+: `**device` unpacks the dictionary as keyword arguments (equivalent to writing `ConnectHandler(device_type="cisco_ios", host="192.168.1.1", ...)`).
+
+Line 13:
+: `send_command()` sends a single show command and returns the output as a string.
+
+Lines 16-22:
+: `send_config_set()` enters config mode, sends each command in the list, and exits config mode automatically.
+{{< /line-explain >}}
+
+Ansible's `network_cli` connection plugin is built on top of Netmiko. When I configure an Ansible playbook with `connection: network_cli`, Ansible is using Netmiko under the hood to connect to devices. Understanding Netmiko directly helps me troubleshoot connectivity issues in Ansible, because the same parameters apply: `device_type` maps to `ansible_network_os`, `username` maps to `ansible_user`, and so on.
 
 ---
 
-#### Napalm
+### Napalm
 
-NAPALM (Network Automation and Programmability Abstraction Layer with Multivendor support) sits above Netmiko. Instead of sending raw CLI commands, NAPALM provides vendor-neutral Python methods that work the same way across Cisco, Juniper, and Arista.
+NAPALM sits above Netmiko. Instead of sending raw CLI commands, NAPALM provides vendor-neutral Python methods that work the same way across Cisco, Juniper, and Arista.
 
-```python {linenos=table, hl_lines=[3,14]}
+{{< codeblock lang="Python" syntax="python" lines="true" >}}
 from napalm import get_network_driver
 
 driver = get_network_driver("ios")
@@ -693,46 +724,15 @@ for name, details in interfaces.items():
 bgp_neighbors = device.get_bgp_neighbors()
 
 device.close()
-```
+{{< /codeblock >}}
 
-- **Line 3:** `get_network_driver("ios")` returns the Cisco IOS driver class. The same code works with `"junos"`, `"eos"` (Arista), or `"nxos"`.
-- **Line 14:** `get_facts()` returns a standardized dictionary with the same keys regardless of vendor. This is NAPALM's core value: I write the code once and it works everywhere.
+{{< line-explain >}}
+Line 3:
+: `get_network_driver("ios")` returns the Cisco IOS driver class. The same code works with `"junos"`, `"eos"` (Arista), or `"nxos"`.
 
-{{% /steps %}}
-
----
-
-## Reading Error Messages
-
-Errors are inevitable. Here's how I read them without panicking.
-
-```
-Traceback (most recent call last):
-  File "inventory.py", line 53, in <module>
-    print(f"  {device['hostname']:<6} | {device['ip']}")
-KeyError: 'ip'
-```
-
-I always read from **bottom to top**:
-
-1. **Last line** - the actual error type and message: `KeyError: 'ip'`
-2. **Second to last** - the exact line of code that caused it: `device['ip']`
-3. **Third to last** - the file and line number: `inventory.py`, line 53
-
-In this case, I tried to access a key `'ip'` that doesn't exist in my dictionary. The key is actually named `'mgmt_ip'`. Fixed.
-
----
-
-Common Errors
-
-| Error | What It Means | Typical Fix |
-|---|---|---|
-| `KeyError: 'hostname'` | Dictionary key doesn't exist | Use `.get()` or check the key name |
-| `IndentationError` | Wrong whitespace | Fix indentation — Python requires consistency |
-| `SyntaxError` | Invalid Python syntax | Check for missing colons, brackets, quotes |
-| `ModuleNotFoundError` | Library not installed | `pip3 install <library>` |
-| `TypeError` | Wrong data type | Check what type the function expects |
-| `FileNotFoundError` | File path is wrong | Check the path with `ls` |
+Line 14:
+: `get_facts()` returns a standardized dictionary with the same keys regardless of vendor. This is NAPALM's core value: I write the code once and it works everywhere.
+{{< /line-explain >}}
 
 ---
 

@@ -16,7 +16,13 @@ weight: 1
 {{< badge content="VS Code" color="blue" >}}
 {{< badge content="Linux" color="red" >}}
 
+---
+
+{{< lab-callout type="info" >}}
 This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+{{< /lab-callout >}}
+
+---
 
 ## VS Code with Remote-SSH
 
@@ -46,7 +52,7 @@ Right now I'm just setting everything up, so I will create an SSH-key with no pa
 
 ---
 
-#### SSH Keys
+### SSH Keys
 
 {{< lab-callout type="info" >}}
   **How SSH Key Authentication Works**
@@ -79,7 +85,7 @@ When prompted for a passphrase, I pressed 'Enter' to skip it.
 
 ---
 
-#### Copying the Public Key to Ubuntu
+### Copying the Public Key to Ubuntu
 
 Now I need to put the public key on my VM. One way is to issue this PowerShell command:
 
@@ -109,7 +115,7 @@ ssh -i ~/.ssh/ansible_key ansible@10.33.99.50
 
 ---
 
-#### Disabling Password Authentication
+### Disabling Password Authentication
 
 Once key-based auth is confirmed working, I disable password SSH login on Ubuntu entirely.
 
@@ -133,7 +139,7 @@ sudo systemctl restart ssh
 
 ---
 
-#### Connecting via SSH-Remote
+### Connecting via SSH-Remote
 
 Now, back in VS Code, I pressed `Ctrl+Shift+P` to open the Command Palette and typed: **Remote-SSH: Connect to Host**
 
@@ -145,7 +151,7 @@ VS Code opened a new window, downloaded the VS Code Server onto the Ubuntu VM an
 
 ---
 
-### VS Code Extensions
+## VS Code Extensions
 
 Next, I installed some extensions on the remote host.
 
@@ -179,7 +185,7 @@ After installing extensions on the remote SSH host, I open VS Code’s settings 
 
 ---
 
-### Home Directory Structure
+## Home Directory Structure
 
 When I log into my VM, I land in my home directory `/home/nesto`. This is my personal space on the system. Understanding how to organize it sets me up for clean Ansible project management.
 
@@ -262,11 +268,11 @@ I keep all my Ansible projects under `~/projects/`. That way, when I come back t
 
 ---
 
-### Persistent Terminal Sessions
+## Persistent Terminal Sessions
 
 `tmux` is a terminal multiplexer. It runs a terminal sessions on the Ubuntu VM that persists even when I disconnect. When I reconnect, I just re-attach to the session and everything is exactly as I left it.
 
-#### tmux Concepts
+### tmux Concepts
 
 - **Session** - a peristent workspace. It survives disconnects
 - **Window** - like a tab inside a session. I can have multiple windows.
@@ -274,7 +280,7 @@ I keep all my Ansible projects under `~/projects/`. That way, when I come back t
 
 ---
 
-#### tmux Commands
+### tmux Commands
 
 {{< codeblock lang="Bash" syntax="bash" lines="true" >}}
 tmux new -s ansible-lab
@@ -311,7 +317,7 @@ Sroll mode (`Ctrl+B, [`]) is 1 of the most useful tmux features for Ansible. Whe
 
 ---
 
-#### tmux Workflow
+### tmux Workflow
 
 Every time I start a lab sessions I do this:
 

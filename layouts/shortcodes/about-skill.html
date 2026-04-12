@@ -1,0 +1,5 @@
+{{ $cat := .Get "cat" | default "network" }}
+<span class="lab-about-skill">
+  <span class="lab-about-skill-dot {{ $cat }}"></span>
+  {{ .Inner }}
+</span>

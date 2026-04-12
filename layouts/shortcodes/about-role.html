@@ -1,0 +1,24 @@
+{{ $num := .Get "num" | default "" }}
+{{ $role := .Get "role" | default "" }}
+{{ $company := .Get "company" | default "" }}
+{{ $dates := .Get "dates" | default "" }}
+{{ $current := .Get "current" | default "false" }}
+
+<div class="lab-about-item {{ if eq $current "true" }}current{{ end }}">
+  <div class="lab-about-marker">{{ $num }}</div>
+
+  <div class="lab-about-card">
+    <h3 class="lab-about-role">{{ $role }}</h3>
+
+    <div class="lab-about-meta">
+      <span class="lab-about-company">{{ $company }}</span>
+      <span class="lab-about-meta-dot"></span>
+      <span class="lab-about-dates">{{ $dates }}</span>
+      {{ if eq $current "true" }}<span class="lab-about-badge">Current</span>{{ end }}
+    </div>
+
+    <ul class="lab-about-bullets">
+      {{ .Inner }}
+    </ul>
+  </div>
+</div>

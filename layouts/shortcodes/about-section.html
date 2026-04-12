@@ -1,0 +1,8 @@
+{{ $label := .Get "label" | default "" }}
+<section class="lab-about-section">
+  <div class="lab-about-section-header">
+    <div class="lab-about-section-label">{{ $label }}</div>
+    <div class="lab-about-section-rule"></div>
+  </div>
+  {{ .Inner }}
+</section>

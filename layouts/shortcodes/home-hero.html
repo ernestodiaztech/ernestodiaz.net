@@ -1,0 +1,14 @@
+<section class="lab-home-hero">
+  {{ with .Get "label" }}<div class="lab-home-label">{{ . }}</div>{{ end }}
+  <h1 class="lab-home-title">{{ .Get "title" }}</h1>
+  <p class="lab-home-subtitle">{{ .Get "subtitle" }}</p>
+
+  <div class="lab-home-actions">
+    <a class="lab-home-btn primary" href="{{ .Get "primary_href" }}">
+      {{ .Get "primary_label" }}
+    </a>
+    <a class="lab-home-btn" href="{{ .Get "secondary_href" }}">
+      {{ .Get "secondary_label" }}
+    </a>
+  </div>
+</section>

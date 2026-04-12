@@ -3,27 +3,36 @@ draft: false
 title: ''
 ---
 
-{{< badge content="Personal Blog" >}}
+{{< home-page >}}
 
-{{< hextra/hero-headline >}}
-Ernesto Diaz
-{{< /hextra/hero-headline >}}
+{{< home-hero
+  label="Personal Blog"
+  title="Ernesto Diaz"
+  subtitle="System & Network Engineering Projects"
+  primary_href="/about/"
+  primary_label="About Me"
+  secondary_href="https://github.com/ernestodiaztech"
+  secondary_label="GitHub"
+>}}
 
-{{< hextra/hero-subtitle >}}
-System & Network Engineering Projects.
-{{< /hextra/hero-subtitle >}}
+{{< home-section label="Topics" >}}
+{{< topic-grid >}}
+{{< topic-card title="Network Engineering" href="#" >}}Designing, deploying, and managing enterprise routing, switching, and wireless across distributed environments.{{< /topic-card >}}
+{{< topic-card title="Ansible Automation" href="#" >}}Automating network configurations, deployments, and troubleshooting workflows at scale.{{< /topic-card >}}
+{{< topic-card title="Endpoint Management" href="#" >}}Managing and securing devices across sites with Intune, Jamf, NinjaOne, and Action1.{{< /topic-card >}}
+{{< topic-card title="PowerShell" href="#" >}}Scripts and tools for automating system administration and streamlining daily operations.{{< /topic-card >}}
+{{< topic-card title="High Availability Cluster" href="#" >}}Building resilient self-hosted infrastructure with failover, redundancy, and load balancing.{{< /topic-card >}}
+{{< topic-card title="Networking News" href="#" >}}Keeping up with the latest in networking, infrastructure, and enterprise IT.{{< /topic-card >}}
+{{< /topic-grid >}}
+{{< /home-section >}}
 
-{{< hextra/hero-button text="About Me" link="/about/" >}}
-{{< hextra/hero-button text="GitHub" link="https://github.com/ernestodiaztech/ernestodiaz.net" >}}
+{{< home-section label="Tech Stack" >}}
+{{< skills-grid >}}
+{{< skill-chip >}}Ansible{{< /skill-chip >}}
+{{< skill-chip >}}Python{{< /skill-chip >}}
+{{< skill-chip >}}Cisco{{< /skill-chip >}}
+{{< skill-chip >}}Linux{{< /skill-chip >}}
+{{< /skills-grid >}}
+{{< /home-section >}}
 
----
-
-{{< cards cols="2">}}
-  {{< card title="Network Engineering" subtitle="Designing, deploying, and managing enterprise routing, switching, and wireless across distributed environments." >}}
-  {{< card title="Ansible Automation" subtitle="Automating network configurations, deployments, and troubleshooting workflows at scale." >}}
-  {{< card title="Endpoint Management" subtitle="Managing and securing devices across sites with Intune, Jamf, NinjaOne, and Action1." >}}
-  {{< card title="PowerShell" subtitle="Scripts and tools for automating system administration and streamlining daily operations." >}}
-  {{< card title="High Availability Cluster" subtitle="Building resilient self-hosted infrastructure with failover, redundancy, and load balancing." >}}
-  {{< card title="Networking News" subtitle="Keeping up with the latest in networking, infrastructure, and enterprise IT." >}}
-{{< /cards >}}
-
+{{< /home-page >}}

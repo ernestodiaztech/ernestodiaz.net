@@ -1,0 +1,48 @@
+{{ $label := .Get "label" | default "About" }}
+{{ $name := .Get "name" | default "" }}
+{{ $title := .Get "title" | default "" }}
+{{ $location := .Get "location" | default "" }}
+{{ $photo := .Get "photo" | default "" }}
+{{ $resume := .Get "resume_href" | default "" }}
+{{ $projects := .Get "projects_href" | default "" }}
+{{ $github := .Get "github_href" | default "" }}
+{{ $linkedin := .Get "linkedin_href" | default "" }}
+{{ $email := .Get "email_href" | default "" }}
+
+<section class="lab-about-hero">
+  <div class="lab-about-photo-col">
+    <div class="lab-about-photo">
+      {{ if $photo }}
+        <img src="{{ $photo }}" alt="{{ $name }}">
+      {{ else }}
+        <div class="lab-about-placeholder">○</div>
+      {{ end }}
+    </div>
+
+    <div class="lab-about-social">
+      {{ with $github }}<a href="{{ . }}" aria-label="GitHub">GH</a>{{ end }}
+      {{ with $linkedin }}<a href="{{ . }}" aria-label="LinkedIn">in</a>{{ end }}
+      {{ with $email }}<a href="{{ . }}" aria-label="Email">@</a>{{ end }}
+    </div>
+  </div>
+
+  <div class="lab-about-info">
+    <div class="lab-about-pill">{{ $label }}</div>
+    <h1 class="lab-about-name">{{ $name }}</h1>
+
+    <div class="lab-about-title-row">
+      <span>{{ $title }}</span>
+      <span class="lab-about-title-dot"></span>
+      <span>{{ $location }}</span>
+    </div>
+
+    <div class="lab-about-bio">
+      {{ .Inner }}
+    </div>
+
+    <div class="lab-about-actions">
+      {{ with $resume }}<a class="lab-about-btn primary" href="{{ . }}">Download Resume</a>{{ end }}
+      {{ with $projects }}<a class="lab-about-btn" href="{{ . }}">View Projects →</a>{{ end }}
+    </div>
+  </div>
+</section>

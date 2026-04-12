@@ -8,6 +8,8 @@ enableGitInfo: true
 
 params:
   externalLinkDecoration: true
+  theme:
+    default: dark
   navbar:
     displayTitle: true
     displayLogo: true

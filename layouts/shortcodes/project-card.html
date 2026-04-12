@@ -1,0 +1,34 @@
+{{ $title := .Get "title" | default "" }}
+{{ $desc := .Get "desc" | default "" }}
+{{ $status := .Get "status" | default "" }}
+{{ $image := .Get "image" | default "" }}
+{{ $viewHref := .Get "view_href" | default "" }}
+{{ $githubHref := .Get "github_href" | default "" }}
+
+<div class="lab-project-card">
+  <div class="lab-project-card-media">
+    {{ if $image }}
+      <img src="{{ $image }}" alt="{{ $title }}" loading="lazy" />
+    {{ else }}
+      <div class="lab-project-card-placeholder">Screenshot pending</div>
+    {{ end }}
+  </div>
+
+  <div class="lab-project-card-body">
+    <div class="lab-project-badges">
+      {{ if eq $status "active" }}<span class="lab-project-badge active">Active</span>{{ end }}
+      {{ if eq $status "progress" }}<span class="lab-project-badge progress">In Progress</span>{{ end }}
+      {{ if eq $status "completed" }}<span class="lab-project-badge completed">Completed</span>{{ end }}
+    </div>
+
+    {{ with $title }}<h3 class="lab-project-title">{{ . }}</h3>{{ end }}
+    {{ with $desc }}<p class="lab-project-subtext">{{ . }}</p>{{ end }}
+
+    <div class="lab-project-tags">{{ .Inner }}</div>
+
+    <div class="lab-project-actions">
+      {{ with $viewHref }}<a class="lab-project-btn primary" href="{{ . }}">View Project →</a>{{ end }}
+      {{ with $githubHref }}<a class="lab-project-btn" href="{{ . }}">GitHub</a>{{ end }}
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '3 - Git'
 description: "Part 3 of my Ansible learning geared towards Network Engineering."
 tags:
@@ -16,16 +16,21 @@ weight: 3
 {{< badge content="Git" color="green" >}}
 {{< badge content="Linux" color="red" >}}
 
+---
+
+{{< lab-callout type="info" >}}
 This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
-
-
-## Git & GitHub for Version Control
-
-I already know the basics (add, commit, push). But there's a big difference between using Git and using Git well. Playbooks are infrastructure code. A bad commit that gets pushed and run in production can take down a network segment. A missing `.gitignore` can leak credentials to a public repository. This part covers Git the right way for a network automation engineer working on a team with a formal review process.
+{{< /lab-callout >}}
 
 ---
 
-#### Why Version Control Is Non-Negotiable for Automation Work
+## Git & GitHub
+
+I already know the basics (add, commit, push). But there's a big difference between using Git and using Git well. Playbooks are infrastructure code. A bad commit that gets pushed and run in production can take down a network segment. A missing `.gitignore` can leak credentials to a public repository.
+
+---
+
+### Why Version Control
 
 Before Git, network changes worked like this: an engineer SSHs into a device, makes changes, types `write mem`, and hopes nothing breaks. If it does break, the rollback is "remember what you changed and undo it manually." The config backup, if it exists, is a text file on a shared drive with a name like `R1-config-final-FINAL-v3-USE-THIS-ONE.txt`.
 
@@ -39,102 +44,96 @@ Version control changes everything:
 - **The history is the documentation**: commit messages explain decisions that comments in code never would
 - **Collaboration is structured**: multiple engineers can work on the same codebase without overwriting each other
 
->[!Info]
-> Git and GitHub are different things. Git is the version control system (the software that tracks changes locally on my Ubuntu VM). GitHub is a cloud hosting platform for Git repositories. It stores a copy of my repo online and provides collaboration features like Pull Requests, Issues, and Actions.
-
 ---
 
-## Installing and Configuring Git on Ubuntu
+## Installing and Configuring Git
 
-{{% steps %}}
-
-#### Installing Git
+### Installing Git
 
 First, I updated the packages and then install git.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo apt update
 sudo apt install -y git
-```
+{{< /codeblock >}}
 
 Verify:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git --version
 # git version 2.34.x
-```
+{{< /codeblock >}}
 
 ---
 
-#### Configuring Git Identity
+### Configuring Git Identity
 
 The first thing I do after installing Git is tell it who I am. Every commit I make is stamped with this name and email, it's how the team knows who made each change.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git config --global user.name "Ernesto Diaz"
 git config --global user.email "myemail@domain.com"
-```
+{{< /codeblock >}}
 
-- `--global` - applies this setting to all repositories on this machine. I set it once and it applies everywhere.
-- Without this configuration, Git will either refuse to commit or use a default that looks unprofessional in the team's commit history.
+Without this configuration, Git will either refuse to commit or use a default that looks unprofessional in the team's commit history.
 
 ---
 
-#### Setting the Default Branch Name
+### Setting the Default Branch Name
 
 GitHub's default branch name is `main`. Older Git versions default to `master`. I align them to avoid confusion:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git config --global init.defaultBranch main
-```
+{{< /codeblock >}}
 
 ---
 
-#### Setting the Default Editor
+### Setting the Default Editor
 
 When Git needs me to write a commit message in an editor (e.g., during a merge), it opens the default editor. I set it to nano since it's what I'm used to:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git config --global core.editor nano
-```
+{{< /codeblock >}}
 
 ---
 
-#### Setting Up a Credential Helper
+### Setting Up a Credential Helper
 
 When I push to GitHub over HTTPS (before SSH keys are set up), Git will ask for my credentials. The credential helper caches them so I'm not asked every single time:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git config --global credential.helper store
-```
+{{< /codeblock >}}
 
->[!Caution]
-> `credential.helper store` saves credentials in plaintext at `~/.git-credentials`. This is acceptable for a private VM on a home lab network, but not for a shared server or any machine others have access to. On shared machines, use `credential.helper cache` instead, it stores credentials in memory for a configurable timeout (default 15 minutes) and never writes them to disk.
+{{< lab-callout type="danger" >}}
+`credential.helper store` saves credentials in plaintext at `~/.git-credentials`. This is acceptable for a private VM on a home lab network, but not for a shared server or any machine others have access to. On shared machines, use `credential.helper cache` instead, it stores credentials in memory for a configurable timeout (default 15 minutes) and never writes them to disk.
+{{< /lab-callout >}}
 
 ---
 
-#### Verifying the Configuration
+### Verifying the Configuration
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git config --global --list
-```
+{{< /codeblock >}}
 
-Expected output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 user.name=First Last
 user.email=myemail@company.com
 init.defaultBranch=main
 core.editor=nano
 credential.helper=store
-```
+{{< /codeblock >}}
 
 All global Git settings are stored in `~/.gitconfig`:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cat ~/.gitconfig
-```
+{{< /codeblock >}}
 
-```ini
+{{< codeblock lang="Expected Output" copy="false" >}}
 [user]
     name = First Last
     email = myemail@company.com
@@ -144,9 +143,7 @@ cat ~/.gitconfig
     editor = nano
 [credential]
     helper = store
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
@@ -156,9 +153,7 @@ I want Git operations (push, pull, clone) to work without typing a password ever
 
 ---
 
-{{% steps %}}
-
-#### Generating an SSH Key on the Ubuntu VM
+### Generating an SSH Key on the Ubuntu VM
 
 This key is specifically for GitHub. I generate it on the Ubuntu VM itself:
 
@@ -174,7 +169,7 @@ When prompted for a passphrase, I set one.
 
 ---
 
-#### Setting Correct Permissions
+### Setting Correct Permissions
 
 ```bash
 chmod 600 ~/.ssh/github_key
@@ -183,7 +178,7 @@ chmod 644 ~/.ssh/github_key.pub
 
 ---
 
-#### Configuring SSH to Use This Key for GitHub
+### Configuring SSH to Use This Key for GitHub
 
 I edit create `~/.ssh/config` on the Ubuntu VM to tell SSH which key to use when connecting to GitHub:
 
@@ -213,7 +208,7 @@ chmod 600 ~/.ssh/config
 
 ---
 
-#### Adding the SSH Agent
+### Adding the SSH Agent
 
 Since my key has a passphrase, I'd have to type it on every Git push without an SSH agent. The agent holds the decrypted key in memory for the session:
 
@@ -254,7 +249,7 @@ source ~/.bashrc
 
 ---
 
-#### Adding the Public Key to GitHub
+### Adding the Public Key to GitHub
 
 Now I copy the public key and add it to my GitHub account.
 
@@ -277,7 +272,7 @@ I copy this entire line, then:
 6. **Key:** paste the public key
 7. Click **Add SSH key**
 
-#### Testing the Connection
+### Testing the Connection
 
 ```bash
 ssh -T git@github.com
@@ -289,8 +284,6 @@ Hi myusername! You've successfully authenticated, but GitHub does not provide sh
 ```
 
 That message confirms SSH authentication to GitHub is working. The "does not provide shell access" part is normal. GitHub only accepts Git operations over SSH, not interactive shell sessions.
-
-{{% /steps %}}
 
 ---
 

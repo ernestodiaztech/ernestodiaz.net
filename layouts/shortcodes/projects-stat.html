@@ -1,0 +1,6 @@
+{{ $value := .Get "value" | default "" }}
+{{ $label := .Get "label" | default "" }}
+<div class="lab-projects-stat">
+  <div class="lab-projects-stat-value">{{ $value }}</div>
+  <div class="lab-projects-stat-label">{{ $label }}</div>
+</div>

@@ -17,7 +17,13 @@ weight: 4
 {{< badge content="VS Code" color="blue" >}}
 {{< badge content="Linux" color="red" >}}
 
+---
+
+{{< lab-callout type="info" >}}
 This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+{{< /lab-callout >}}
+
+---
 
 
 ## Python Virtual Environments

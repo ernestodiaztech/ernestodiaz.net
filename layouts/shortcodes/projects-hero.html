@@ -1,0 +1,10 @@
+{{ $kicker := .Get "kicker" | default "" }}
+{{ $title := .Get "title" | default "" }}
+{{ $desc := .Get "desc" | default "" }}
+
+<div class="lab-projects-hero">
+  {{ with $kicker }}<div class="lab-projects-kicker">{{ . }}</div>{{ end }}
+  {{ with $title }}<h1 class="lab-projects-title">{{ . }}</h1>{{ end }}
+  {{ with $desc }}<p class="lab-projects-desc">{{ . }}</p>{{ end }}
+  <div class="lab-projects-stats">{{ .Inner }}</div>
+</div>

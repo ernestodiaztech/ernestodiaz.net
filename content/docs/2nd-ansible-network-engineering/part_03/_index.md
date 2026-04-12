@@ -9,7 +9,7 @@ categories:
   - automation
 sidebar:
   exclude: false
-weight: 3
+weight: 4
 ---
 
 {{< badge "Ansible" >}}

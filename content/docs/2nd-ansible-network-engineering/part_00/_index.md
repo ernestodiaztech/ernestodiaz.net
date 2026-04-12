@@ -1,6 +1,6 @@
 ---
 draft: false
-title: 'Workstation Setup'
+title: '1a. Workstation Setup'
 description: ""
 tags:
   - ansible
@@ -8,8 +8,8 @@ tags:
 categories:
   - automation
 sidebar:
-  exclude: true
-weight: 1
+  exclude: false
+weight: 2
 ---
 
 {{< badge "Ansible" >}}

@@ -1,5 +1,5 @@
 ---
-title: Ernesto Diaz
+title: 
 toc: false
 ---
 

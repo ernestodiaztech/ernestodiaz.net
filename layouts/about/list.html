@@ -1,0 +1,85 @@
+{{/*
+  layouts/about/list.html
+  
+  About page layout override for Hextra theme.
+  Place this file at: layouts/about/list.html
+  
+  This uses Hextra's base template but replaces the content area
+  with the redesigned about page layout.
+  
+  The data comes from front matter in content/about/_index.md
+*/}}
+
+{{ define "main" }}
+<div style="max-width: 640px; margin: 0 auto; padding: 48px 24px 40px;">
+
+  {{/* ── Profile Header ── */}}
+  <div class="about-profile">
+    <div class="about-avatar">
+      <img src="{{ "images/pfp.jpg" | relURL }}" alt="{{ .Site.Title }}">
+    </div>
+    <div>
+      <h1 class="about-name">{{ .Site.Title }}</h1>
+      <div class="about-role">{{ .Params.role | default "Assistant IT Manager" }}</div>
+      <div class="about-location">{{ .Params.location | default "Grand Prairie, TX" }}</div>
+      <div class="about-social">
+        {{ with .Params.github }}<a href="{{ . }}" title="GitHub">GH</a>{{ end }}
+        {{ with .Params.linkedin }}<a href="{{ . }}" title="LinkedIn">in</a>{{ end }}
+        {{ with .Params.email }}<a href="mailto:{{ . }}" title="Email">@</a>{{ end }}
+      </div>
+    </div>
+  </div>
+
+  {{/* ── Bio ── */}}
+  <div class="about-bio">
+    {{ .Params.bio | markdownify | default (.Content) }}
+    <div class="about-actions">
+      {{ with .Params.resume }}<a class="btn-primary" href="{{ . | relURL }}">Download resume</a>{{ end }}
+      <a class="btn-secondary" href="{{ "docs/" | relURL }}">View projects</a>
+    </div>
+  </div>
+
+  <div class="about-separator"></div>
+
+  {{/* ── Skills ── */}}
+  {{ with .Params.skills }}
+  <div class="section-label">Skills & technologies</div>
+  <div class="skills-grid">
+    {{ range . }}
+    <span class="skill-pill" data-cat="{{ .category }}">{{ .name }}</span>
+    {{ end }}
+  </div>
+  <div class="about-separator"></div>
+  {{ end }}
+
+  {{/* ── Experience Timeline ── */}}
+  {{ with .Params.experience }}
+  <div class="section-label">Experience</div>
+  <div class="timeline">
+    {{ range $i, $job := . }}
+    <div class="tl-item{{ if eq $i 0 }} current{{ end }}">
+      <div class="tl-dot"><div class="tl-dot-inner"></div></div>
+      <div class="tl-card">
+        <div class="tl-head">
+          <span class="tl-title">
+            {{ .title }}
+            {{ if eq $i 0 }}<span class="tl-badge">Current</span>{{ end }}
+          </span>
+          <span class="tl-date">{{ .dates }}</span>
+        </div>
+        <div class="tl-company">{{ .company }}</div>
+        {{ with .highlights }}
+        <ul class="tl-highlights">
+          {{ range . }}
+          <li>{{ . }}</li>
+          {{ end }}
+        </ul>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+  {{ end }}
+
+</div>
+{{ end }}

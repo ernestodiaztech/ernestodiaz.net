@@ -2967,3 +2967,35 @@ html.dark .lab-home-section-rule {
     margin:0 auto;
   }
 }
+
+
+/* =========================
+   SUBTLE LABEL (theme aware)
+========================= */
+
+.lab-subtle-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:28px 0 16px;
+}
+
+.lab-subtle-label-bar{
+  width:28px;
+  height:1px;
+  background:rgba(120,170,255,0.5);
+}
+
+/* Light mode */
+.lab-subtle-label-text{
+  font-size:18px;
+  font-weight:500;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#1d1d1f;
+}
+
+/* Dark mode */
+html.dark .lab-subtle-label-text{
+  color:#f5f5f7;
+}

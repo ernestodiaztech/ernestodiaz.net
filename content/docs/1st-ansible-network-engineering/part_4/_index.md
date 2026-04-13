@@ -48,7 +48,7 @@ Version control changes everything:
 
 ## Installing and Configuring Git
 
-### Installing Git
+{{< subtle-label >}}Installing Git{{< /subtle-label >}}
 
 First, I updated the packages and then install git.
 
@@ -66,7 +66,7 @@ git --version
 
 ---
 
-### Configuring Git Identity
+{{< subtle-label >}}Configuring Git Identity{{< /subtle-label >}}
 
 The first thing I do after installing Git is tell it who I am. Every commit I make is stamped with this name and email, it's how the team knows who made each change.
 
@@ -79,7 +79,7 @@ Without this configuration, Git will either refuse to commit or use a default th
 
 ---
 
-### Setting the Default Branch Name
+{{< subtle-label >}}Setting the Default Branch Name{{< /subtle-label >}}
 
 GitHub's default branch name is `main`. Older Git versions default to `master`. I align them to avoid confusion:
 
@@ -89,7 +89,7 @@ git config --global init.defaultBranch main
 
 ---
 
-### Setting the Default Editor
+{{< subtle-label >}}Setting the Default Editor{{< /subtle-label >}}
 
 When Git needs me to write a commit message in an editor (e.g., during a merge), it opens the default editor. I set it to nano since it's what I'm used to:
 
@@ -99,7 +99,7 @@ git config --global core.editor nano
 
 ---
 
-### Setting Up a Credential Helper
+{{< subtle-label >}}Setting Up a Credential Helper{{< /subtle-label >}}
 
 When I push to GitHub over HTTPS (before SSH keys are set up), Git will ask for my credentials. The credential helper caches them so I'm not asked every single time:
 
@@ -147,92 +147,95 @@ cat ~/.gitconfig
 
 ---
 
-## Connecting the Ubuntu VM to GitHub via SSH
+## Connecting VM to GitHub via SSH
 
-I want Git operations (push, pull, clone) to work without typing a password every time. The cleanest way is SSH key authentication between my Ubuntu VM and GitHub. The same concept as SSH keys for server access, but this time the "server" is GitHub.
+I want Git operations to work without typing a password every time. The cleanest way is SSH key authentication between my Ubuntu VM and GitHub. The same concept as SSH keys for server access, but this time the "server" is GitHub.
 
 ---
 
-### Generating an SSH Key on the Ubuntu VM
+{{< subtle-label >}}Generating an SSH Key{{< /subtle-label >}}
 
 This key is specifically for GitHub. I generate it on the Ubuntu VM itself:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
 ssh-keygen -t ed25519 -C "myemail@company.com" -f ~/.ssh/github_key
-```
+{{< /codeblock >}}
 
-- `-t ed25519` - Ed25519 is the modern, recommended key type for GitHub
-- `-C "myemail@company.com"` - the comment becomes a label in GitHub's SSH key list, helping me identify which key is which
-- `-f ~/.ssh/github_key` - saves the key pair as `github_key` (private) and `github_key.pub` (public)
+{{< line-explain >}}
+-t ed25519:
+: Ed25519 is the modern, recommended key type for GitHub
+
+-C "myemail@company.com:
+: the comment becomes a label in GitHub's SSH key list, helping me identify which key is which
+
+-f ~/.ssh/github_key:
+: saves the key pair as `github_key` (private) and `github_key.pub` (public)
+{{< /line-explain >}}
 
 When prompted for a passphrase, I set one.
 
 ---
 
-### Setting Correct Permissions
+{{< subtle-label >}}Setting Correct Permissions{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 chmod 600 ~/.ssh/github_key
 chmod 644 ~/.ssh/github_key.pub
-```
+{{< /codeblock >}}
 
 ---
 
-### Configuring SSH to Use This Key for GitHub
+{{< subtle-label >}}Configuring SSH to Use This Key for Github{{< /subtle-label >}}
 
 I edit create `~/.ssh/config` on the Ubuntu VM to tell SSH which key to use when connecting to GitHub:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/.ssh/config
-```
+{{< /codeblock >}}
 
 I add the following:
 
-```
+{{< codeblock file="/.ssh/config" syntax="ini" >}}
 Host github.com
     HostName github.com
     User git
     IdentityFile ~/.ssh/github_key
     IdentitiesOnly yes
-```
-
-- `Host github.com` - this block applies whenever I SSH to github.com
-- `User git` - GitHub's SSH always uses the username `git` regardless of my GitHub username
-- `IdentityFile ~/.ssh/github_key` - use my GitHub-specific key
-- `IdentitiesOnly yes` - only try this key, don't offer others
+{{< /codeblock >}}
 
 I set correct permissions on the config file:
-```bash
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 chmod 600 ~/.ssh/config
-```
+{{< /codeblock >}}
 
 ---
 
-### Adding the SSH Agent
+{{< subtle-label >}}Adding the SSH Agent{{< /subtle-label >}}
 
 Since my key has a passphrase, I'd have to type it on every Git push without an SSH agent. The agent holds the decrypted key in memory for the session:
 
 To start the SSH agent:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 eval "$(ssh-agent -s)"
-```
+{{< /codeblock >}}
 
 Add my GitHub key to the agent (will prompt for passphrase once):
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh-add ~/.ssh/github_key
-```
+{{< /codeblock >}}
 
 Verify it's loaded
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh-add -l
-```
+{{< /codeblock >}}
 
 To make this automatic on every new shell session, I add it to `~/.bashrc`:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
 cat >> ~/.bashrc << 'EOF'
 
 # Start SSH agent and add GitHub key if not already running
@@ -243,24 +246,28 @@ fi
 EOF
 
 source ~/.bashrc
-```
+{{< /codeblock >}}
 
-- `[ -z "$SSH_AUTH_SOCK" ]` - checks if the SSH agent is already running. Without this check, a new agent process would start every time I open a terminal, leaking memory over time.
+{{< line-explain >}}
+Line 4:
+: checks if the SSH agent is already running. Without this check, a new agent process would start every time I open a terminal, leaking memory over time.
+{{< /line-explain >}}
 
 ---
 
-### Adding the Public Key to GitHub
+{{< subtle-label >}}Adding the Public Key to Github{{< /subtle-label >}}
 
 Now I copy the public key and add it to my GitHub account.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cat ~/.ssh/github_key.pub
-```
+{{< /codeblock >}}
 
 The output looks like:
-```
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... myemail@company.com
-```
+{{< /codeblock >}}
 
 I copy this entire line, then:
 
@@ -274,14 +281,13 @@ I copy this entire line, then:
 
 ### Testing the Connection
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh -T git@github.com
-```
+{{< /codeblock >}}
 
-Expected output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 Hi myusername! You've successfully authenticated, but GitHub does not provide shell access.
-```
+{{< /codeblock >}}
 
 That message confirms SSH authentication to GitHub is working. The "does not provide shell access" part is normal. GitHub only accepts Git operations over SSH, not interactive shell sessions.
 
@@ -291,30 +297,30 @@ That message confirms SSH authentication to GitHub is working. The "does not pro
 
 Now I set up the Git repository for the Ansible project I'll build throughout this lab.
 
-{{% steps %}}
+---
 
-#### Creating the Project Directory Structure
+### Creating the Project Directory Structure
 
 Create the project directory
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p ~/projects/ansible-network
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
 Create the initial directory structure
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p {playbooks,inventory/{group_vars,host_vars},roles,collections,templates,files,vars}
-```
+{{< /codeblock >}}
 
 Verify the structure
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 tree .
-```
+{{< /codeblock >}}
 
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 ansible-network/
 ├── collections/
 │   └── requirements.yml
@@ -327,30 +333,30 @@ ansible-network/
 ├── roles/
 ├── templates/
 └── vars/
-```
+{{< /codeblock >}}
 
-#### Initializing Git
+---
 
-```bash
+{{< subtle-label >}}Initializing Git{{< /subtle-label >}}
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
 git init
-```
+{{< /codeblock >}}
 
-Output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 Initialized empty Git repository in /home/ansible/projects/ansible-network/.git/
-```
+{{< /codeblock >}}
 
 Git creates a hidden `.git/` directory that contains the entire history of the repository. I never manually edit anything inside `.git/`.
 
 Check the current state of the repository:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git status
-```
+{{< /codeblock >}}
 
-Output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 On branch main
 
 No commits yet
@@ -362,22 +368,21 @@ Untracked files:
         playbooks/
 
 nothing added to commit but untracked files present
-```
+{{< /codeblock >}}
 
->[!Info]
-> "Untracked files" means Git sees these files exist but isn't tracking changes to them yet. Nothing is version-controlled until I explicitly `git add` it. This is by design, Git never assumes I want to track a file. I choose what gets tracked.
+"Untracked files" means Git sees these files exist but isn't tracking changes to them yet. Nothing is version-controlled until I explicitly `git add` it. This is by design, Git never assumes I want to track a file. I choose what gets tracked.
 
 ---
 
-#### Creating the .gitignore File
+### Creating the .gitignore File
 
 Before I make a single commit, I create the `.gitignore` file. This is non-negotiable since it prevents secrets, temporary files, and regeneratable artifacts from ever entering the repository.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/.gitignore
-```
+{{< /codeblock >}}
 
-```bash {linenos=table,hl_lines=[1,12,15,17]}
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
 venv/
 .venv/
 env/
@@ -436,45 +441,64 @@ awx_export/
 
 # host_vars/
 # group_vars/
-```
+{{< /codeblock >}}
 
-- **Line 1** - The venv is outside this project directory (~/venvs/) but adding these patterns protects against accidental venv creation inside the project.
-- **Line 12** - Retry files are created when a playbook fails mid-run. They contain hostnames and should never be committed.
-- **Line 15** - Ansible fact cache can contain sensitive device information.
-- **Lines 17-20** - Secrets, never commit these.
-- **Lines 22-24** - Environment variable files containing tokens/passwords.
-- **Lines 26-28** - Any file named secrets.
-- **Lines 30-35** - SSH private keys, just in case.
-- **Line 37** - VS Code, individual user settings are not committed.
-- **Lines 40-42** - VIM swap files.
-- **Lines 44-47** - Logs and temporary files.
-- **Lines 49-52** - Test and cover reports.
-- **Lines 54-55** - AWX / Tower export files. These can contain credentials if exported carelessly.
+{{< line-explain >}}
+Line 1:
+: The venv is outside this project directory (~/venvs/) but adding these patterns protects against accidental venv creation inside the project.
 
-{{< callout type="Important">}}
-The `.gitignore` file only prevents **untracked** files from being added to Git. If I accidentally commit a secret file before adding it to `.gitignore`, the secret is now in the Git history. Even if I delete the file afterward. Git history is permanent. The correct remediation is `git filter-repo` to rewrite history (which destroys all commit SHAs and requires every team member to re-clone), plus immediately rotating the compromised credential. The lesson: set up `.gitignore` before the first commit, every single time.
-{{< /callout >}}
+Line 12:
+: Retry files are created when a playbook fails mid-run. They contain hostnames and should never be committed.
+
+Line 15:
+: Ansible fact cache can contain sensitive device information.
+
+Lines 17-20:
+: Secrets, never commit these.
+
+Lines 22-24:
+: Environment variable files containing tokens/passwords.
+
+Lines 26-28:
+: Any file named secrets.
+
+Lines 30-35:
+: SSH private keys, just in case.
+
+Line 37:
+: VS Code, individual user settings are not committed.
+
+Lines 40-42:
+: VIM swap files.
+
+Lines 44-47:
+: Logs and temporary files.
+
+Lines 49-52:
+: Test and cover reports.
+
+Lines 54-55:
+: AWX / Tower export files. These can contain credentials if exported carelessly.
+{{< /line-explain >}}
+
+{{< lab-callout type="warning" >}}
+The `.gitignore` file only prevents untracked files from being added to Git. If I accidentally commit a secret file before adding it to `.gitignore`, the secret is now in the Git history. Even if I delete the file afterward. Git history is permanent. The correct remediation is `git filter-repo` to rewrite history (which destroys all commit SHAs and requires every team member to re-clone), plus immediately rotating the compromised credential. The lesson: set up `.gitignore` before the first commit, every single time.
+{{< /lab-callout >}}
 
 ---
 
-#### host_vars/ and group_vars/
+{{< subtle-label >}}host_vars/ and group_vars/{{< /subtle-label >}}
 
 I left these two lines commented out intentionally:
 
-```gitignore
+{{< codeblock lang="" copy="false" >}}
 # host_vars/
 # group_vars/
-```
+{{< /codeblock >}}
 
 If I uncomment them, Git ignores the entire `host_vars/` and `group_vars/` directories, which means my variable files never get committed. That's too aggressive. Most content in these directories (VLAN lists, interface names, routing configs) is not sensitive and should be in version control.
 
 The correct approach is to use Ansible Vault to encrypt only the sensitive values within those files. I commit the encrypted vault files. Git stores the ciphertext, which is safe. The vault password itself goes in `.vault_pass`, which is in `.gitignore`.
-
-{{< callout type="Important" >}}
-GitHub maintains a comprehensive collection of `.gitignore` templates at `github.com/github/gitignore`. There's a Python template and an Ansible template worth reviewing. I can also generate a `.gitignore` at `gitignore.io` by searching for "Ansible", "Python", "Linux", and "VisualStudioCode" all at once and it merges all four templates into one file.
-{{< /callout >}}
-
-{{% /steps %}}
 
 ---
 
@@ -484,12 +508,12 @@ With the `.gitignore` in place, I'm ready to start tracking files. The core Git 
 
 ---
 
-#### The Three States of a File in Git
+{{< subtle-label >}}Three States of a File in Git{{< /subtle-label >}}
 
-```
+{{< codeblock lang="" copy="false" >}}
 Working Directory  →  Staging Area (Index)  →  Repository (.git/)
    (modified)           (git add)               (git commit)
-```
+{{< /codeblock >}}
 
 - **Working Directory** - files on my filesystem as I edit them
 - **Staging Area** - files I've marked as ready to be included in the next commit
@@ -499,76 +523,75 @@ Understanding the staging area is the key to Git. It lets me commit only specifi
 
 ---
 
-{{% steps %}}
+{{< subtle-label >}}First Commit{{< /subtle-label >}}
 
-#### First Commit
-
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
 1. Check current state
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git status
-```
+{{< /codeblock >}}
 
 2. Stage the .gitignore file first
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add .gitignore
 git status
-```
+{{< /codeblock >}}
 
 3. Commit it
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git commit -m "Initial commit: add .gitignore for Ansible project"
-```
+{{< /codeblock >}}
 
 4. Stage the collections requirements file
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add collections/requirements.yml
 git commit -m "Add Ansible collections requirements file"
-```
+{{< /codeblock >}}
 
 5. Stage the entire project structure at once
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add .
 git status
 git commit -m "Add initial project directory structure"
-```
+{{< /codeblock >}}
+
 
 - `git add .` - stages all untracked and modified files in the current directory and below. The `.` means "here and everything beneath."
 - `git add .gitignore` - stages only that specific file. Precise staging like this produces cleaner commits.
 
 ---
 
-#### Viewing What Changed Before Staging
+{{< subtle-label >}}Viewing What Changed Before Staging{{< /subtle-label >}}
 
 See unstaged changes (what I've modified but not yet staged)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git diff
-```
+{{< /codeblock >}}
 
 See staged changes (what will go into the next commit)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git diff --staged
-```
+{{< /codeblock >}}
 
 See changes in a specific file
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git diff playbooks/site.yml
-```
+{{< /codeblock >}}
 
 `git diff` output reads like this:
 
-```diff
+{{< codeblock lang="Bash" syntax="diff" >}}
 diff --git a/playbooks/site.yml b/playbooks/site.yml
 index a1b2c3d..d4e5f6g 100644
 --- a/playbooks/site.yml
@@ -579,7 +602,7 @@ index a1b2c3d..d4e5f6g 100644
 +  connection: network_cli
 +  become: false
    tasks:
-```
+{{< /codeblock >}}
 
 - Lines starting with `+` are additions (shown in green in VS Code)
 - Lines starting with `-` are deletions (shown in red)
@@ -587,38 +610,41 @@ index a1b2c3d..d4e5f6g 100644
 
 ---
 
-#### Unstaging a File
+{{< subtle-label >}}Unstaging a File{{< /subtle-label >}}
 
 If I staged something by mistake:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git restore --staged filename.yml
-```
+{{< /codeblock >}}
 
 The file goes back to "modified but unstaged". The change is still there, it just won't be in the next commit.
 
 ---
 
-#### Discarding Changes Entirely
+{{< subtle-label >}}Discarding Changes Entirely{{< /subtle-label >}}
 
 Discard all changes to a file since the last commit (CANNOT BE UNDONE):
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git restore filename.yml
-```
+{{< /codeblock >}}
 
->[!Caution]
-> `git restore filename.yml` permanently discards uncommitted changes to that file. There is no undo. This is one of the few Git operations that loses work irreversibly. I always run `git diff filename.yml` first to confirm what I'm about to lose before running restore.
+{{< lab-callout type="warning" >}}
+`git restore filename.yml` permanently discards uncommitted changes to that file. There is no undo. This is one of the few Git operations that loses work irreversibly. I always run `git diff filename.yml` first to confirm what I'm about to lose before running restore.
+{{< /lab-callout >}}
 
 ---
 
-#### Writing Meaningful Commit Messages
+{{< subtle-label >}}Writing Meaningful Commit Messages{{< /subtle-label >}}
 
 A commit message is a letter to my future self and my teammates explaining why a change was made. The code shows what changed and the commit message explains why.
 
-#### The Standard Format {class="no-step-marker"}
+---
 
-```
+{{< subtle-label >}}Standard Format{{< /subtle-label >}}
+
+{{< codeblock lang="" copy="false" >}}
 <type>(<scope>): <short summary — 50 chars or less>
 
 <body — optional, wrap at 72 chars>
@@ -628,9 +654,11 @@ What was the previous behavior, and why was it wrong?
 <footer — optional>
 Refs: CHG0012345
 Closes: #42
-```
+{{< /codeblock >}}
 
-#### Commit Types {class="no-step-marker"}
+---
+
+### Commit Types
 
 | Type | When to Use |
 |---|---|
@@ -642,32 +670,37 @@ Closes: #42
 | `test` | Adding or updating test playbooks |
 | `revert` | Reverting a previous commit |
 
-#### Good vs Bad Commit Messages {class="no-step-marker"}
+---
 
-```bash
-# Bad — tells me nothing useful
+{{< subtle-label >}}Good vs Bad Commit Messages{{< /subtle-label >}}
+
+
+{{< codeblock file="Bad" syntax="bash" >}}
 git commit -m "fix"
 git commit -m "update playbook"
 git commit -m "changes"
 git commit -m "WIP"
+{{< /codeblock >}}
 
-# Good — tells me exactly what changed and why
+{{< codeblock file="Good" syntax="bash" >}}
 git commit -m "fix(ios): correct interface description task to use ios_config not raw"
 git commit -m "feat(nxos): add VLAN provisioning playbook for datacenter fabric"
 git commit -m "chore: update ansible from 9.7.0 to 9.8.0, pin in requirements.txt"
 git commit -m "fix(bgp): add missing neighbor activate under address-family for R3"
-```
+{{< /codeblock >}}
 
-#### A Commit Message with a Body (for Complex Changes) {class="no-step-marker"}
+---
 
-```bash
+{{< subtle-label >}}Commit Message with a Body{{< /subtle-label >}}
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 git commit
-```
+{{< /codeblock >}}
+
 
 This opens nano for a multi-line message
 
-In the editor:
-```
+{{< codeblock file="In the editor" syntax="ini" >}}
 fix(ospf): increase dead interval to prevent flapping on WAN links
 
 The OSPF dead interval was set to the default 40 seconds. WAN links
@@ -682,15 +715,11 @@ interfaces (still using defaults).
 Tested against: R1, R2, R3 in staging environment.
 Change window: CHG0019823
 Refs: #87
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
 ## Connecting to GitHub and Pushing
-
-{{% steps %}}
 
 #### Creating the Remote Repository on GitHub
 
@@ -709,106 +738,99 @@ GitHub shows the "Quick setup" page with instructions. I'll use the SSH URL.
 
 #### Connecting the Local Repository to GitHub
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
 Add GitHub as the remote repository (named "origin" by convention)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git remote add origin git@github.com:myusername/ansible-network.git
-```
+{{< /codeblock >}}
 
 Verify the remote was added
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git remote -v
-```
+{{< /codeblock >}}
 
-Output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 origin  git@github.com:myusername/ansible-network.git (fetch)
 origin  git@github.com:myusername/ansible-network.git (push)
-```
+{{< /codeblock >}}
 
-- `origin` is the conventional name for the primary remote. I can name it anything, but `origin` is what every tool expects.
+`origin` is the conventional name for the primary remote. I can name it anything, but `origin` is what every tool expects.
 
 ---
 
-#### Pushing for the First Time
+{{< subtle-label >}}Pushing for the First Time{{< /subtle-label >}}
 
 Push the main branch to GitHub and set it as the upstream tracking branch
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git push -u origin main
-```
+{{< /codeblock >}}
 
-- `-u origin main` - sets the upstream tracking relationship. After this first push, I can just type `git push` and Git knows where to push to.
+`-u origin main` - sets the upstream tracking relationship. After this first push, I can just type `git push` and Git knows where to push to.
 
-Expected output:
-
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 Enumerating objects: 12, done.
 Counting objects: 100% (12/12), done.
 Writing objects: 100% (12/12), 1.23 KiB | 1.23 MiB/s, done.
 To git@github.com:myusername/ansible-network.git
  * [new branch]      main -> main
 Branch 'main' set up to track remote branch 'main' from 'origin'.
-```
+{{< /codeblock >}}
 
 I can now go to `github.com/myusername/ansible-network` and see my files online.
 
-{{% /steps %}}
-
 ---
 
-## The Daily Git Workflow
+## Git Workflow
 
 These are the commands I run every day.
 
 1. Start the session (activate the virtualenv and navigate to the lab)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 source ~/venvs/ansible-network/bin/activate
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
 2. Pull the latest changes from GitHub before starting work
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git pull
-```
+{{< /codeblock >}}
 
 3. Do my work (edit playbooks, add roles, update inventory)
 
 4. Check what changed
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git status
 git diff
-```
+{{< /codeblock >}}
 
 5. Stage specific files
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add playbooks/deploy_vlans.yml
-```
+{{< /codeblock >}}
 
 6. Commit with a meaningful message
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git commit -m "feat(vlans): add VLAN deployment playbook for IOS access switches"
-```
+{{< /codeblock >}}
 
 7. Push to GitHub
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git push
-```
+{{< /codeblock >}}
 
-{{< callout type="info" >}}
 `git pull` is actually two operations in one: `git fetch` (download changes from GitHub) followed by `git merge` (apply them to my local branch). For solo work, `git pull` is fine. On a team, some engineers prefer `git pull --rebase` which replays my local commits on top of the fetched commits, keeping a cleaner linear history.
-{{< /callout >}}
 
 ---
 
@@ -818,11 +840,9 @@ On a team with a formal review process, nobody pushes directly to `main`. Change
 
 ---
 
-{{% steps %}}
+{{< subtle-label >}}Branch Structure{{< /subtle-label >}}
 
-#### Branch Structure
-
-```
+{{< codeblock lang="" copy="false" >}}
 main          # Production-ready code only. Protected branch.
 │             # All changes enter via Pull Request and peer review
 ├── feature/add-bgp-role
@@ -830,9 +850,9 @@ main          # Production-ready code only. Protected branch.
 ├── fix/ospf-dead-interval-wan
 ├── hotfix/acl-blocking-monitoring
 └── chore/update-ansible-9.8
-```
+{{< /codeblock >}}
 
-#### Branch Types {class="no-step-marker"}
+{{< subtle-label >}}Branch Types{{< /subtle-label >}}
 
 | Branch Type | Naming Convention | Purpose |
 |---|---|---|
@@ -844,117 +864,122 @@ main          # Production-ready code only. Protected branch.
 
 ---
 
-#### Creating and Working on a Branch
+{{< subtle-label >}}Creating and Working on a Branch{{< /subtle-label >}}
 
 I always start from an up-to-date main
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git checkout main
 git pull
-```
+{{< /codeblock >}}
 
 Create a new branch and switch to it in one command
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git checkout -b feature/add-ios-vlan-playbook
-```
+{{< /codeblock >}}
 
 Verify which branch I'm on
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git branch
 # * feature/add-ios-vlan-playbook
 #   main
-```
+{{< /codeblock >}}
 
 - `git checkout -b` - creates the branch AND switches to it. Without `-b`, I'd switch to an existing branch.
 - The `*` in `git branch` output marks the current branch.
 
----
-
-Do my work on this branch
+I then do my work on this branch
 
 ---
 
 Stage and commit as normal. Commits go to the feature branch, not main
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add playbooks/deploy_vlans.yml
 git commit -m "feat(vlans): add IOS VLAN deployment playbook with trunk/access support"
-```
+{{< /codeblock >}}
 
 Push the feature branch to GitHub
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git push -u origin feature/add-ios-vlan-playbook
-```
+{{< /codeblock >}}
 
 ---
 
-#### Switching Between Branches
+{{< subtle-label >}}Switching Between Branches{{< /subtle-label >}}
 
 Switch back to main (e.g., to pull updates or start a different task)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git checkout main
-```
+{{< /codeblock >}}
 
 Switch back to my feature branch
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git checkout feature/add-ios-vlan-playbook
-```
+{{< /codeblock >}}
 
 List all branches (local and remote)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git branch -a
-```
+{{< /codeblock >}}
 
->[!Warning]
-> Before switching branches, I always commit or stash my work-in-progress. Git will refuse to switch branches if I have uncommitted changes that conflict with the target branch. If I'm mid-task and need to switch:
-> ```bash
-> git stash        # Temporarily shelve uncommitted changes
-> git checkout main
-> # ... do what I need to do on main ...
-> git checkout feature/add-ios-vlan-playbook
-> git stash pop    # Restore my shelved changes
-> ```
+
+Before switching branches, I always commit or stash my work-in-progress. Git will refuse to switch branches if I have uncommitted changes that conflict with the target branch. If I'm mid-task and need to switch:
+
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
+git stash
+git checkout main
+# ... do what I need to do on main ...
+git checkout feature/add-ios-vlan-playbook
+git stash pop
+{{< /codeblock >}}
+
+{{< line-explain >}}
+Line 1:
+: Temporarily shelve uncommitted changes
+
+Line 5:
+: Restore my shelved changes
+{{< /line-explain >}}
+
+
 
 ---
 
-#### Cleaning Up
+{{< subtle-label >}}Cleaning Up{{< /subtle-label >}}
 
 Switch back to main and pull the merged changes
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git checkout main
 git pull
-```
+{{< /codeblock >}}
 
 Delete the feature branch locally (it's been merged, no longer needed)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git branch -d feature/add-ios-vlan-playbook
-```
+{{< /codeblock >}}
 
 Delete the remote branch on GitHub
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git push origin --delete feature/add-ios-vlan-playbook
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
-## Pull Requests and the Peer Review Process
+## Peer Review Process
 
 A Pull Request (PR) is a formal request to merge a branch into `main`. On a team with a formal review process, no code reaches `main` without at least one approval.
 
-{{% steps %}}
-
-#### Creating a Pull Request on GitHub
+{{< subtle-label >}}Creating a Pull Request on GitHub{{< /subtle-label >}}
 
 After pushing a feature branch:
 
@@ -963,12 +988,15 @@ After pushing a feature branch:
 3. Fill in the PR template:
 
 **PR Title:**
-```
+
+{{< codeblock lang="" copy="false" >}}
 feat(vlans): Add IOS VLAN deployment playbook with trunk/access support
-```
+{{< /codeblock >}}
+
 
 **PR Description:**
-```markdown
+
+{{< codeblock lang="Markdown" syntax="markdown" >}}
 ## Summary
 Adds a new playbook `playbooks/deploy_vlans.yml` for deploying VLAN
 configurations to Cisco IOS access layer switches.
@@ -984,12 +1012,14 @@ configurations to Cisco IOS access layer switches.
 - Verified VLAN database and trunk configurations post-apply
 
 ## How to Test
-```bash
-ansible-playbook playbooks/deploy_vlans.yml --limit lab_switches --check
-ansible-playbook playbooks/deploy_vlans.yml --limit lab_switches
-```
+`ansible-playbook playbooks/deploy_vlans.yml --limit lab_switches --check`
+`ansible-playbook playbooks/deploy_vlans.yml --limit lab_switches`
+{{< /codeblock >}}
 
-#### Checklist {class="no-step-marker"}
+---
+
+{{< subtle-label >}}Checklist{{< /subtle-label >}}
+
 - [x] ansible-lint passes with no violations
 - [x] yamllint passes with no violations
 - [x] No secrets or credentials in this PR
@@ -999,12 +1029,13 @@ ansible-playbook playbooks/deploy_vlans.yml --limit lab_switches
 4. Assign a **Reviewer** at least one other engineer
 5. Click **Create pull request**
 
->[!Tip]
-> I add a PR template to the repository so every PR automatically gets the checklist structure. I create the file `.github/pull_request_template.md` in the repository root and GitHub will use it for every new PR automatically. This standardizes what every reviewer expects to see and makes the checklist a habit rather than an afterthought.
+{{< lab-callout type="info" >}}
+I add a PR template to the repository so every PR automatically gets the checklist structure. I create the file `.github/pull_request_template.md` in the repository root and GitHub will use it for every new PR automatically. This standardizes what every reviewer expects to see and makes the checklist a habit rather than an afterthought.
+{{< /lab-callout >}}
 
 ---
 
-#### What the Reviewer Does
+{{< subtle-label >}}What the Reviewer Does{{< /subtle-label >}}
 
 The reviewer:
 - Reads through every changed file in the **Files changed** tab
@@ -1012,24 +1043,25 @@ The reviewer:
 - Verifies no secrets are present
 - Checks that the playbook follows the project's naming and structure conventions
 - Leaves inline comments on specific lines if something needs changing
-- Either **Approves**, **Requests changes**, or **Comments** without a verdict
+- Either Approves, Requests changes, or Comments without a verdict
 
 ---
 
-#### Responding to Review Feedback
+{{< subtle-label >}}Responding to Review Feedback{{< /subtle-label >}}
 
-```bash
-# Make the requested changes on my feature branch
+Make the requested changed on my feature branch
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add playbooks/deploy_vlans.yml
 git commit -m "fix: address review feedback — parameterize VLAN range, add error handling"
 git push
-```
+{{< /codeblock >}}
 
 The PR on GitHub automatically updates with the new commit. The reviewer can see the changes and re-review. Once approved, the PR is merged.
 
 ---
 
-#### Branch Protection Rules
+### Branch Protection Rules
 
 For a team with formal review, I configure branch protection on `main` in GitHub:
 
@@ -1044,15 +1076,11 @@ For a team with formal review, I configure branch protection on `main` in GitHub
    - [x] **Restrict who can push to matching branches** (only senior engineers or automation service accounts)
 5. Click **Create**
 
-{{% /steps %}}
-
 ---
 
 ## git log and git diff
 
-{{% steps %}}
-
-#### `git log` - Viewing Commit History
+{{< subtle-label >}}Viewing Commit History{{< /subtle-label >}}
 
 Basic log:
 
@@ -1113,7 +1141,7 @@ Sample `git log --oneline --graph --all` output:
 
 ---
 
-#### `git show` - Inspecting a Specific Commit
+{{< subtle-label >}}Inspecting a Specific Commit{{< /subtle-label >}}
 
 Show the full diff of a specific commit:
 
@@ -1135,7 +1163,7 @@ git show a3f2b1c -- playbooks/bgp.yml
 
 ---
 
-#### `git diff` - Comparing States
+{{< subtle-label >}}Comparing States{{< /subtle-label >}}
 
 What changed between two commits:
 
@@ -1161,7 +1189,7 @@ What changed in a specific file between two branches:
 git diff main feature/add-ios-vlan-playbook -- playbooks/deploy_vlans.yml
 ```
 
-#### Reverting a Bad Commit
+{{< subtle-label >}}Reverting a Bad Commit{{< /subtle-label >}}
 
 If a commit that was already pushed to `main` turns out to be wrong:
 
@@ -1173,15 +1201,11 @@ git push
 >[!Caution]
 > Never use `git reset --hard` or `git push --force` on the `main` branch on a shared repository. These commands rewrite history, which invalidates every team member's local copy of the repository and can cause data loss. `git revert` is always the safe way to undo a change that's already been pushed. Reserve `git reset` for cleaning up commits that have NOT yet been pushed.
 
-{{% /steps %}}
-
 ---
 
 ## Security Best Practices
 
-{{% steps %}}
-
-#### What Never Goes Into Git
+{{< subtle-label >}}What Never Goes Into Git{{< /subtle-label >}}
 
 ```
 - Passwords (device passwords, API tokens, RADIUS secrets)
@@ -1195,7 +1219,7 @@ git push
 
 ---
 
-#### Scanning for Accidentally Committed Secrets
+{{< subtle-label >}}Scanning for Accidentlly Committed Secrets{{< /subtle-label >}}
 
 Before pushing, I can scan for secrets using `git-secrets` or `trufflehog`:
 
@@ -1211,7 +1235,7 @@ Scan the entire repository history for secrets
 trufflehog git file://. --only-verified
 ```
 
-#### Setting Up a Pre-commit Hook to Block Secret Commits
+{{< subtle-label >}}Setting Up a Pre-commit Hook to Block Secret Commits{{< /subtle-label >}}
 
 A pre-commit hook runs automatically before every `git commit` and can block the commit if it finds problems:
 
@@ -1274,7 +1298,7 @@ pre-commit run --all-files
 
 ---
 
-#### If a Secret Was Already Committed
+### If a Secret Was Already Committed
 
 This is the procedure if I accidentally committed a credential:
 
@@ -1288,8 +1312,6 @@ This is the procedure if I accidentally committed a credential:
 3. **Notify the team** - everyone must re-clone the repository because the history has changed.
 4. **Add the file to `.gitignore`** immediately.
 5. **Conduct a post-incident review** - how did this happen and what process change prevents it next time?
-
-{{% /steps %}}
 
 ---
 

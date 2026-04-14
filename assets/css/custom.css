@@ -536,8 +536,8 @@ article code:not(pre code) {
 
 .lab-line-explain dl {
   display: grid;
-  grid-template-columns: 80px minmax(0, 1fr);
-  column-gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 16px;
   row-gap: 14px;
   align-items: start;
   margin: 0;
@@ -552,7 +552,9 @@ article code:not(pre code) {
   font-size: 11px;
   font-weight: 600;
   line-height: 1.8;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 200px;
 }
 
 .lab-line-explain dd {

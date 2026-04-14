@@ -3,7 +3,7 @@ title: About
 toc: false
 role: Assistant IT Manager
 location: Grand Prairie, TX
-github: https://github.com/ernestodiaztx
+github: https://github.com/ernestodiaztech
 linkedin: https://linkedin.com/in/ernestodiaztx
 email: ernesto@ernestodiaz.net
 resume: /resume.pdf

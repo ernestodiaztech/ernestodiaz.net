@@ -1084,60 +1084,61 @@ For a team with formal review, I configure branch protection on `main` in GitHub
 
 Basic log:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log
-```
+{{< /codeblock >}}
 
-Compact one-line format (my most-used):
+Compact one-line format:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log --oneline
-```
+{{< /codeblock >}}
 
 Compact with branch graph:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log --oneline --graph --all
-```
+{{< /codeblock >}}
 
 Last 5 commits:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log -5 --oneline
-```
+{{< /codeblock >}}
 
 Commits by a specific author:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log --author="First Last" --oneline
-```
+{{< /codeblock >}}
 
 Commits that touched a specific file:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log --oneline -- playbooks/deploy_vlans.yml
-```
+{{< /codeblock >}}
 
 Commits in a date range:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log --oneline --after="2024-01-01" --before="2024-12-31"
-```
+{{< /codeblock >}}
 
 Search commit messages for a keyword:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git log --grep="bgp" --oneline
-```
+{{< /codeblock >}}
 
 Sample `git log --oneline --graph --all` output:
-```
+
+{{< codeblock lang="Expected Output" copy="false" >}}
 * a3f2b1c (HEAD -> main, origin/main) fix(bgp): add missing neighbor activate for R3
 * 9d4e5f2 feat(vlans): add IOS VLAN deployment playbook
 * 7c8b3a1 chore: update ansible from 9.7.0 to 9.8.0
 * 4f1d9e8 feat(ospf): add multi-area OSPF role for IOS
 * 2a3c7b0 Initial commit: add .gitignore for Ansible project
-```
+{{< /codeblock >}}
 
 ---
 
@@ -1145,21 +1146,21 @@ Sample `git log --oneline --graph --all` output:
 
 Show the full diff of a specific commit:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git show a3f2b1c
-```
+{{< /codeblock >}}
 
 Show just the files that changed in a commit:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git show a3f2b1c --stat
-```
+{{< /codeblock >}}
 
 Show what changed in a specific file in a specific commit:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git show a3f2b1c -- playbooks/bgp.yml
-```
+{{< /codeblock >}}
 
 ---
 
@@ -1167,39 +1168,38 @@ git show a3f2b1c -- playbooks/bgp.yml
 
 What changed between two commits:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git diff 4f1d9e8 a3f2b1c
-```
+{{< /codeblock >}}
 
 What changed between a commit and the current working state:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git diff a3f2b1c
-```
+{{< /codeblock >}}
 
 What changed between two branches:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git diff main feature/add-ios-vlan-playbook
-```
+{{< /codeblock >}}
 
 What changed in a specific file between two branches:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git diff main feature/add-ios-vlan-playbook -- playbooks/deploy_vlans.yml
-```
+{{< /codeblock >}}
 
 {{< subtle-label >}}Reverting a Bad Commit{{< /subtle-label >}}
 
 If a commit that was already pushed to `main` turns out to be wrong:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git revert a3f2b1c
 git push
-```
+{{< /codeblock >}}
 
->[!Caution]
-> Never use `git reset --hard` or `git push --force` on the `main` branch on a shared repository. These commands rewrite history, which invalidates every team member's local copy of the repository and can cause data loss. `git revert` is always the safe way to undo a change that's already been pushed. Reserve `git reset` for cleaning up commits that have NOT yet been pushed.
+Never use `git reset --hard` or `git push --force` on the `main` branch on a shared repository. These commands rewrite history, which invalidates every team member's local copy of the repository and can cause data loss. `git revert` is always the safe way to undo a change that's already been pushed. Reserve `git reset` for cleaning up commits that have NOT yet been pushed.
 
 ---
 
@@ -1207,7 +1207,6 @@ git push
 
 {{< subtle-label >}}What Never Goes Into Git{{< /subtle-label >}}
 
-```
 - Passwords (device passwords, API tokens, RADIUS secrets)
 - SSH private keys
 - Ansible Vault passwords (.vault_pass)
@@ -1215,7 +1214,6 @@ git push
 - AWS/cloud credentials
 - Private IP addressing schemes of production networks (debatable, but cautious teams exclude this)
 - Anything that would give an attacker a foothold if the repo were made public
-```
 
 ---
 
@@ -1225,15 +1223,15 @@ Before pushing, I can scan for secrets using `git-secrets` or `trufflehog`:
 
 Install trufflehog (a secrets scanner)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install trufflehog
-```
+{{< /codeblock >}}
 
 Scan the entire repository history for secrets
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 trufflehog git file://. --only-verified
-```
+{{< /codeblock >}}
 
 {{< subtle-label >}}Setting Up a Pre-commit Hook to Block Secret Commits{{< /subtle-label >}}
 
@@ -1241,13 +1239,13 @@ A pre-commit hook runs automatically before every `git commit` and can block the
 
 Install pre-commit framework
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install pre-commit
-```
+{{< /codeblock >}}
 
 Create .pre-commit-config.yaml in the project root
 
-```bash {linenos=table,hl_lines=[6,7,8,9,14,20]}
+{{< codeblock lang="Bash" syntax="bash" lines="true" >}}
 cat > ~/projects/ansible-network/.pre-commit-config.yaml << 'EOF'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -1269,32 +1267,42 @@ repos:
     hooks:
       - id: ansible-lint
 EOF
-```
+{{< /codeblock >}}
 
-- `id: check-yaml` - Validates YAML syntax
-- `id:end-of-file-fixer` - Ensures files end with newline
-- `id:trailing-whitespace` - Removes trailing whitespace
-- `id: check-merge-conflict` - Blocks commits with merge conflic markers
-- `id: detect-secrets` - Scans for hardcoded secrets
-- `id: ansible-link` - Runs ansible-lint before every commit
+{{< line-explain >}}
+id: check-yaml:
+: Validates YAML syntax
+
+id:end-of-file-fixer:
+: Ensures files end with newline
+
+id:trailing-whitespace:
+: Removes trailing whitespace
+
+id: check-merge-conflict:
+: Blocks commits with merge conflic markers
+
+id: detect-secrets:
+: Scans for hardcoded secrets
+
+id: ansible-link:
+: Runs ansible-lint before every commit
+{{< /line-explain >}}
 
 Install the hooks (runs once — creates hooks in .git/hooks/)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pre-commit install
-```
+{{< /codeblock >}}
 
 - `pre-commit install` - installs the hooks into `.git/hooks/pre-commit`. Now every `git commit` automatically runs these checks first.
 - If any check fails, the commit is blocked until I fix the issue.
 
 Test it manually
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pre-commit run --all-files
-```
-
->[!Tip]
-> The `.pre-commit-config.yaml` file should be committed to the repository. This means every engineer who clones the repo and runs `pre-commit install` gets the same hooks. Combined with branch protection rules on GitHub, this creates two layers of defense: hooks block bad commits locally, and GitHub blocks merges that haven't passed review. Neither layer alone is sufficient.
+{{< /codeblock >}}
 
 ---
 
@@ -1304,11 +1312,13 @@ This is the procedure if I accidentally committed a credential:
 
 1. **Rotate the credential immediately** - assume it's compromised. Change the password, revoke the API token, generate a new SSH key. Do this first, before anything else.
 2. **Remove it from history** using `git filter-repo` (not `git filter-branch` which is deprecated):
-   ```bash
-   pip install git-filter-repo
-   git filter-repo --path secrets.yml --invert-paths
-   git push --force-with-lease origin main
-   ```
+
+{{< codeblock lang="Bash" syntax="bash" >}}
+pip install git-filter-repo
+git filter-repo --path secrets.yml --invert-paths
+git push --force-with-lease origin main
+{{< /codeblock >}}
+
 3. **Notify the team** - everyone must re-clone the repository because the history has changed.
 4. **Add the file to `.gitignore`** immediately.
 5. **Conduct a post-incident review** - how did this happen and what process change prevents it next time?
@@ -1316,5 +1326,3 @@ This is the procedure if I accidentally committed a credential:
 ---
 
 Every change I make from this point forward goes through Git. Playbooks, inventory files, variable files, roles, templates. All of it is version-controlled, reviewed, and traceable.
-
-

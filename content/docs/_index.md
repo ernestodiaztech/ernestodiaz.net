@@ -18,7 +18,7 @@ breadcrumbs: false
         desc="Designing, deploying, and managing enterprise routing, switching, and wireless with Ansible."
         status="progress"
         featured="false"
-        image=""
+        image="ansible-logo.png"
         view_href="/docs/2nd-ansible-network-engineering/"
         github_href="https://github.com/ernestodiaztech"
     >}}
@@ -36,7 +36,7 @@ breadcrumbs: false
           title="Learning Network Automation with Ansible Project"
           desc="Learning how to design, deploy, and manage enterprise routing, switching, and wireless with Ansible."
           status="completed"
-          image=""
+          image="ansible-logo.png"
           view_href="/docs/infra_mgmt/project-one/"
           github_href="https://github.com/ernestodiaztech/ansible-network"
       >}}

@@ -1,0 +1,8 @@
+{{ $title := .Get "title" | default "" }}
+
+<div class="about-exp-item">
+  {{ with $title }}
+    <span class="about-exp-item-title">{{ . }}</span>
+  {{ end }}
+  <span class="about-exp-item-text">{{ .Inner }}</span>
+</div>

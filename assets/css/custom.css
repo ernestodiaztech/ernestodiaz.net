@@ -3190,3 +3190,214 @@ html.dark .lab-about-skill {
     width: 100%;
   }
 }
+
+
+/* ─────────────────────────────────────────────
+   About Experience – Apple / Premium Style
+───────────────────────────────────────────── */
+
+.about-exp-card {
+  background: rgba(15, 23, 42, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 20px;
+  padding: 24px 26px;
+  margin: 24px 0;
+  backdrop-filter: blur(10px);
+}
+
+.dark .about-exp-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Header */
+.about-exp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.about-exp-head-left {
+  min-width: 0;
+}
+
+.about-exp-role {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+}
+
+.dark .about-exp-role {
+  color: #ffffff;
+}
+
+.about-exp-company {
+  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.dark .about-exp-company {
+  color: #60a5fa;
+}
+
+.about-exp-dates {
+  white-space: nowrap;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.dark .about-exp-dates {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Badge */
+.about-exp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.dark .about-exp-badge {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+/* Sections */
+.about-exp-section {
+  margin-top: 20px;
+}
+
+.about-exp-section-title {
+  margin-bottom: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.45);
+}
+
+.dark .about-exp-section-title {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Items */
+.about-exp-item {
+  position: relative;
+  padding-left: 18px;
+  margin: 14px 0;
+  line-height: 1.7;
+}
+
+/* Bullet */
+.about-exp-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #2563eb;
+  font-size: 0.9rem;
+}
+
+.dark .about-exp-item::before {
+  color: #3b82f6;
+}
+
+/* Title inside bullet */
+.about-exp-item-title {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dark .about-exp-item-title {
+  color: #ffffff;
+}
+
+/* Description */
+.about-exp-item-text {
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.dark .about-exp-item-text {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.about-exp-item-text p {
+  display: inline;
+  margin: 0;
+}
+
+/* Sub-roles inside same company */
+.about-exp-subrole {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.dark .about-exp-subrole {
+  border-top-color: rgba(255, 255, 255, 0.06);
+}
+
+.about-exp-subrole-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.about-exp-subrole-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dark .about-exp-subrole-title {
+  color: #ffffff;
+}
+
+.about-exp-subrole-dates {
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.45);
+}
+
+.dark .about-exp-subrole-dates {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .about-exp-head,
+  .about-exp-subrole-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .about-exp-dates,
+  .about-exp-subrole-dates {
+    white-space: normal;
+  }
+
+  .about-exp-role {
+    font-size: 1.25rem;
+  }
+}

@@ -1,0 +1,29 @@
+{{ $role := .Get "role" | default "" }}
+{{ $company := .Get "company" | default "" }}
+{{ $dates := .Get "dates" | default "" }}
+{{ $current := .Get "current" | default "false" }}
+
+<div class="about-exp-card">
+  <div class="about-exp-head">
+    <div class="about-exp-head-left">
+      <h3 class="about-exp-role">
+        {{ $role }}
+        {{ if eq $current "true" }}
+          <span class="about-exp-badge">Current</span>
+        {{ end }}
+      </h3>
+
+      {{ with $company }}
+        <div class="about-exp-company">{{ . }}</div>
+      {{ end }}
+    </div>
+
+    {{ with $dates }}
+      <div class="about-exp-dates">{{ . }}</div>
+    {{ end }}
+  </div>
+
+  <div class="about-exp-body">
+    {{ .Inner }}
+  </div>
+</div>

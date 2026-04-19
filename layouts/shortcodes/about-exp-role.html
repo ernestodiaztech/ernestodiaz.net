@@ -1,0 +1,19 @@
+{{ $title := .Get "title" | default "" }}
+{{ $dates := .Get "dates" | default "" }}
+{{ $current := .Get "current" | default "false" }}
+
+<div class="about-exp-subrole">
+  <div class="about-exp-subrole-head">
+    <div class="about-exp-subrole-title">
+      {{ $title }}
+      {{ if eq $current "true" }}
+        <span class="about-exp-badge">Current</span>
+      {{ end }}
+    </div>
+    <div class="about-exp-subrole-dates">{{ $dates }}</div>
+  </div>
+
+  <div class="about-exp-subrole-body">
+    {{ .Inner }}
+  </div>
+</div>

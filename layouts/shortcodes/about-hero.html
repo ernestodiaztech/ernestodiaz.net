@@ -1,48 +1,28 @@
-{{ $label := .Get "label" | default "About" }}
-{{ $name := .Get "name" | default "" }}
-{{ $title := .Get "title" | default "" }}
-{{ $location := .Get "location" | default "" }}
-{{ $photo := .Get "photo" | default "" }}
-{{ $resume := .Get "resume_href" | default "" }}
-{{ $projects := .Get "projects_href" | default "" }}
-{{ $github := .Get "github_href" | default "" }}
-{{ $linkedin := .Get "linkedin_href" | default "" }}
-{{ $email := .Get "email_href" | default "" }}
-
-<section class="lab-about-hero">
-  <div class="lab-about-photo-col">
-    <div class="lab-about-photo">
-      {{ if $photo }}
-        <img src="{{ $photo }}" alt="{{ $name }}">
-      {{ else }}
-        <div class="lab-about-placeholder">○</div>
-      {{ end }}
-    </div>
-
-    <div class="lab-about-social">
-      {{ with $github }}<a href="{{ . }}" aria-label="GitHub">GH</a>{{ end }}
-      {{ with $linkedin }}<a href="{{ . }}" aria-label="LinkedIn">in</a>{{ end }}
-      {{ with $email }}<a href="{{ . }}" aria-label="Email">@</a>{{ end }}
-    </div>
+<div class="about-hero">
+  <div class="about-hero-left">
+    <img class="about-avatar" src="{{ .Get "image" | relURL }}" alt="profile">
   </div>
 
-  <div class="lab-about-info">
-    <div class="lab-about-pill">{{ $label }}</div>
-    <h1 class="lab-about-name">{{ $name }}</h1>
+  <div class="about-hero-right">
+    <h1 class="about-name">{{ .Get "name" }}</h1>
+    <div class="about-role">{{ .Get "role" }}</div>
+    <div class="about-location">{{ .Get "location" }}</div>
 
-    <div class="lab-about-title-row">
-      <span>{{ $title }}</span>
-      <span class="lab-about-title-dot"></span>
-      <span>{{ $location }}</span>
-    </div>
-
-    <div class="lab-about-bio">
-      {{ .Inner }}
-    </div>
-
-    <div class="lab-about-actions">
-      {{ with $resume }}<a class="lab-about-btn primary" href="{{ . }}">Download Resume</a>{{ end }}
-      {{ with $projects }}<a class="lab-about-btn" href="{{ . }}">View Projects →</a>{{ end }}
+    <div class="about-social">
+      {{ with .Get "github" }}<a href="{{ . }}">GH</a>{{ end }}
+      {{ with .Get "linkedin" }}<a href="{{ . }}">in</a>{{ end }}
+      {{ with .Get "email" }}<a href="mailto:{{ . }}">@</a>{{ end }}
     </div>
   </div>
-</section>
+</div>
+
+<div class="about-bio">
+  {{ .Inner }}
+</div>
+
+<div class="about-actions">
+  {{ with .Get "resume" }}
+    <a class="btn-primary" href="{{ . | relURL }}">Download resume</a>
+  {{ end }}
+  <a class="btn-secondary" href="/docs/">View projects</a>
+</div>

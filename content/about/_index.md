@@ -1,57 +1,39 @@
 ---
-title: About
+title: 
 toc: false
-role: Assistant IT Manager
-location: Grand Prairie, TX
-github: https://github.com/ernestodiaztech
-linkedin: https://linkedin.com/in/ernestodiaztx
-email: ernesto@ernestodiaz.net
-resume: /about/resume.pdf
-
-bio: |
-  Network engineer specializing in multi-site infrastructure and network automation, with hands-on ownership of SD-WAN, security, and monitoring across 80+ locations. Proven ability to design resilient network architectures, standardize deployments, and automate configuration management using Ansible and Git. Strong focus on scalability, uptime, and reducing operational overhead through automation and centralized control.
-
-skills:
-  - { name: "Routing & Switching", category: "networking" }
-  - { name: "SD-WAN", category: "networking" }
-  - { name: "Cisco Meraki", category: "networking" }
-  - { name: "Ruckus", category: "networking" }
-  - { name: "Cradlepoint", category: "networking" }
-  - { name: "Ansible", category: "automation" }
-  - { name: "PowerShell", category: "automation" }
-  - { name: "Bash", category: "automation" }
-  - { name: "Git / GitHub", category: "automation" }
-  - { name: "Intune", category: "management" }
-  - { name: "Jamf", category: "management" }
-  - { name: "NinjaOne", category: "management" }
-  - { name: "Action1", category: "management" }
-
-experience:
-  - title: Assistant IT Manager
-    company: Pollo Regio
-    dates: "Aug 2022 – Present"
-    highlights:
-      - "Designed and standardized network architecture across 50+ retail locations"
-      - "Architected and deployed SD-WAN with centralized policy management"
-      - "Automated network config workflows using Ansible"
-      - "Led multi-site infrastructure modernization for 44 locations"
-      - "Designed network infra for two 55,000 sq ft warehouses"
-
-  - title: Technical Support Specialist
-    company: Cyberlink ASP
-    dates: "Jan 2022 – Aug 2022"
-    highlights:
-      - "Administered Citrix XenApp and XenDesktop environments"
-      - "Provided tier 1/2 support for hosted applications"
-      - "Assisted in administering Fortinet firewalls and VPNs"
-
-  - title: Customer Service Supervisor
-    company: Walmart
-    dates: "Jan 2005 – Dec 2021"
-    highlights:
-      - "Managed daily operations including scheduling and performance"
-      - "Primary point of contact for escalated customer issues"
 ---
+
+{{< about-hero
+  name="Ernesto Diaz"
+  role="Assistant IT Manager"
+  location="Grand Prairie, TX"
+  image="/images/pfp.jpg"
+  github="https://github.com/ernestodiaztech"
+  linkedin="https://linkedin.com/in/ernestodiaztx"
+  email="ernesto@ernestodiaz.net"
+  resume="/resume.pdf" >}}
+
+Network engineer specializing in multi-site infrastructure and network automation, with hands-on ownership of SD-WAN, security, and monitoring across 80+ locations. Proven ability to design resilient network architectures, standardize deployments, and automate configuration management using Ansible and Git. Strong focus on scalability, uptime, and reducing operational overhead through automation and centralized control.
+
+{{< /about-hero >}}
+
+---
+
+{{< about-skills >}}
+{{< skill-pill name="Routing & Switching" category="networking" >}}
+{{< skill-pill name="SD-WAN" category="networking" >}}
+{{< skill-pill name="Cisco Meraki" category="networking" >}}
+{{< skill-pill name="Ruckus" category="networking" >}}
+{{< skill-pill name="Cradlepoint" category="networking" >}}
+{{< skill-pill name="Ansible" category="automation" >}}
+{{< skill-pill name="PowerShell" category="automation" >}}
+{{< skill-pill name="Bash" category="automation" >}}
+{{< skill-pill name="Git / GitHub" category="automation" >}}
+{{< skill-pill name="Intune" category="management" >}}
+{{< skill-pill name="Jamf" category="management" >}}
+{{< skill-pill name="NinjaOne" category="management" >}}
+{{< skill-pill name="Action1" category="management" >}}
+{{< /about-skills >}}
 
 ## Experience
 

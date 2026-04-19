@@ -1,0 +1,4 @@
+{{ $name := .Get "name" | default "" }}
+{{ $category := .Get "category" | default "default" }}
+
+<span class="skill-pill" data-cat="{{ $category }}">{{ $name }}</span>

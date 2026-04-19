@@ -11,7 +11,7 @@ toc: false
   github="https://github.com/ernestodiaztech"
   linkedin="https://linkedin.com/in/ernestodiaztx"
   email="ernesto@ernestodiaz.net"
-  resume="/resume.pdf" >}}
+  resume="/about/resume.pdf" >}}
 
 Network engineer specializing in multi-site infrastructure and network automation, with hands-on ownership of SD-WAN, security, and monitoring across 80+ locations. Proven ability to design resilient network architectures, standardize deployments, and automate configuration management using Ansible and Git. Strong focus on scalability, uptime, and reducing operational overhead through automation and centralized control.
 

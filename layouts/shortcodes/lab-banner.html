@@ -1,0 +1,23 @@
+{{ $icon := .Get "icon" | default "" }}
+{{ $title := .Get "title" | default "" }}
+{{ $device := .Get "device" | default "" }}
+{{ $badge_class := .Get "badge" | default "default" }}
+
+<div class="lab-step-card">
+  <div class="lab-step-head">
+    <div class="lab-step-head-left">
+      {{ with $icon }}
+        <span class="lab-step-icon {{ $badge_class }}">{{ . }}</span>
+      {{ end }}
+      <span class="lab-step-title">{{ $title }}</span>
+    </div>
+
+    {{ with $device }}
+      <span class="lab-step-device {{ $badge_class }}">{{ . }}</span>
+    {{ end }}
+  </div>
+
+  <div class="lab-step-body">
+    {{ .Inner }}
+  </div>
+</div>

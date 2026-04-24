@@ -1,0 +1,12 @@
+{{ $label := .Get "label" | default "" }}
+
+<div class="lab-code-wrap">
+  {{ with $label }}
+    <div class="lab-code-top">
+      <span class="lab-code-label">{{ . }}</span>
+    </div>
+  {{ end }}
+  <div class="lab-code-inner">
+    {{ .Inner | markdownify }}
+  </div>
+</div>

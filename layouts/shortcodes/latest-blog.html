@@ -1,0 +1,48 @@
+{{ $posts := where site.RegularPages "Section" "blog" }}
+{{ $latest := first 2 ($posts.ByDate.Reverse) }}
+
+{{ if gt (len $latest) 0 }}
+<section class="latest-blog-section">
+  <div class="portfolio-section-heading">
+    <span>Latest Blog</span>
+  </div>
+
+  <div class="latest-blog-grid">
+    {{ range $latest }}
+    <article class="latest-blog-card">
+      <div class="latest-blog-content">
+        <div class="latest-blog-meta">
+          {{ with .Date }}
+            <span>{{ .Format "Jan 2, 2006" }}</span>
+          {{ end }}
+        </div>
+
+        <h2 class="latest-blog-title">{{ .Title }}</h2>
+
+        {{ with .Params.description }}
+          <p class="latest-blog-desc">{{ . }}</p>
+        {{ else }}
+          <p class="latest-blog-desc">{{ .Summary | plainify | truncate 140 }}</p>
+        {{ end }}
+
+        {{ with .Params.tags }}
+        <div class="latest-blog-tags">
+          {{ range first 3 . }}
+            <span>{{ . }}</span>
+          {{ end }}
+        </div>
+        {{ end }}
+
+        <div class="latest-blog-actions">
+          <a class="latest-blog-primary" href="{{ .RelPermalink }}">Read Post →</a>
+        </div>
+      </div>
+    </article>
+    {{ end }}
+  </div>
+
+  <div class="latest-blog-view-all">
+    <a class="latest-blog-secondary" href="{{ "blog/" | relURL }}">All Blogs</a>
+  </div>
+</section>
+{{ end }}

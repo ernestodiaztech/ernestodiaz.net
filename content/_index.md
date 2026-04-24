@@ -78,11 +78,4 @@ toc: false
 
 <div class="home-separator"></div>
 
-<div class="tech-strip">
-  <span class="tech-pill">Ansible</span>
-  <span class="tech-pill">Python</span>
-  <span class="tech-pill">Cisco</span>
-  <span class="tech-pill">Linux</span>
-  <span class="tech-pill">PowerShell</span>
-  <span class="tech-pill">Git</span>
-</div>
+{{< latest-blog >}}

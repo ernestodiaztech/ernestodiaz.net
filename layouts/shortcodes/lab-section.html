@@ -1,0 +1,20 @@
+{{ $num := .Get "num" | default "" }}
+{{ $title := .Get "title" | default "" }}
+{{ $desc := .Get "desc" | default "" }}
+
+<section class="lab-section-block">
+  <div class="lab-section-heading">
+    {{ with $num }}
+      <span class="lab-section-num">{{ . }}</span>
+    {{ end }}
+    <h2 class="lab-section-title">{{ $title }}</h2>
+  </div>
+
+  {{ with $desc }}
+    <p class="lab-section-desc">{{ . }}</p>
+  {{ end }}
+
+  <div class="lab-section-content">
+    {{ .Inner }}
+  </div>
+</section>

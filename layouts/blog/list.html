@@ -1,0 +1,63 @@
+{{ define "main" }}
+<div class="blog-landing">
+
+  <section class="blog-hero">
+    <div class="blog-hero-copy">
+      <div class="blog-eyebrow"></div>
+      <h1 class="blog-title">{{ .Title }}</h1>
+      {{ with .Content }}
+        <div class="blog-description">{{ . }}</div>
+      {{ else }}
+        <p class="blog-description">
+          Notes, walkthroughs, and lessons learned across networking, infrastructure, automation, and homelab projects.
+        </p>
+      {{ end }}
+    </div>
+  </section>
+
+  {{ $pages := .Pages.ByDate.Reverse }}
+  {{ if gt (len $pages) 0 }}
+    <section class="blog-grid">
+      {{ range $pages }}
+        <article class="blog-card">
+          <a class="blog-card-link" href="{{ .RelPermalink }}">
+            <div class="blog-card-inner">
+              <div class="blog-card-meta">
+                {{ with .Date }}
+                  <time datetime="{{ .Format "2006-01-02" }}">{{ .Format "Jan 2, 2006" }}</time>
+                {{ end }}
+                {{ with .Params.tags }}
+                  <span class="blog-card-tags">
+                    {{ range first 2 . }}
+                      <span class="blog-tag">{{ . }}</span>
+                    {{ end }}
+                  </span>
+                {{ end }}
+              </div>
+
+              <h2 class="blog-card-title">{{ .Title }}</h2>
+
+              {{ with .Params.description }}
+                <p class="blog-card-desc">{{ . }}</p>
+              {{ else }}
+                {{ with .Summary }}
+                  <p class="blog-card-desc">{{ . | plainify | truncate 160 }}</p>
+                {{ end }}
+              {{ end }}
+
+              <div class="blog-card-footer">
+                <span class="blog-readmore">Read article →</span>
+              </div>
+            </div>
+          </a>
+        </article>
+      {{ end }}
+    </section>
+  {{ else }}
+    <section class="blog-empty">
+      <p>No posts yet.</p>
+    </section>
+  {{ end }}
+
+</div>
+{{ end }}

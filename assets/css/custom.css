@@ -3947,10 +3947,16 @@ html.dark .lab-about-skill {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.025);
   overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.latest-blog-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .latest-blog-content {
-  padding: 2rem;
+  padding: 1.5rem 1.5rem 1.4rem;
 }
 
 .latest-blog-meta {
@@ -3961,24 +3967,27 @@ html.dark .lab-about-skill {
   color: #60a5fa;
   background: rgba(59, 130, 246, 0.12);
   border: 1px solid rgba(59, 130, 246, 0.22);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  opacity: 0.75;
+  transform: scale(0.95);
 }
 
 .latest-blog-title {
   margin: 0;
-  max-width: 640px;
-  font-size: clamp(1.2rem, 2vw, 1.55rem);
-  line-height: 1.3;
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  color: #fff;
+  max-width: 500px;
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .latest-blog-desc {
   margin: 1rem 0 0;
+  margin-top: 0.6rem;
   max-width: 760px;
-  line-height: 1.75;
+  line-height: 1.65;
   color: rgba(255, 255, 255, 0.68);
 }
 
@@ -3986,7 +3995,7 @@ html.dark .lab-about-skill {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 1.25rem;
+  margin-top: 0.9rem;
 }
 
 .latest-blog-tags span {
@@ -4004,7 +4013,7 @@ html.dark .lab-about-skill {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-  margin-top: 1.5rem;
+  margin-top: 1.1rem;
 }
 
 .latest-blog-primary,
@@ -4042,6 +4051,11 @@ html.dark .lab-about-skill {
 .light .latest-blog-card {
   background: rgba(15, 23, 42, 0.025);
   border-color: rgba(15, 23, 42, 0.1);
+}
+
+.light .latest-blog-card:hover {
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(15, 23, 42, 0.035);
 }
 
 .light .latest-blog-title {

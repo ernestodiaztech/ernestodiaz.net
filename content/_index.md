@@ -33,42 +33,82 @@ toc: false
   <div class="topics-grid">
     <div class="topic-card">
       <div class="topic-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2v12M4 4l8 8M12 4l-8 8" stroke="var(--lab-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+           <circle cx="4" cy="4" r="1.5" stroke="var(--lab-accent)" stroke-width="1.5"/>
+           <circle cx="12" cy="4" r="1.5" stroke="var(--lab-accent)" stroke-width="1.5"/>
+           <circle cx="8" cy="12" r="1.5" stroke="var(--lab-accent)" stroke-width="1.5"/>
+           <path d="M5.5 4h5M5 5.5l2.5 4M11 5.5l-2.5 4"
+          stroke="var(--lab-accent)" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
       <h3>Network engineering</h3>
       <p>Enterprise routing, switching, and wireless across distributed environments</p>
     </div>
     <div class="topic-card">
       <div class="topic-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="8" rx="1.5" stroke="var(--lab-accent)" stroke-width="1.5"/><path d="M5 8h2M9 8h2" stroke="var(--lab-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 5h7M10 3l2 2-2 2" 
+          stroke="var(--lab-accent)" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13 11H6M6 9l-2 2 2 2" 
+          stroke="var(--lab-accent)" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
       <h3>Ansible automation</h3>
       <p>Network configs, deployments, and troubleshooting at scale</p>
     </div>
     <div class="topic-card">
       <div class="topic-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="2" stroke="var(--lab-accent)" stroke-width="1.5"/><path d="M6 6h4M6 9h2" stroke="var(--lab-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="3" y="4" width="10" height="6" rx="1.5"
+          stroke="var(--lab-accent)" stroke-width="1.5"/>
+          <path d="M2.5 11h11"
+          stroke="var(--lab-accent)" stroke-width="1.5"
+          stroke-linecap="round"/>
+          <circle cx="11.5" cy="5.5" r="1"
+          fill="var(--lab-accent)"/>
+        </svg>
       </div>
       <h3>Endpoint management</h3>
       <p>Intune, Jamf, NinjaOne, and Action1 across sites</p>
     </div>
     <div class="topic-card">
       <div class="topic-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 12l3-6 4 4 3-7" stroke="var(--lab-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 14h12" stroke="var(--lab-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+  <path d="M3 5l3 3-3 3"
+        stroke="var(--lab-accent)" stroke-width="1.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M7.5 11H13"
+        stroke="var(--lab-accent)" stroke-width="1.5"
+        stroke-linecap="round"/>
+</svg>
       </div>
       <h3>PowerShell</h3>
       <p>Automation scripts and sysadmin tooling</p>
     </div>
     <div class="topic-card">
       <div class="topic-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="var(--lab-accent)" stroke-width="1.5"/><path d="M8 5v3l2 2" stroke="var(--lab-accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 9h3l2-4 2 6 2-4h3"
+          stroke="var(--lab-accent)" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
       <h3>High availability</h3>
       <p>Resilient self-hosted infra with failover and redundancy</p>
     </div>
     <div class="topic-card">
       <div class="topic-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 11l3-4 3 2.5 4-5" stroke="var(--lab-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="3" y="3" width="10" height="4" rx="1.5"
+             stroke="var(--lab-accent)" stroke-width="1.5"/>
+            <rect x="3" y="9" width="10" height="4" rx="1.5"
+            stroke="var(--lab-accent)" stroke-width="1.5"/>
+            <circle cx="5" cy="5" r="0.8" fill="var(--lab-accent)"/>
+            <circle cx="5" cy="11" r="0.8" fill="var(--lab-accent)"/>
+        </svg>
       </div>
       <h3>Networking news</h3>
       <p>Latest in networking, infrastructure, and enterprise IT</p>

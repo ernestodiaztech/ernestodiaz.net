@@ -37,7 +37,7 @@ breadcrumbs: false
           desc="Learning how to design, deploy, and manage enterprise routing, switching, and wireless with Ansible."
           status="completed"
           image="ansible-logo.png"
-          view_href="/docs/infra_mgmt/project-one/"
+          view_href="/docs/1st-ansible-network-engineering/"
           github_href="https://github.com/ernestodiaztech/ansible-network"
       >}}
         {{< project-tag >}}Ansible{{< /project-tag >}}

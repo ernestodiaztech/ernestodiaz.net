@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '4 - Virtualenv'
 toc: true
 description: "Part 4 of my Ansible learning geared towards Network Engineering."
@@ -32,62 +32,81 @@ In Part 2 I used `--break-system-packages` every time I installed something with
 
 ---
 
-{{% steps %}}
+{{< subtle-label >}}virtual Environment{{< /subtle-label >}}
 
-#### What a Virtual Environment Is
-
-When I install a Python package with `pip3 install ansible`, it goes into the system-wide Python installation at `/usr/lib/python3/`. Every Python script on the entire Ubuntu VM now shares that installation. This sounds convenient until it isn't.
+When I install a Python package with `pip3 install ansible`, it goes into the system-wide Python installation at `/usr/lib/python3/`. Every Python script on the entire Ubuntu VM now shares that installation.
 
 Here's the problem: different projects need different versions of the same package.
 
-```
+{{< codeblock lang="" copy="false" >}}
 Project A (ansible-network):   needs ansible==9.x, netmiko==4.x
 Project B (legacy-scripts):    needs ansible==2.9, netmiko==3.x
 System tools (apt, Ubuntu):    need specific Python packages to function
-```
+{{< /codeblock >}}
 
-If I install everything into the system Python, these projects will constantly conflict. Upgrading Ansible for Project A breaks Project B. Worse, a bad pip install can break Ubuntu's own system tools that depend on Python.
+If I install everything into the system Python, these projects will constantly conflict. Upgrading Ansible for Project A breaks Project B. A bad pip install can break Ubuntu's own system tools that depend on Python.
 
 A virtual environment solves this by creating a completely isolated Python installation for each project:
 
-```
+{{< codeblock lang="" syntax="ini" lines="true" copy="false" >}}
 /home/ansible/
 ├── venvs/
-│   ├── ansible-network/      # Isolated Python for this guide's project
-│   │   ├── bin/python3       # Its own Python interpreter
-│   │   ├── bin/pip           # Its own pip
-│   │   ├── bin/ansible       # Ansible installed HERE, not system-wide
-│   │   └── lib/              # All packages installed here
-│   └── legacy-scripts/       # Completely separate environment
+│   ├── ansible-network/ 
+│   │   ├── bin/python3  
+│   │   ├── bin/pip  
+│   │   ├── bin/ansible 
+│   │   └── lib/  
+│   └── legacy-scripts/  
 │       ├── bin/python3
 │       └── lib/
 └── projects/
-    └── ansible-network/      # My project code lives here (not inside venvs/)
-```
+    └── ansible-network/
+{{< /codeblock >}}
 
-When I activate a virtual environment, my shell uses that environment's Python and pip instead of the system ones. When I deactivate it, the system Python comes back. Nothing ever collides.
+{{< line-explain >}}
+Line 3:
+: Isolated Python for this guide's project
 
-{{< callout type="info" >}}
-The virtual environment directory (`venvs/ansible-network/`) and the project directory (`projects/ansible-network/`) are kept separate intentionally. The venv contains the Python runtime and installed packages. It's regeneratable from `requirements.txt` and should never go into Git. The project directory contains my playbooks, inventory, and roles (that's what goes into Git). Mixing them together is a common beginner mistake that creates messy repositories.
-{{< /callout >}}
+Line 4:
+: Its own Python interpreter
+
+Line 5:
+: Its own pip
+
+Line 6:
+: Ansible installed HERE, not system-wide
+
+Line 7:
+: All packages installed here
+
+Line 8:
+: Completely separate environment
+
+Line 12:
+: My project code lives here (not inside venvs/)
+{{< /line-explain >}}
+
+
+When I activate a virtual environment, my shell uses that environment's Python and pip instead of the system ones. When I deactivate it, the system Python comes back.
 
 ---
 
-#### venv vs virtualenv
+## venv vs virtualenv
 
 Both tools create virtual environments, but they come from different places and have slightly different capabilities.
 
 ---
 
-#### `venv` Python's Built-in Tool {class="no-step-marker"}
+{{< subtle-label >}}VENV - Python's Built-in Tool{{< /subtle-label >}}
 
 `venv` is included with Python 3.3+ and ships with Ubuntu 22.04. No installation required. It's the official, standard way to create virtual environments and covers everything I need.
 
 How to check if venv is available:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 python3 -m venv --help
-```
+{{< /codeblock >}}
+
 
 **Limitations of `venv`:**
 - Cannot create environments for Python versions other than the one it's called from
@@ -95,16 +114,16 @@ python3 -m venv --help
 
 ---
 
-#### `virtualenv` The Third-Party Tool {class="no-step-marker"}
+{{< subtle-label >}}virtualenv - The Third-Party Tool{{< /subtle-label >}}
 
 `virtualenv` is a more mature, feature-rich third-party package that predates Python's built-in `venv`. It's what most older documentation and enterprise tooling references when they say "virtual environment."
 
 How to install and check version:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip3 install virtualenv --break-system-packages
 virtualenv --version
-```
+{{< /codeblock >}}
 
 **Additional capabilities of `virtualenv`:**
 - Can create environments for different Python versions (e.g., `virtualenv -p python3.9 myenv`)
@@ -112,7 +131,7 @@ virtualenv --version
 - More configuration options
 - Required by some tools like `tox` (a testing framework)
 
-#### Comparison
+{{< subtle-label >}}Comparison{{< /subtle-label >}}
 
 | Situation | Use |
 |---|---|
@@ -122,8 +141,6 @@ virtualenv --version
 | CI/CD pipelines and testing with `tox` | `virtualenv` |
 | This guide's main project | `venv` - simple, built-in, sufficient |
 
-{{% /steps %}}
-
 ---
 
 ## Installing `pip` and `virtualenv`
@@ -132,63 +149,66 @@ Before creating any environments, I make sure the necessary tools are in place.
 
 ---
 
-{{% steps %}}
-
-#### Checking What's Already Installed
+{{< subtle-label >}}Pre-Check{{< /subtle-label >}}
 
 Check Python version:
-```bash
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 python3 --version
-```
+{{< /codeblock >}}
 
 Check Pip version:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip3 --version
-```
+{{< /codeblock >}}
+
 
 Check if venv module is available:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 python3 -m venv --help 2>&1 | head -5
-```
+{{< /codeblock >}}
 
 ---
 
-#### Installing pip and venv
+{{< subtle-label >}}Installing pip and venv{{< /subtle-label >}}
 
 On a fresh Ubuntu 22.04 install, I run:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo apt update
 sudo apt install -y python3-pip python3-venv
-```
+{{< /codeblock >}}
 
-- `python3-pip` — installs pip3, the package installer for Python 3
-- `python3-venv` — installs the venv module (sometimes missing on minimal Ubuntu installs)
+{{< line-explain >}}
+python3-pip:
+: installs pip3, the package installer for Python 3
+
+python3-venv:
+: installs the venv module (sometimes missing on minimal Ubuntu installs)
+{{< /line-explain >}}
 
 ---
 
-#### Upgrading pip Itself
+{{< subtle-label >}}Upgrading pip{{< /subtle-label >}}
 
 pip has its own updates. Before creating any environments, I upgrade pip:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip3 install --upgrade pip --break-system-packages
-```
+{{< /codeblock >}}
 
 ---
 
-#### Installing virtualenv
+{{< subtle-label >}}Installing virtualenv{{< /subtle-label >}}
 
 Even though I'll primarily use `venv` for this project, I install `virtualenv` to have both available:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip3 install virtualenv --break-system-packages
 virtualenv --version
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
@@ -198,84 +218,119 @@ Now I create the virtual environment that will house Ansible and all related too
 
 ---
 
-{{% steps %}}
-
-#### Creating the Environment with venv
+{{< subtle-label >}}Creating the Environment with venv{{< /subtle-label >}}
 
 First, I create the venvs directory:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p ~/venvs
-```
+{{< /codeblock >}}
+
 Then I create the virtual environment:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 python3 -m venv ~/venvs/ansible-network
-```
+{{< /codeblock >}}
 
-- `python3 -m venv` - runs the venv module using Python 3
-- `~/venvs/ansible-network` - the path where the environment will be created
+{{< line-explain >}}
+python3 -m venv:
+: runs the venv module using Python 3
+
+~/venvs/ansible-network:
+: the path where the environment will be created
+{{< /line-explain >}}
 
 ---
 
-#### What Gets Created
+{{< subtle-label >}}What Gets Created{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 tree ~/venvs/ansible-network/ -L 3
-```
+{{< /codeblock >}}
 
-```
+{{< codeblock lang="Expected Output" syntax="ini" copy="false" lines="true" >}}
 /home/ansible/venvs/ansible-network/
 ├── bin/
-│   ├── activate            # The activation script I'll source
-│   ├── activate.fish       # Activation script for Fish shell
-│   ├── pip                 # pip linked to this environment
-│   ├── pip3                # Same as pip
-│   ├── python              # Python interpreter for this environment
-│   └── python3             # Same as python
-├── include/                # C headers for compiling extensions
+│   ├── activate 
+│   ├── activate.fish
+│   ├── pip
+│   ├── pip3
+│   ├── python
+│   └── python3
+├── include/
 ├── lib/
 │   └── python3.10/
-│       └── site-packages/  # Installed packages go here
-└── pyvenv.cfg              # Environment configuration file
-```
+│       └── site-packages/
+└── pyvenv.cfg
+{{< /codeblock >}}
+
+{{< line-explain >}}
+Line 3:
+: The activation script I'll source
+
+Line 4:
+: Activation script for Fish shell
+
+Line 5:
+: pip linked to this environment
+
+Line 6:
+: Same as pip
+
+Line 7:
+: Python interpreter for this environment
+
+Line 8:
+: Same as python
+
+Line 9:
+: C headers for compiling extensions
+
+Line 12:
+: Installed packages go here
+
+Line 13:
+: Environment configuration file
+{{< /line-explain >}}
+
 
 **`pyvenv.cfg`** is worth looking at:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cat ~/venvs/ansible-network/pyvenv.cfg
-```
+{{< /codeblock >}}
 
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 home = /usr/bin
 include-system-site-packages = false
 version = 3.10.12
-```
+{{< /codeblock >}}
 
 The `include-system-site-packages = false` line means this environment is completely isolated from the system Python packages. Nothing installed system-wide bleeds in.
 
 ---
 
-#### Creating the Same Environment with virtualenv (Alternative)
+{{< subtle-label >}}Creating the Same Environment with virtualenv{{< /subtle-label >}}
 
 Use virtualenv instead of venv:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 virtualenv ~/venvs/ansible-network-v2
-```
+{{< /codeblock >}}
+
 
 Target a sepcific Python version with virtualenv:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 virtualenv -p python3.10 ~/venvs/ansible-network-v3
-```
+{{< /codeblock >}}
 
-- `-p python3.10` - tells virtualenv which Python binary to use. This is the main advantage over `venv` since I can target any installed Python version.
 
->[!Info]
-> Both `venv` and `virtualenv` produce environments that work identically once created. The activation scripts, pip behavior, and package isolation are the same. The difference is only in how the environment is created and what options are available at creation time.
+`-p python3.10` - tells virtualenv which Python binary to use. This is the main advantage over `venv` since I can target any installed Python version.
 
-{{% /steps %}}
+{{< lab-callout type="info" >}}
+Both `venv` and `virtualenv` produce environments that work identically once created. The activation scripts, pip behavior, and package isolation are the same. The difference is only in how the environment is created and what options are available at creation time.
+{{< /lab-callout >}}
 
 ---
 
@@ -285,15 +340,13 @@ Project-Specific vs Generic naming conventions.
 
 ---
 
-{{% steps %}}
+{{< subtle-label >}}Approach 1: Name After the Project{{< /subtle-label >}}
 
-#### Approach 1: Name After the Project
-
-```bash
+{{< codeblock lang="Expected Output" copy="false" >}}
 python3 -m venv ~/venvs/ansible-network
 python3 -m venv ~/venvs/netbox-scripts
 python3 -m venv ~/venvs/legacy-automation
-```
+{{< /codeblock >}}
 
 **When to use this:** When I have multiple projects with different dependency requirements. Each project gets its own environment. The name makes it immediately obvious which project the environment belongs to.
 
@@ -308,12 +361,12 @@ python3 -m venv ~/venvs/legacy-automation
 
 ---
 
-#### Approach 2: Generic Name
+{{< subtle-label >}}Approach 2: Generic Name{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Expected Output" copy="false" >}}
 python3 -m venv ~/venvs/ansible-env
 python3 -m venv ~/venvs/python-env
-```
+{{< /codeblock >}}
 
 **When to use this:** When I have one general-purpose environment for all Ansible work, or on a dedicated Ansible control node that only ever runs one type of workload.
 
@@ -328,204 +381,197 @@ python3 -m venv ~/venvs/python-env
 
 ---
 
-#### My Convention for This Lab
+{{< subtle-label >}}Convention for this Project{{< /subtle-label >}}
 
-For this lab I use the project-specific naming approach:
+For this project I use the project-specific naming approach:
 
-```bash
+{{< codeblock lang="Expected Output" copy="false" >}}
 python3 -m venv ~/venvs/ansible-network
-```
+{{< /codeblock >}}
 
 This environment is dedicated to this project. When I start a new, separate project later, it gets its own environment.
 
-{{% /steps %}}
-
 ---
 
-## Activating and Deactivating a Virtual Environment
+## Activating and Deactivating
 
 Creating the environment doesn't automatically use it. I need to activate it.
 
 ---
-{{% steps %}}
 
-#### Activating
+{{< subtle-label >}}Activating{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 source ~/venvs/ansible-network/bin/activate
-```
+{{< /codeblock >}}
 
 - `source` - runs the activation script in the current shell session (not a subprocess). The environment variables set by `activate` wouldn't affect my current shell.
 - After activation, my shell prompt changes to show the environment name:
 
-```bash
+{{< codeblock lang="Expected Output" copy="false" >}}
 # Before activation
 ansible@ubuntu:~$
 
 # After activation
 (ansible-network) ansible@ubuntu:~$
-```
+{{< /codeblock >}}
 
 That `(ansible-network)` prefix is my visual confirmation that I'm inside the right environment.
 
 ---
 
-#### Confirming the Activation Worked
+{{< subtle-label >}}Confirmation{{< /subtle-label >}}
 
 Check where Python is coming from:
-```bash
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 which python3
-```
+{{< /codeblock >}}
 
-Expected output:
-
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 # /home/ansible/venvs/ansible-network/bin/python3
-```
+{{< /codeblock >}}
 
 Check where pip coming from:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 which pip
-```
+{{< /codeblock >}}
 
-Expected output:
-
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 # /home/ansible/venvs/ansible-network/bin/pip
-```
+{{< /codeblock >}}
 
 Check whhat packages are currently installed:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip list
-```
+{{< /codeblock >}}
 
-Example output:
-
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 # Package    Version
 # ---------- -------
 # pip        24.x.x
 # setuptools 68.x.x
-```
+{{< /codeblock >}}
 
 ---
 
-#### Deactivating
+{{< subtle-label >}}Deactivating{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 deactivate
-```
+{{< /codeblock >}}
+
 
 My prompt returns to normal and Python/pip point back to the system installation.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 which python3
-```
+{{< /codeblock >}}
 
-Expected output:
+{{< codeblock lang="Expected Output" copy="false" >}}
+# /usr/bin/python3
+{{< /codeblock >}}
 
-```
-# /usr/bin/python3  ← back to system Python
-```
+---
 
-#### Automating Activation
+{{< subtle-label >}}Automating Activation{{< /subtle-label >}}
 
 I can add the activation command to my `~/.bashrc` so it activates automatically on every new shell:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 echo "source ~/venvs/ansible-network/bin/activate" >> ~/.bashrc
 source ~/.bashrc
-```
+{{< /codeblock >}}
 
->[!Note]
-> Auto-activating in `.bashrc` is convenient for a dedicated Ansible control node where I always want this environment active. But if I use the Ubuntu VM for multiple Python projects, auto-activating one environment means I always have to manually deactivate it before working on another project. For a single-purpose Ansible VM, auto-activation in `.bashrc` is fine. For a general-purpose dev machine, activate manually per session.
+{{< lab-callout type="info" >}}
+Auto-activating in `.bashrc` is convenient for a dedicated Ansible control node where I always want this environment active. But if I use the Ubuntu VM for multiple Python projects, auto-activating one environment means I always have to manually deactivate it before working on another project. For a single-purpose Ansible VM, auto-activation in `.bashrc` is fine. For a general-purpose dev machine, activate manually per session.
+{{< /lab-callout >}}
 
-{{% /steps %}}
 ---
 
 ## Installing the Full Ansible Networking Stack
 
-With the environment activated, I now install everything needed for this lab. I no longer need `--break-system-packages` since I'm inside the virtualenv and pip only touches this isolated environment.
+With the environment activated, I now install everything needed for this project. I no longer need `--break-system-packages` since I'm inside the virtualenv and pip only touches this isolated environment.
 
 ---
 
-{{% steps %}}
-
-#### Upgrading pip
+{{< subtle-label >}}Upgrading PIP{{< /subtle-label >}}
 
 I always upgrade pip inside a fresh virtualenv before installing anything.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install --upgrade pip
-```
+{{< /codeblock >}}
 
 ---
 
-#### Installing the Core Stack
+{{< subtle-label >}}Installing the Core Stack{{< /subtle-label >}}
 
 I'll install everything in a logical order, explaining what each package is and why I need it.
 
 Core Ansible:
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install ansible
-```
+{{< /codeblock >}}
+
 
 Ansible linting and validation tools.
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install ansible-lint
 pip install yamllint
-```
+{{< /codeblock >}}
+
 
 SSH connectivity libraries:
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install paramiko
 pip install netmiko
-```
+{{< /codeblock >}}
 
 Vendor-neutral network abstraction:
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install napalm
-```
+{{< /codeblock >}}
 
 HTTP library for REST APIs (Netbox, AWX, PAN-OS):
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install requests
-```
+{{< /codeblock >}}
 
 YAML parser (used in helper scripts):
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install pyyaml
-```
+{{< /codeblock >}}
 
 Netbox Python client (for Netbox integration):
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install pynetbox
-```
+{{< /codeblock >}}
 
 Ansible Navigator (modern way to run and inspect playbooks):
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install ansible-navigator
-```
+{{< /codeblock >}}
 
 Or I can install everything in one command:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install ansible ansible-lint yamllint paramiko netmiko napalm requests pyyaml pynetbox ansible-navigator
-```
+{{< /codeblock >}}
 
 ---
 
-#### What each package does: {class="no-step-marker"}
+{{< subtle-label >}}What each package does{{< /subtle-label >}}
 
 | Package | Purpose |
 |---|---|
@@ -542,16 +588,15 @@ pip install ansible ansible-lint yamllint paramiko netmiko napalm requests pyyam
 
 ---
 
-#### Verifying the Installation
+{{< subtle-label >}}Verifying the Installation{{< /subtle-label >}}
 
 I can verify Ansible is installed and check the version with:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible --version
-```
+{{< /codeblock >}}
 
-Expected output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 ansible [core 2.17.x]
   config file = None
   configured module search path = ['/home/ansible/.ansible/plugins/modules', ...]
@@ -561,55 +606,50 @@ ansible [core 2.17.x]
   python version = 3.10.12 (main, ...) [GCC 11.4.0]
   jinja version = 3.1.x
   libyaml = True
-```
+{{< /codeblock >}}
 
 The key line to confirm: `executable location` should point into my virtualenv (`/home/ansible/venvs/ansible-network/bin/ansible`), not `/usr/bin/ansible`.
 
 Verify the other tools:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-lint --version
 yamllint --version
 python3 -c "import netmiko; print(netmiko.__version__)"
 python3 -c "import napalm; print(napalm.__version__)"
 python3 -c "import paramiko; print(paramiko.__version__)"
-```
+{{< /codeblock >}}
 
 ---
 
-#### Installing Ansible Collections
+{{< subtle-label >}}Installing Ansible Collections{{< /subtle-label >}}
 
 Collections are Ansible's plugin/module packages. They're installed separately from pip packages using `ansible-galaxy`:
 
 
 Install network vendor collections:
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-galaxy collection install cisco.ios
 ansible-galaxy collection install cisco.nxos
 ansible-galaxy collection install junipernetworks.junos
 ansible-galaxy collection install paloaltonetworks.panos
-```
+{{< /codeblock >}}
+
 
 Install utility collections:
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-galaxy collection install ansible.netcommon
 ansible-galaxy collection install ansible.utils
 ansible-galaxy collection install netbox.netbox
-```
+{{< /codeblock >}}
 
-Verify installed collections"
+Verify installed collections
 
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-galaxy collection list
-```
-
->[!Info]
-> Collections installed with `ansible-galaxy` go to `~/.ansible/collections/` by default (outside the virtualenv). This is intentional since collections are Ansible-level packages, not Python-level packages. They stay in place even if I recreate the virtualenv. I can change the install path with `--collections-path` or by setting `collections_paths` in `ansible.cfg`.
-
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
@@ -619,25 +659,17 @@ Right now my virtual environment has a specific set of packages at specific vers
 
 ---
 
-{{% steps %}}
-
-#### Generating `requirements.txt`
+{{< subtle-label >}}Generating requirements.txt{{< /subtle-label >}}
 
 First, I make sure the virtualenv is activated, and then freeze all installed packages and their  versions.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip freeze > requirements.txt
-```
+{{< /codeblock >}}
 
-The view the results:
+View the results:
 
-``` bash
-cat requirements.txt
-```
-
-Example output:
-
-```
+{{< codeblock file="requirements.txt" syntax="ini" >}}
 ansible==9.8.0
 ansible-core==2.17.8
 ansible-lint==24.9.2
@@ -660,107 +692,112 @@ setuptools==68.2.0
 urllib3==2.2.3
 yamllint==1.35.1
 ...
-```
+{{< /codeblock >}}
 
 **`pip freeze`** captures every single installed package including dependencies of my dependencies. This guarantees a perfectly reproducible environment.
 
-{{< callout type="info" >}}
+{{< lab-callout type="info" >}}
 The output of `pip freeze` includes packages I didn't explicitly install like `cffi`, `cryptography`, `MarkupSafe`. These are **transitive dependencies** packages that `paramiko`, `ansible`, or `requests` depend on. Freezing them ensures that even sub-dependency versions are locked, preventing the scenario where a sub-dependency gets updated and silently breaks something.
-{{< /callout >}}
+{{< /lab-callout >}}
 
 ---
 
-#### Two Styles of requirements.txt
+{{< subtle-label >}}Two Styles of requirements.txt{{< /subtle-label >}}
 
 There are two common approaches, and both have their place:
 
 **Style 1: Pinned versions for Maximum reproducibility**
-```
+
+{{< codeblock lang="" copy="false" >}}
 ansible==9.8.0
 ansible-lint==24.9.2
 netmiko==4.4.0
 paramiko==3.5.0
-```
+{{< /codeblock >}}
+
 Use this for production environments where I need guaranteed stability. Every engineer gets the exact same versions.
 
 **Style 2: Minimum versions for Maximum flexibility**
-```
+
+{{< codeblock lang="" copy="false" >}}
 ansible>=9.0.0
 ansible-lint>=24.0.0
 netmiko>=4.0.0
 paramiko>=3.0.0
-```
+{{< /codeblock >}}
+
 Use this for open-source or shared projects where I want to allow newer compatible versions. Less strict, but more likely to get the latest bug fixes.
 
-For this lab I use pinned versions from `pip freeze` for the actual project environment, and keep a separate loose `requirements-dev.txt` for quick new environment setups where exact versions matter less.
+For this project I use pinned versions from `pip freeze` for the actual project environment, and keep a separate loose `requirements-dev.txt` for quick new environment setups where exact versions matter less.
 
->[!Tip]
-> I commit `requirements.txt` to Git every time I add or upgrade a package. The git history then shows exactly when each package was added or updated and by whom. This is helps for debugging: "Ansible started failing on Thursday let me check what changed in `requirements.txt` on Thursday."
+{{< lab-callout type="tip" >}}
+I commit `requirements.txt` to Git every time I add or upgrade a package. The git history then shows exactly when each package was added or updated and by whom. This is helps for debugging: "Ansible started failing on Thursday let me check what changed in `requirements.txt` on Thursday."
+{{< /lab-callout >}}
 
 ---
 
-#### Recreating an Environment
+{{< subtle-label >}}Recreating an Environment{{< /subtle-label >}}
 
 This is the payoff for maintaining `requirements.txt`. Whether I'm setting up a new VM, onboarding a colleague, or recovering from a broken environment, I can recreate everything in minutes.
 
 Step 1: Clone the project repository:
 
-```bash
-git clone git@github.com:myusername/ansible-network.git
+{{< codeblock lang="Bash" syntax="bash" >}}
+git clone git@github.com:ernestodiaztech/ansible-network.git
 cd ansible-network
-```
+{{< /codeblock >}}
 
 Step 2: Create a fresh virtual environment:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 python3 -m venv ~/venvs/ansible-network
-```
+{{< /codeblock >}}
 
 Step 3: Activate it:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 source ~/venvs/ansible-network/bin/activate
-```
+{{< /codeblock >}}
 
 Step 4: Upgrade pip:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install --upgrade pip
-```
+{{< /codeblock >}}
 
 Step 5: Install all packages from requirements.txt:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install -r requirements.txt
-```
+{{< /codeblock >}}
 
 Step 6: Reinstall Ansible collections:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-galaxy collection install -r collections/requirements.yml
-```
+{{< /codeblock >}}
 
 Step 7: Verify
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible --version
-```
+{{< /codeblock >}}
 
 The `-r requirements.txt` flag tells pip to read the file and install everything listed in it. The entire environment is rebuilt in one command.
 
 ---
 
-#### Managing Collections
+{{< subtle-label >}}Managing Collections{{< /subtle-label >}}
 
 Just as `requirements.txt` tracks Python packages, `collections/requirements.yml` tracks Ansible collections:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p ~/projects/ansible-network/collections
-```
+{{< /codeblock >}}
 
 Create `~/projects/ansible-network/collections/requirements.yml`:
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 ---
 collections:
   - name: cisco.ios
@@ -777,26 +814,23 @@ collections:
     version: ">=4.0.0"
   - name: netbox.netbox
     version: ">=3.0.0"
-```
+{{< /codeblock >}}
 
 Install from this file:
-```bash
-ansible-galaxy collection install -r collections/requirements.yml
-```
 
-{{% /steps %}}
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible-galaxy collection install -r collections/requirements.yml
+{{< /codeblock >}}
 
 ---
 
-## Setting Up VS Code to Use the Virtual Environment
+## Setting Up VS Code
 
 VS Code needs to know which Python interpreter to use, specifically the one inside my virtual environment. Without this, VS Code's IntelliSense, linting, and the Ansible extension won't see the packages I've installed.
 
 ---
 
-{{% steps %}}
-
-#### Selecting the Python Interpreter in VS Code
+{{< subtle-label >}}Selecting the Python Interpreter{{< /subtle-label >}}
 
 With VS Code connected to my Ubuntu VM via Remote-SSH:
 
@@ -804,27 +838,31 @@ With VS Code connected to my Ubuntu VM via Remote-SSH:
 2. Type `Python: Select Interpreter` and press Enter
 3. VS Code scans for available Python environments and shows a list
 4. I select the one pointing to my virtualenv:
-   ```
+
+{{< codeblock lang="" copy="false" >}}
    Python 3.10.12 ('ansible-network': venv)
    ~/venvs/ansible-network/bin/python3
-   ```
+{{< /codeblock >}}
 
 If VS Code doesn't detect it automatically, I click **Enter interpreter path...** and type the full path:
-```
-/home/ansible/venvs/ansible-network/bin/python3
-```
 
-#### Configuring VS Code Settings for the Project
+{{< codeblock lang="" copy="false" >}}
+/home/ansible/venvs/ansible-network/bin/python3
+{{< /codeblock >}}
+
+---
+
+{{< subtle-label >}}Configuring VS Code Settings{{< /subtle-label >}}
 
 I add a `.vscode/settings.json` file to my project directory so the interpreter setting is saved with the project and applies automatically when anyone opens it:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p ~/projects/ansible-network/.vscode
-```
+{{< /codeblock >}}
 
 Create `~/projects/ansible-network/.vscode/settings.json`:
 
-```json
+{{< codeblock file="settings.json" syntax="json" >}}
 {
     "python.defaultInterpreterPath": "/home/ansible/venvs/ansible-network/bin/python3",
     "ansible.python.interpreterPath": "/home/ansible/venvs/ansible-network/bin/python3",
@@ -842,100 +880,115 @@ Create `~/projects/ansible-network/.vscode/settings.json`:
         "editor.formatOnSave": true
     }
 }
-```
+{{< /codeblock >}}
 
-- `python.defaultInterpreterPath` - tells the Python extension which interpreter to use
-- `ansible.python.interpreterPath` - tells the Ansible extension which interpreter to use (must match)
-- `ansible.validation.enabled` - enables real-time playbook validation in the editor
-- `ansible.validation.lint.enabled` - enables ansible-lint integration in VS Code
-- `yaml.schemas` - maps my playbook and task files to the Ansible YAML schema for validation
-- `editor.tabSize: 2` - YAML best practice is 2-space indentation
-- `editor.insertSpaces: true` - uses spaces, not tabs (tabs in YAML are illegal)
-- `"[yaml]": { "editor.formatOnSave": true }` - auto-formats YAML files on save
+{{< line-explain >}}
+python.defaultInterpreterPath:
+: tells the Python extension which interpreter to use
 
->[!Caution]
-> YAML does **not** allow tab characters for indentation, only spaces. If VS Code is configured to insert tabs (`editor.insertSpaces: false`) in YAML files, every playbook I save will be silently broken. Always verify `editor.insertSpaces` is `true` and `editor.tabSize` is `2` for YAML files. The `indent-rainbow` extension (from Part 1) will highlight incorrect indentation visually.
+ansible.python.interpreterPath:
+: tells the Ansible extension which interpreter to use (must match)
+
+ansible.validation.enabled:
+: enables real-time playbook validation in the editor
+
+ansible.validation.lint.enabled:
+: enables ansible-lint integration in VS Code
+
+yaml.schemas:
+: maps my playbook and task files to the Ansible YAML schema for validation
+
+editor.tabSize: 2:
+: YAML best practice is 2-space indentation
+
+editor.insertSpaces: true:
+: uses spaces, not tabs (tabs in YAML are illegal)
+
+"[yaml]": { "editor.formatOnSave": true }:
+: auto-formats YAML files on save
+{{< /line-explain >}}
+
+{{< lab-callout type="warning" >}}
+YAML does **not** allow tab characters for indentation, only spaces. If VS Code is configured to insert tabs (`editor.insertSpaces: false`) in YAML files, every playbook I save will be silently broken. Always verify `editor.insertSpaces` is `true` and `editor.tabSize` is `2` for YAML files. The `indent-rainbow` extension (from Part 1) will highlight incorrect indentation visually.
+{{< /lab-callout >}}
 
 ---
 
-#### Verifying VS Code Sees the Right Environment
+{{< subtle-label >}}Verifying VS Code Sees the Right Environment{{< /subtle-label >}}
 
 After selecting the interpreter, I open a new VS Code terminal (`Ctrl+`` `). The virtual environment should activate automatically. I verify:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 which ansible
 which python3
-```
+{{< /codeblock >}}
 
-Expected output:
-
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 # /home/ansible/venvs/ansible-network/bin/ansible
 # /home/ansible/venvs/ansible-network/bin/python3
-```
+{{< /codeblock >}}
 
->[!Important]
-> The `.vscode/settings.json` file should be committed to Git so the entire team gets the same VS Code configuration automatically. However, if some team members have the virtualenv at a different path (e.g., on macOS it would be different), the hardcoded path becomes a problem. A cleaner approach for cross-platform teams is to use a relative path or the `${workspaceFolder}` VS Code variable and keep the virtualenv inside the project directory itself. For this guide's single-user setup, the absolute path is fine.
-
-{{% /steps %}}
+The `.vscode/settings.json` file should be committed to Git so the entire team gets the same VS Code configuration automatically. However, if some team members have the virtualenv at a different path (e.g., on macOS it would be different), the hardcoded path becomes a problem. A cleaner approach for cross-platform teams is to use a relative path or the `${workspaceFolder}` VS Code variable and keep the virtualenv inside the project directory itself. For this guide's single-user setup, the absolute path is fine.
 
 ---
 
 ## Best Practices
 
-#### One Virtual Environment Per Project
+{{< subtle-label >}}One Virtual Environment Per Project{{< /subtle-label >}}
 
 **Correct - separate environments for separate projects**
 
-```
+{{< codeblock lang="" copy="false" >}}
 ~/venvs/ansible-network/       ← This guide's project
 ~/venvs/legacy-nornir-scripts/ ← Older project using different library versions
 ~/venvs/netbox-api-tools/      ← Standalone Netbox scripts
-```
+{{< /codeblock >}}
 
 **Wrong - one environment for everything**
 
-```
-~/venvs/python-env/            ← All projects crammed in here, dependency chaos
-```
+{{< codeblock lang="" copy="false" >}}
+~/venvs/python-env/   ← All projects crammed in here, dependency chaos
+{{< /codeblock >}}
 
-#### Never Commit the venv Directory to Git
+---
+
+{{< subtle-label >}}Never Commit the venv Directory to Git{{< /subtle-label >}}
 
 The virtual environment directory is large (often 50–200MB), contains compiled binaries specific to my OS, and is completely regeneratable from `requirements.txt`. It must never go into Git.
 
 I add it to `.gitignore`:
 
-```
+{{< codeblock file=".gitignore" syntax="ini" >}}
 # .gitignore
 venv/
 venvs/
 .venv/
 env/
-```
+{{< /codeblock >}}
 
 ---
 
-#### Pin Versions
+{{< subtle-label >}}Pin Versions{{< /subtle-label >}}
 
 After setting up the environment and confirming everything works:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip freeze > requirements.txt
 git add requirements.txt
 git commit -m "Pin Python dependencies for ansible-network environment"
-```
+{{< /codeblock >}}
 
 ---
 
-#### Document the Setup Process in README.md
+{{< subtle-label >}}Document the Setup Process in README.md{{< /subtle-label >}}
 
 Every project should have a `README.md` that tells a new engineer exactly how to recreate the environment:
 
-```markdown
+{{< codeblock lang="markdown" syntax="markdown" >}}
 ## Setup
 
 1. Clone the repository:
-   git clone git@github.com:myusername/ansible-network.git
+   git clone git@github.com:ernestodiaztech/ansible-network.git
 
 2. Create and activate a virtual environment:
    python3 -m venv ~/venvs/ansible-network
@@ -950,126 +1003,125 @@ Every project should have a `README.md` that tells a new engineer exactly how to
 
 5. Verify:
    ansible --version
-```
+{{< /codeblock >}}
 
 ---
 
 ## Managing the Environment Over Time
 
-#### Adding a New Package
-
+{{< subtle-label >}}Adding a New Package{{< /subtle-label >}}
 
 Activate the environment:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 source ~/venvs/ansible-network/bin/activate
-```
+{{< /codeblock >}}
 
 Install the new package:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install some-new-library
-```
+{{< /codeblock >}}
 
 Update requirements.txt immediately:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip freeze > requirements.txt
-```
+{{< /codeblock >}}
 
 Commit the change
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add requirements.txt
 git commit -m "Add some-new-library for feature X"
-```
+{{< /codeblock >}}
 
 ---
 
-#### Upgrading Packages
+{{< subtle-label >}}Upgrading Packages{{< /subtle-label >}}
 
 Upgrade a specific package:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install --upgrade ansible
-```
+{{< /codeblock >}}
 
 Check what changed:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip freeze > requirements.txt
 git diff requirements.txt
-```
+{{< /codeblock >}}
 
 Commit if everything still works:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add requirements.txt
 git commit -m "Upgrade ansible from 9.7.0 to 9.8.0"
-```
+{{< /codeblock >}}
 
 ---
 
-#### Upgrading All Packages at Once
+{{< subtle-label >}}Upgrading All Packages at Once{{< /subtle-label >}}
 
 List outdated packages:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip list --outdated
-```
+{{< /codeblock >}}
 
 Upgrade all packages (use with caution):
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip install --upgrade $(pip freeze | cut -d= -f1)
-```
+{{< /codeblock >}}
 
 Test everything still works before freezing:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible --version
 ansible-lint --version
-```
+{{< /codeblock >}}
 
 Then freeze and commit:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 pip freeze > requirements.txt
-```
+{{< /codeblock >}}
 
 ---
 
-#### Deleting and Recreating a Broken Environment
+{{< subtle-label >}}Deleting and Recreating a Broken Environment{{< /subtle-label >}}
 
 If the virtualenv gets corrupted or I want a clean slate:
 
 Deactivate first if active:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 deactivate
-```
+{{< /codeblock >}}
 
 Delete the entire environment directory:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 rm -rf ~/venvs/ansible-network
-```
+{{< /codeblock >}}
 
 Recreate from scratch:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 python3 -m venv ~/venvs/ansible-network
 source ~/venvs/ansible-network/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ansible-galaxy collection install -r collections/requirements.yml
-```
+{{< /codeblock >}}
 
 Verify:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible --version
-```
+{{< /codeblock >}}
 
 This takes about 2-3 minutes and produces a perfectly clean environment. The virtualenv is truly disposable because everything needed to recreate it is in `requirements.txt`.
 

@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '6 - Containerlab'
 description: "Part 6 of my Ansible learning geared towards Network Engineering."
 tags:
@@ -15,7 +15,13 @@ weight: 6
 {{< badge "Ansible" >}}
 {{< badge content="Containerlab" color="yellow" >}}
 
+---
+
+{{< lab-callout type="info" >}}
 This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+{{< /lab-callout >}}
+
+---
 
 
 ## Containerlab
@@ -24,7 +30,7 @@ Containerlab spins up actual vendor network operating systems as containers on m
 
 ---
 
-#### What Containerlab Is
+{{< subtle-label >}}What Containerlab Is{{< /subtle-label >}}
 
 Traditional network labs had three options: physical hardware , GNS3/EVE-NG, or vendor-specific simulators. Containerlab is a different approach entirely.
 
@@ -45,111 +51,110 @@ Containerlab requires Docker. I install Docker Engine on my Ubuntu VM.
 
 ---
 
-{{% steps %}}
-
-#### Removing Old Docker Versions
+{{< subtle-label >}}Removing Old Docker Versions{{< /subtle-label >}}
 
 Remove any old Docker installations that might conflict
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo apt remove -y docker docker-engine docker.io containerd runc
-```
+{{< /codeblock >}}
 
 ---
 
-#### Installing Docker Engine
+{{< subtle-label >}}Installing Docker Engine{{< /subtle-label >}}
 
 Step 1: Install prerequisites
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo apt update
-sudo apt install -y \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
-```
+sudo apt install -y ca-certificates curl gnupg lsb-release
+{{< /codeblock >}}
+
 
 Step 2: Add Docker's official GPG key
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-    sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-```
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+{{< /codeblock >}}
 
 Step 3: Add the Docker repository
 
-```bash
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-  https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+{{< /codeblock >}}
 
 Step 4: Install Docker Engine
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-```
+{{< /codeblock >}}
 
-- `docker-ce` - the Docker Engine (the daemon that runs containers)
-- `docker-ce-cli` - the `docker` command line tool
-- `containerd.io` - the container runtime that Docker uses under the hood
-- `docker-compose-plugin` - adds `docker compose` support (useful but not required for Containerlab)
+{{< line-explain >}}
+docker-ce:
+: the Docker Engine (the daemon that runs containers)
+
+docker-ce-cli:
+: the `docker` command line tool
+
+containerd.io:
+: the container runtime that Docker uses under the hood
+
+docker-compose-plugin:
+: adds `docker compose` support (useful but not required for Containerlab)
+{{< /line-explain >}}
 
 ---
 
-#### Adding My User to the Docker Group
+{{< subtle-label >}}Adding My User to the Docker Group{{< /subtle-label >}}
 
 By default, only `root` can run Docker commands. I add my user to the `docker` group so I can run Docker (and Containerlab) without `sudo`:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo usermod -aG docker $USER
-```
+{{< /codeblock >}}
 
 This change takes effect on the next login. I either log out and back in, or use:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 newgrp docker
-```
+{{< /codeblock >}}
 
 ---
 
-#### Verifying Docker
+{{< subtle-label >}}Verifying Docker{{< /subtle-label >}}
 
 Check Docker is running
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo systemctl status docker
-```
+{{< /codeblock >}}
 
 Run the hello-world container to confirm everything works
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker run hello-world
-```
+{{< /codeblock >}}
 
 Check Docker version
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker --version
 # Docker version 26.x.x, build ...
-```
+{{< /codeblock >}}
 
 ---
 
-#### Configuring Docker for Large Network Images
+{{< subtle-label >}}Configuring Docker for Large Network Images{{< /subtle-label >}}
 
 Network OS containers are large and require more resources than typical application containers. I configure Docker to handle this:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo nano /etc/docker/daemon.json
-```
+{{< /codeblock >}}
 
-```json
+{{< codeblock file="daemon.json" syntax="json" >}}
 {
     "log-driver": "json-file",
     "log-opts": {
@@ -165,19 +170,25 @@ sudo nano /etc/docker/daemon.json
         }
     }
 }
-```
+{{< /codeblock >}}
 
-- `log-driver` and `log-opts` - limits log file sizes so network OS containers don't fill up disk with logs
-- `default-ulimits` - increases the open file descriptor limit, which some NOS containers require
-- `storage-driver: overlay2` - the recommended storage driver for Ubuntu 22.04
+{{< line-explain >}}
+log-driver and log-opts:
+: limits log file sizes so network OS containers don't fill up disk with logs
+
+default-ulimits:
+: increases the open file descriptor limit, which some NOS containers require
+
+storage-driver: overlay2:
+: the recommended storage driver for Ubuntu 22.04
+{{< /line-explain >}}
 
 Apply the changes:
-```bash
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo systemctl restart docker
 sudo systemctl enable docker
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
@@ -185,18 +196,17 @@ sudo systemctl enable docker
 
 With Docker running, Containerlab installs in one command:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 bash -c "$(curl -sL https://get.containerlab.dev)"
-```
+{{< /codeblock >}}
 
 This script detects my OS, downloads the correct package, and installs it. Verify:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 containerlab version
-```
+{{< /codeblock >}}
 
-Expected output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
                            _                   _       _
                  _        (_)                 | |     | |
  ____ ___  ____ | |_  ____ _ ____  ____  ____| | ____| | _
@@ -208,7 +218,7 @@ Expected output:
     commit: ...
     date: ...
     source: https://github.com/srl-labs/containerlab
-```
+{{< /codeblock >}}
 
 ---
 
@@ -218,9 +228,9 @@ Everything about my lab (which devices exist, what images they use, how they con
 
 ---
 
-#### Topology File Structure
+{{< subtle-label >}}Topology File Structure{{< /subtle-label >}}
 
-```yaml {linenos=table}
+{{< codeblock lang="YAML" syntax="yaml" lines="true" >}}
 name: <lab-name>
 
 topology:
@@ -238,18 +248,36 @@ topology:
     - endpoints:
         - "<node1>:<interface>"
         - "<node2>:<interface>"
-```
+{{< /codeblock >}}
 
-- **Line 1** - Name of the lab.
-- **Line 4** - Settings applied to all nodes unless overridden.
-- **Line 7** - Dictionary of all devices in the topology.
-- **Line 9** - Platform type.
-- **Line 10** - Docker image to use for this node.
-- **Line 11** - Optional: Push this config on first boot.
-- **Line 12** - Management IP address on the mgmt network.
-- **Line 14** - Lost of connections between nodes.
+{{< line-explain >}}
+Line 1:
+: Name of the lab.
 
-#### Node Kinds for My Platforms
+Line 4:
+: Settings applied to all nodes unless overridden.
+
+Line 7:
+: Dictionary of all devices in the topology.
+
+Line 9:
+: Platform type.
+
+Line 10:
+: Docker image to use for this node.
+
+Line 11:
+: Optional: Push this config on first boot.
+
+Line 12:
+: Management IP address on the mgmt network.
+
+Line 14:
+: Lost of connections between nodes.
+{{< /line-explain >}}
+
+
+{{< subtle-label >}}Node Kinds for My Platforms{{< /subtle-label >}}
 
 | Platform | Containerlab `kind` |
 |---|---|
@@ -307,7 +335,7 @@ Before writing the topology file, I draw out what I'm building.
 Management Network: 172.16.0.0/24 (out-of-band, all devices reachable from Ubuntu VM)
 ```
 
-#### Device Summary
+{{< subtle-label >}}Device Summary{{< /subtle-label >}}
 
 | Device | Role | Platform | Mgmt IP |
 |---|---|---|---|
@@ -329,12 +357,12 @@ Management Network: 172.16.0.0/24 (out-of-band, all devices reachable from Ubunt
 
 I create the topology file in the project directory:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p ~/projects/ansible-network/containerlab
 nano ~/projects/ansible-network/containerlab/enterprise-lab.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="enterprise-lab.yaml" syntax="yaml" >}}
 ---
 name: enterprise-lab
 
@@ -454,31 +482,33 @@ topology:
     # =========================================================
     - endpoints: ["leaf-01:eth3", "host-01:eth1"]    # LEAF-01 to HOST-01
     - endpoints: ["leaf-02:eth3", "host-02:eth1"]    # LEAF-02 to HOST-02
-```
+{{< /codeblock >}}
 
-#### Understanding the `links:` Section
+{{< subtle-label >}}Understanding the 'links:' Section{{< /subtle-label >}}
 
-```yaml
+{{< codeblock lang="" copy="false" >}}
 - endpoints: ["wan-r1:eth1", "fw-01:eth1"]
-```
+{{< /codeblock >}}
 
 This creates a virtual cable between `wan-r1`'s `eth1` interface and `fw-01`'s `eth1` interface. Containerlab creates a Linux veth (virtual ethernet) pair and attaches one end to each container.
 
 **Interface naming convention:**
 - `eth0` - always the management interface (handled automatically by Containerlab, never wired in `links:`)
-- `eth1`, `eth2`, etc. — data plane interfaces, wired in the `links:` section
+- `eth1`, `eth2`, etc. - data plane interfaces, wired in the `links:` section
 
-#### Creating Base Startup Configs Directory
+---
+
+{{< subtle-label >}}Creating Base Startup Configs Directory{{< /subtle-label >}}
 
 The `startup-config:` field in the topology file points to a config file that gets pushed to the device on first boot. I create the directory and minimal base configs to ensure SSH and an Ansible user are configured:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p ~/projects/ansible-network/containerlab/configs
-```
+{{< /codeblock >}}
 
 **`configs/wan-r1-base.cfg`** (and repeat for `wan-r2-base.cfg` with `wan-r2` as the hostname):
 
-```
+{{< codeblock lang="" copy="false" >}}
 hostname wan-r1
 !
 ip domain-name lab.local
@@ -496,13 +526,13 @@ ip ssh timeout 60
 ip ssh authentication-retries 3
 !
 end
-```
+{{< /codeblock >}}
 
 ---
 
-**`configs/leaf-01-base.cfg`** (repeat for `leaf-02-base.cfg` with `leaf-02` as the hostname).  
+**`configs/leaf-01-base.cfg`** (repeat for `leaf-02-base.cfg` with `leaf-02` as the hostname). 
 
-```
+{{< codeblock lang="" copy="false" >}}
 hostname leaf-01
 !
 ip domain-name lab.local
@@ -517,13 +547,13 @@ line vty 0 4
  transport input ssh
 !
 end
-```
+{{< /codeblock >}}
 
 ---
 
-**`configs/spine-01-base.cfg`** (repeat for `spine-02-base.cfg`).  
+**`configs/spine-01-base.cfg`** (repeat for `spine-02-base.cfg`).
 
-```
+{{< codeblock lang="" copy="false" >}}
 hostname spine-01
 !
 feature ssh
@@ -533,7 +563,7 @@ username ansible password ansible123 role network-admin
 !
 ssh key rsa 2048
 !
-```
+{{< /codeblock >}}
 
 ---
 
@@ -543,26 +573,25 @@ All Containerlab commands are run from the directory containing the topology fil
 
 ---
 
-{{% steps %}}
-
-#### Deploying the Lab
+{{< subtle-label >}}Deploying the Lab{{< /subtle-label >}}
 
 First, move to the directory where the Containerlab YAML file is:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network/containerlab
-```
+{{< /codeblock >}}
 
 Deploy the lab
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo containerlab deploy -t enterprise-lab.yml
-```
+{{< /codeblock >}}
 
 The first deploy takes longer because Docker pulls images that aren't cached yet. Subsequent deploys of the same topology are much faster.
 
 Containerlab output during deploy:
-```
+
+{{< codeblock lang="Expected Output" copy="false" >}}
 INFO[0000] Containerlab v0.56.x started
 INFO[0000] Parsing & checking topology file: enterprise-lab.yml
 INFO[0000] Creating lab directory: /home/ansible/projects/ansible-network/containerlab/clab-enterprise-lab
@@ -580,90 +609,87 @@ INFO[0120] Adding containerlab host entries to /etc/hosts
 |  2 | clab-enterprise-lab-wan-r1   | b2c3d4e5 | vrnetlab/cisco_csr1000v:17.03.08  | cisco_csr1000v   | running |
 ...
 +----+------------------+--------------+---------------------+------+---------+
-```
+{{< /codeblock >}}
 
->[!Info]
-> Containerlab automatically adds entries to `/etc/hosts` for every node in the topology. After deploying, I can SSH to `clab-enterprise-lab-wan-r1` or `wan-r1` by hostname instead of IP. The hostname format is always `clab-<lab-name>-<node-name>`. This is useful but the management IPs I defined in the topology file are what I'll use in the Ansible inventory.
+Containerlab automatically adds entries to `/etc/hosts` for every node in the topology. After deploying, I can SSH to `clab-enterprise-lab-wan-r1` or `wan-r1` by hostname instead of IP. The hostname format is always `clab-<lab-name>-<node-name>`. This is useful but the management IPs I defined in the topology file are what I'll use in the Ansible inventory.
 
 ---
 
-#### Checking Lab Status
+{{< subtle-label >}}Checking Lab Status{{< /subtle-label >}}
 
 Check the status of all running labs
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo containerlab inspect --all
-```
+{{< /codeblock >}}
 
 Check status of a specific lab
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo containerlab inspect -t enterprise-lab.yml
-```
+{{< /codeblock >}}
 
 ---
 
-#### Stopping the Lab (Preserves State)
+{{< subtle-label >}}Stopping the Lab (Preserves State){{< /subtle-label >}}
 
 Stop all containers without destroying them (Configurations and state are preserved)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo containerlab deploy -t enterprise-lab.yml --reconfigure
-```
+{{< /codeblock >}}
 
 **A cleaner approach to stop and start individual containers:**
 
 Stop a specific container
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker stop clab-enterprise-lab-wan-r1
-```
+{{< /codeblock >}}
+
 
 Start it again (preserves config)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker start clab-enterprise-lab-wan-r1
-```
+{{< /codeblock >}}
 
 Stop all lab containers at once
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker ps --filter "label=containerlab=enterprise-lab" -q | xargs docker stop
-```
+{{< /codeblock >}}
 
 ---
 
-#### Destroying the Lab
+{{< subtle-label >}}Destroying the Lab{{< /subtle-label >}}
 
 Completely destroy the lab, this removes all containers and the management network
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo containerlab destroy -t enterprise-lab.yml
-```
+{{< /codeblock >}}
 
 Destroy and remove all lab files (including the clab-enterprise-lab/ directory)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo containerlab destroy -t enterprise-lab.yml --cleanup
-```
+{{< /codeblock >}}
 
->[!Caution]
-> `containerlab destroy` removes all containers and their state. Any configuration changes made inside the devices that aren't saved in startup-config files or Git-committed Ansible playbooks are gone permanently. This is by design since the lab should be fully reproducible from the topology file and playbooks.
+`containerlab destroy` removes all containers and their state. Any configuration changes made inside the devices that aren't saved in startup-config files or Git-committed Ansible playbooks are gone permanently. This is by design since the lab should be fully reproducible from the topology file and playbooks.
 
 ---
 
-#### Redeploying from Scratch
+{{< subtle-label >}}Redeploying from Scratch{{< /subtle-label >}}
 
 Destroy the old lab and immediately redeploy fresh
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 sudo containerlab destroy -t enterprise-lab.yml --cleanup
 sudo containerlab deploy -t enterprise-lab.yml
-```
+{{< /codeblock >}}
 
 The entire topology comes back to a clean baseline in minutes.
-
-{{% /steps %}}
 
 ---
 
@@ -673,70 +699,74 @@ Once the lab is deployed, I can SSH directly to any device from my Ubuntu VM.
 
 ---
 
-#### SSH to Network Devices
+{{< subtle-label >}}SSH to Network Devices{{< /subtle-label >}}
 
 SSH using the management IP
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh ansible@172.16.0.11
-```
+{{< /codeblock >}}
 
 SSH using the Containerlab hostname (added to /etc/hosts)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh ansible@clab-enterprise-lab-wan-r1
-```
+{{< /codeblock >}}
 
 SSH to NX-OS
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh ansible@172.16.0.21
-```
+{{< /codeblock >}}
 
 SSH to PAN-OS
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh ansible@172.16.0.10
-```
+{{< /codeblock >}}
 
-{{< callout type="info" >}}
+---
+
 Every time I destroy and redeploy the lab, the devices get new SSH host keys but the old keys are still in my `~/.ssh/known_hosts` file. SSH will refuse to connect and show:
-```
+
+{{< codeblock lang="" copy="false" >}}
 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
-```
+{{< /codeblock >}}
+
 The fix:
 
 Remove the old key for a specific IP
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ssh-keygen -R 172.16.0.11
-```
+{{< /codeblock >}}
 
 Or remove all keys for the entire management subnet
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 for ip in $(seq 10 35); do ssh-keygen -R 172.16.0.$ip; done
-```
+{{< /codeblock >}}
+
 This is also why `host_key_checking = False` is set in `ansible.cfg` for the lab since Ansible would fail on every fresh deploy otherwise.
-{{< /callout >}}
 
 ---
 
-#### Verifying Device Connectivity
+{{< subtle-label >}}Verifying Device Connectivity{{< /subtle-label >}}
 
 Before running any Ansible playbooks, I verify basic connectivity to all devices:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 # Ping all management IPs
 for ip in 10 11 12 21 22 23 24 31 32; do
     ping -c 1 -W 1 172.16.0.$ip > /dev/null 2>&1 && \
     echo "172.16.0.$ip — UP" || \
     echo "172.16.0.$ip — DOWN"
 done
-```
+{{< /codeblock >}}
 
 Expected output when all devices are ready:
-```
+
+{{< codeblock lang="Expected Output when devices are ready" copy="false" >}}
 172.16.0.10 — UP   (fw-01)
 172.16.0.11 — UP   (wan-r1)
 172.16.0.12 — UP   (wan-r2)
@@ -746,22 +776,22 @@ Expected output when all devices are ready:
 172.16.0.24 — UP   (leaf-02)
 172.16.0.31 — UP   (host-01)
 172.16.0.32 — UP   (host-02)
-```
+{{< /codeblock >}}
 
-#### Checking Device Boot Status
+{{< subtle-label >}}Checking Device Boot Status{{< /subtle-label >}}
 
 Watch a container's console output to see boot progress
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker logs -f clab-enterprise-lab-spine-01
-```
+{{< /codeblock >}}
 
 Check if SSH is responding (quicker than a full SSH session)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nc -zv 172.16.0.21 22
 # Connection to 172.16.0.21 22 port [tcp/ssh] succeeded!
-```
+{{< /codeblock >}}
 
 ---
 
@@ -771,11 +801,11 @@ This is important to understand before building the Ansible inventory.
 
 ---
 
-#### The Management Network
+{{< subtle-label >}}The Management Network{{< /subtle-label >}}
 
 When I deploy the lab, Containerlab creates a Docker bridge network called `mgmt-net` with the subnet `172.16.0.0/24`. Every container in the topology connects to this bridge via its `eth0` interface.
 
-```
+{{< codeblock lang="" copy="false" >}}
 ┌─────────────────────────────────────────────────────┐
 │              Docker Bridge: mgmt-net                │
 │              Subnet: 172.16.0.0/24                  │
@@ -793,20 +823,20 @@ When I deploy the lab, Containerlab creates a Docker bridge network called `mgmt
 │  host-01   ─── 172.16.0.31 (eth0 management)        │
 │  host-02   ─── 172.16.0.32 (eth0 management)        │
 └─────────────────────────────────────────────────────┘
-```
+{{< /codeblock >}}
 
 The Ubuntu VM can reach all management IPs directly because the Docker bridge acts as a router on the Ubuntu VM at `172.16.0.1`. This is the out-of-band management network.
 
 ---
 
-#### Data Plane vs Management Plane
+{{< subtle-label >}}Data Plane vs Management Plane{{< /subtle-label >}}
 
 The `links:` section in the topology file creates data plane connections, the interfaces that carry production traffic between devices. These are the `eth1`, `eth2`, etc. interfaces that I'll configure with IP addresses and routing protocols via Ansible.
 
-```
+{{< codeblock lang="" copy="false" >}}
 Management plane (eth0):  172.16.0.0/24  — Ansible connects here
 Data plane (eth1+):       I configure these via playbooks (e.g., 10.0.0.0/30 point-to-point links)
-```
+{{< /codeblock >}}
 
 This separation mirrors real enterprise networks where out-of-band management (OOBM) is kept completely separate from production traffic.
 
@@ -818,18 +848,14 @@ This is the bridge between Containerlab and everything that comes next. I create
 
 ---
 
-#### Creating the Inventory File
+{{< subtle-label >}}Creating the Inventory File{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/hosts.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="hosts.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# Ansible Inventory
-# Management Network: 172.16.0.0/24
-# =============================================================
 
 all:
   children:
@@ -901,86 +927,86 @@ all:
         cisco_ios:
         cisco_nxos:
         paloalto:
-```
+{{< /codeblock >}}
 
 ---
 
-#### Creating Group Variables
+{{< subtle-label >}}Creating Group Variables{{< /subtle-label >}}
 
 Group variables define connection settings that apply to all devices in a group. This is where `ansible_network_os`, `ansible_user`, and `ansible_password` live.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 # Create group_vars files for each platform
-```
+{{< /codeblock >}}
 
 **`inventory/group_vars/all.yml`** - settings for every device:
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 ---
 # Global settings applied to all devices
+---
 ansible_user: ansible
 ansible_password: ansible123
-```
+{{< /codeblock >}}
 
 **`inventory/group_vars/cisco_ios.yml`**:
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 ---
 ansible_network_os: cisco.ios.ios
 ansible_connection: network_cli
 ansible_become: true
 ansible_become_method: enable
 ansible_become_password: ansible123
-```
+{{< /codeblock >}}
 
 **`inventory/group_vars/cisco_nxos.yml`**:
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 ---
 ansible_network_os: cisco.nxos.nxos
 ansible_connection: network_cli
-```
+{{< /codeblock >}}
 
 **`inventory/group_vars/paloalto.yml`**:
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 ---
 ansible_network_os: paloaltonetworks.panos.panos
 ansible_connection: ansible.netcommon.httpapi
 ansible_httpapi_use_ssl: true
 ansible_httpapi_validate_certs: false
-```
+{{< /codeblock >}}
 
 **`inventory/group_vars/linux_hosts.yml`**:
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 ---
 ansible_connection: ssh
 ansible_python_interpreter: /usr/bin/python3
-```
+{{< /codeblock >}}
 
 ---
 
-#### Verifying the Inventory
+{{< subtle-label >}}Verifying the Inventory{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
 Show the full inventory structure as JSON
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-inventory -i inventory/hosts.yml --list
-```
+{{< /codeblock >}}
 
 Show the inventory as a tree graph
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-inventory -i inventory/hosts.yml --graph
-```
+{{< /codeblock >}}
 
-Expected `--graph` output:
-```
+{{< codeblock lang="Expected --graph Output" copy="false" >}}
 @all:
   |--@cisco_ios:
   |  |--wan-r1
@@ -1014,34 +1040,35 @@ Expected `--graph` output:
   |  |--leaf-01
   |  |--leaf-02
   |--@ungrouped:
-```
+{{< /codeblock >}}
 
 ---
 
-#### Testing Ansible Connectivity to the Lab
+{{< subtle-label >}}Testing Ansible Connectivity to the Lab{{< /subtle-label >}}
 
 With the inventory in place and the lab running, I run a quick connectivity test:
 
 1. Test connection to all IOS-XE devices
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_ios -m ansible.netcommon.net_ping -i inventory/hosts.yml
-```
+{{< /codeblock >}}
 
 2. Test connection to NX-OS devices
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_nxos -m ansible.netcommon.net_ping -i inventory/hosts.yml
-```
+{{< /codeblock >}}
 
 3. Test connection to Linux hosts
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible linux_hosts -m ansible.builtin.ping -i inventory/hosts.yml
-```
+{{< /codeblock >}}
 
 A successful IOS-XE response looks like:
-```yaml
+
+{{< codeblock lang="YAML" syntax="yaml" >}}
 wan-r1 | SUCCESS => {
     "changed": false,
     "ping": "pong"
@@ -1050,20 +1077,23 @@ wan-r2 | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
-```
+{{< /codeblock >}}
 
->[!Tip]
-> I save this connectivity test as a simple shell script `~/projects/ansible-network/scripts/test-connectivity.sh`:
-> ```bash
-> #!/bin/bash
-> echo "Testing IOS-XE..."
-> ansible cisco_ios -m ansible.netcommon.net_ping
-> echo "Testing NX-OS..."
-> ansible cisco_nxos -m ansible.netcommon.net_ping
-> echo "Testing Linux hosts..."
-> ansible linux_hosts -m ansible.builtin.ping
-> ```
-> I run this after every lab deploy to confirm everything is reachable before starting automation work. It saves me from debugging a playbook failure that was actually just a device that hadn't finished booting.
+---
+
+I save this connectivity test as a simple shell script `~/projects/ansible-network/scripts/test-connectivity.sh`:
+
+{{< codeblock lang="Bash" syntax="bash" >}}
+#!/bin/bash
+echo "Testing IOS-XE..."
+ansible cisco_ios -m ansible.netcommon.net_ping
+echo "Testing NX-OS..."
+ansible cisco_nxos -m ansible.netcommon.net_ping
+echo "Testing Linux hosts..."
+ansible linux_hosts -m ansible.builtin.ping
+{{< /codeblock >}}
+
+I run this after every lab deploy to confirm everything is reachable before starting automation work. It saves me from debugging a playbook failure that was actually just a device that hadn't finished booting.
 
 ---
 
@@ -1073,53 +1103,51 @@ This is the routine I follow at the start and end of every lab session:
 
 ---
 
-{{% steps %}}
-
-#### Starting a Lab Session
+{{< subtle-label >}}Starting a Lab Session{{< /subtle-label >}}
 
 1. Navigate to the project
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
 2. Activate the virtual environment
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 source ~/venvs/ansible-network/bin/activate
-```
+{{< /codeblock >}}
 
 3. Start a tmux session (from Part 1)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 tmux new -s ansible-lab
-```
+{{< /codeblock >}}
 
 4. Deploy the lab (if not already running)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd containerlab
 sudo containerlab deploy -t enterprise-lab.yml
-```
+{{< /codeblock >}}
 
 5. Wait for devices to finish booting (~5 minutes for NX-OS)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker logs -f clab-enterprise-lab-spine-01
-```
+{{< /codeblock >}}
 
 6. Test connectivity
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
 ./scripts/test-connectivity.sh
-```
+{{< /codeblock >}}
 
 7. Start working
 
 ---
 
-#### Ending a Lab Session
+{{< subtle-label >}}Ending a Lab Session{{< /subtle-label >}}
 
 Option A: Leave it running (devices preserve state, uses RAM)
 
@@ -1129,20 +1157,18 @@ Just detach from tmux: Ctrl+B, d
 
 Option B: Stop containers (preserves state, frees RAM)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 docker ps --filter "label=containerlab" -q | xargs docker stop
-```
+{{< /codeblock >}}
 
 ---
 
 Option C: Destroy the lab completely (frees all resources)
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network/containerlab
 sudo containerlab destroy -t enterprise-lab.yml
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
@@ -1150,28 +1176,27 @@ sudo containerlab destroy -t enterprise-lab.yml
 
 Everything created in this part goes into version control:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
-```
-
+{{< /codeblock >}}
 
 Stage all new files
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add containerlab/
 git add inventory/
 git add scripts/
-```
+{{< /codeblock >}}
 
 Check what's being committed
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git status
-```
+{{< /codeblock >}}
 
 Commit
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git commit -m "feat(lab): add Containerlab enterprise topology and Ansible inventory
 
 - Add 9-node enterprise topology: 2x IOS-XE WAN routers, 1x PAN-OS firewall,
@@ -1180,7 +1205,7 @@ git commit -m "feat(lab): add Containerlab enterprise topology and Ansible inven
 - Add Ansible inventory with platform groups and logical groupings
 - Add group_vars for cisco_ios, cisco_nxos, paloalto, linux_hosts
 - Add connectivity test script"
-```
+{{< /codeblock >}}
 
 ---
 

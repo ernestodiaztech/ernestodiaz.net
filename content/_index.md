@@ -17,7 +17,7 @@ toc: false
     <div class="hero-label">System &amp; network engineering</div>
     <h1 class="hero-title">Ernesto Diaz</h1>
     <p class="hero-description">
-      Building reliable, scalable infrastructure from the ground up. Network automation, systems engineering, and the tools that tie it all together.
+      Building scalable infrastructure from the ground up. Network automation, systems engineering, and the tools that tie it all together.
     </p>
     <div class="hero-buttons">
       <a class="btn-primary" href="/docs/">View projects</a>

@@ -34,7 +34,7 @@ The inventory also defines groups, logical collections of hosts that I can targe
 
 ---
 
-#### What Lives in the Inventory vs. What Lives in Playbooks
+{{< subtle-label >}}What Lives Where{{< /subtle-label >}}
 
 This is a distinction worth being deliberate about from the start:
 
@@ -51,19 +51,17 @@ The inventory is the 'what exists and how to reach it'. Playbooks are the 'what 
 
 ---
 
-## INI vs YAML Inventory Formats
+{{< subtle-label >}}INI vs YAML{{< /subtle-label >}}
 
 Ansible supports multiple inventory file formats. The two most common are INI and YAML. I'll show both side by side so I understand what I'm looking at when I encounter either in the wild, then commit to YAML for this lab.
 
 ---
 
-#### The Same Inventory in Both Formats
+{{< subtle-label >}}Same Inventory in Both Formats{{< /subtle-label >}}
 
 **INI Format:**
 
-```ini
-# inventory/hosts.ini
-
+{{< codeblock file="inventory/hosts.ini" syntax="ini" >}}
 [wan]
 wan-r1 ansible_host=172.16.0.11
 wan-r2 ansible_host=172.16.0.12
@@ -108,12 +106,11 @@ ansible_connection=network_cli
 [all:vars]
 ansible_user=ansible
 ansible_password=ansible123
-```
+{{< /codeblock >}}
 
 **YAML Format (equivalent):**
 
-```yaml
-# inventory/hosts.yml
+{{< codeblock file="inventory/hosts.yml" syntax="yaml" >}}
 ---
 all:
   children:
@@ -162,11 +159,11 @@ all:
   vars:
     ansible_user: ansible
     ansible_password: ansible123
-```
+{{< /codeblock >}}
 
 ---
 
-#### Comparison
+{{< subtle-label >}}Comparison{{< /subtle-label >}}
 
 | Feature | INI | YAML |
 |---|---|---|
@@ -180,18 +177,19 @@ all:
 
 ---
 
-#### This Project
+{{< subtle-label >}}This Project{{< /subtle-label >}}
 
 I use YAML exclusively for all projects. The INI format is fine for a five-device quick test but breaks down as inventory grows. YAML's nested structure maps naturally to how I think about network hierarchy (core vs access, datacenter vs WAN, production vs lab).
 
 The rest of this project uses YAML inventory.
 
->[!Tip]
-> When I find an old INI-format inventory and want to convert it to YAML, I can use `ansible-inventory` to do the conversion:
-> ```bash
-> ansible-inventory -i old_inventory.ini --list -y > inventory/hosts.yml
-> ```
-> The `-y` flag outputs in YAML format. I always review the output because automatic conversion sometimes flattens nested group structures that need to be manually reorganized.
+{{< lab-callout type="tip" >}}
+When I find an old INI-format inventory and want to convert it to YAML, I can use `ansible-inventory` to do the conversion:
+```bash
+ansible-inventory -i old_inventory.ini --list -y > inventory/hosts.yml
+```
+The `-y` flag outputs in YAML format. I always review the output because automatic conversion sometimes flattens nested group structures that need to be manually reorganized.
+{{< /lab-callout >}}
 
 ---
 
@@ -199,13 +197,15 @@ The rest of this project uses YAML inventory.
 
 Part 6's inventory was a starting point. Now I build it out properly with full group hierarchy, logical groupings, and a structure that mirrors how I'll actually target devices in playbooks.
 
-#### The Expanded `inventory/hosts.yml`
+---
 
-```bash
+{{< subtle-label >}}Expanded inventory/hosts.yml{{< /subtle-label >}}
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/hosts.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="hosts.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # Ansible Inventory — Enterprise Lab
@@ -294,80 +294,79 @@ all:
         cisco_ios:
         cisco_nxos:
         paloalto:
-```
+{{< /codeblock >}}
 
 ---
 
-#### Understanding Group Hierarchy
+{{< subtle-label >}}Understanding Group Hierarchy{{< /subtle-label >}}
 
 When a device belongs to a group, it also implicitly belongs to all parent groups above it. For example, `spine-01` is in:
 
-```
+{{< codeblock lang="" copy="false" >}}
 spine-01
   └── spine_switches      (direct parent)
       └── cisco_nxos      (grandparent)
           └── network_devices  (great-grandparent)
               └── all          (top-level — always exists)
-```
+{{< /codeblock >}}
 
 This matters for variable inheritance and for playbook targeting. If I write `hosts: cisco_nxos`, my playbook runs against `spine-01`, `spine-02`, `leaf-01`, and `leaf-02`. All devices in the hierarchy beneath `cisco_nxos`.
 
 ---
 
-#### Targeting Devices in Playbooks
+{{< subtle-label >}}Targeting Devices in Playbooks{{< /subtle-label >}}
 
 The group structure I've built gives me flexible targeting:
 
 Target all Cisco IOS devices (wan-r1, wan-r2)
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: cisco_ios
-```
+{{< /codeblock >}}
 
 Target only spine switches
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: spine_switches
-```
+{{< /codeblock >}}
 
 Target all NX-OS devices (all 4 switches)
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: cisco_nxos
-```
+{{< /codeblock >}}
 
 Target all network devices (everything except Linux hosts)
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: network_devices
-```
+{{< /codeblock >}}
 
 Target a single device
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: wan-r1
-```
+{{< /codeblock >}}
 
 Target multiple specific groups
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: spine_switches,leaf_switches
-```
+{{< /codeblock >}}
 
 Target all devices EXCEPT Linux hosts
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: all,!linux_hosts
-```
+{{< /codeblock >}}
 
 Target WAN edge devices only
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 hosts: wan_edge
-```
+{{< /codeblock >}}
 
->[!Tip]
-> The `!` operator excludes a group. `hosts: all,!linux_hosts` means every device in `all` except those in `linux_hosts`.
+The `!` operator excludes a group. `hosts: all,!linux_hosts` means every device in `all` except those in `linux_hosts`.
 
 ---
 
@@ -377,7 +376,7 @@ Host variables are variables specific to a single device. Ansible has a set of m
 
 ---
 
-#### The Essential Connection Variables
+{{< subtle-label >}}Essential Connection Variables{{< /subtle-label >}}
 
 | Variable | Purpose | Example Value |
 |---|---|---|
@@ -397,7 +396,7 @@ Host variables are variables specific to a single device. Ansible has a set of m
 | `ansible_persistent_connect_timeout` | Timeout for persistent connection | `30` |
 | `ansible_command_timeout` | Timeout per command | `30` |
 
-#### Where to Set Variables
+{{< subtle-label >}}Where to Set Variables{{< /subtle-label >}}
 
 Host variables can be set in three places:
 1. **Inline in `hosts.yml`** - on the same line/block as the host definition
@@ -419,9 +418,9 @@ The `group_vars/` directory is where I define variables that apply to an entire 
 
 ---
 
-#### Directory Structure
+{{< subtle-label >}}Directory Structure{{< /subtle-label >}}
 
-```
+{{< codeblock lang="" copy="false" >}}
 inventory/
 ├── hosts.yml
 ├── group_vars/
@@ -438,19 +437,17 @@ inventory/
     ├── wan-r2.yml
     ├── spine-01.yml
     └── ...
-```
+{{< /codeblock >}}
 
 ---
 
-{{% steps %}}
+{{< subtle-label >}}Global Variables{{< /subtle-label >}}
 
-#### Global Variables
-
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/all.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="all.yaml" syntax="yaml" >}}
 ---
 # =============================================================
 # Global variables
@@ -482,17 +479,17 @@ snmp_community_ro: "lab-read-only"
 # --- Default SSH timeout settings ---
 ansible_persistent_connect_timeout: 30
 ansible_command_timeout: 30
-```
+{{< /codeblock >}}
 
 ---
 
-#### IOS-XE Connection Settings
+{{< subtle-label >}}IOS-XE Connection Settings{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/cisco_ios.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock lang="cisco_ios.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # Cisco IOS / IOS-XE
@@ -515,17 +512,17 @@ ios_resource_modules_supported: true
 
 # --- Backup settings ---
 backup_dir: backups/cisco_ios
-```
+{{< /codeblock >}}
 
 ---
 
-#### NX-OS Connection Settings
+{{< subtle-label >}}NX-OS Connection Settings{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/cisco_nxos.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="cisco_nxos.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # Cisco NX-OS
@@ -553,17 +550,17 @@ nxos_features_required:
 
 # --- Backup settings ---
 backup_dir: backups/cisco_nxos
-```
+{{< /codeblock >}}
 
 ---
 
-#### Spine-Specific Variables
+{{< subtle-label >}}Spine-Specific Variables{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/spine_switches.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="spine_switches.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # Spine Switches - DC spine layer specific variables
@@ -583,17 +580,17 @@ loopback_interface: "Loopback0"
 
 # MTU for fabric links (jumbo frames for VXLAN)
 fabric_mtu: 9216
-```
+{{< /codeblock >}}
 
 ---
 
-#### Leaf-Specific Variables
+{{< subtle-label >}}Leaf-Specific Variables{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/leaf_switches.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="leaf_switches.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # Leaf Switches - DC leaf layer specific variables
@@ -621,17 +618,17 @@ svi_enabled: true
 
 # VPC domain settings (for dual-homed servers)
 vpc_keepalive_vlan: 4094
-```
+{{< /codeblock >}}
 
 ---
 
-#### PAN-OS Connection Settings
+{{< subtle-label >}}PAN-OS Connection Settings{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/paloalto.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="paloalto.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # Palo Alto PAN-OS - Connection and platform settings
@@ -659,17 +656,17 @@ zones:
   untrust: "untrust"
   trust: "trust"
   dmz: "dmz"
-```
+{{< /codeblock >}}
 
 ---
 
-#### WAN Group Variables
+{{< subtle-label >}}WAN Group Variables{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/wan.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="wan.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # WAN Group - Variables for WAN-facing routers
@@ -686,17 +683,17 @@ ospf_area: 0
 
 # WAN interface naming convention
 wan_interface: GigabitEthernet1
-```
+{{< /codeblock >}}
 
 ---
 
-#### Linux Host Connection Settings
+{{< subtle-label >}}Linux Host Connection Settings{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/group_vars/linux_hosts.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="linux_hosts.yml" syntax="ini" >}}
 ---
 # =============================================================
 # Linux Hosts — Alpine Linux containers
@@ -709,12 +706,9 @@ ansible_python_interpreter: /usr/bin/python3
 ansible_shell_type: sh
 
 device_role: server
-```
+{{< /codeblock >}}
 
->[!Tip]
-> When a host belongs to multiple groups (e.g., `spine-01` belongs to both `spine_switches` and `cisco_nxos`), it inherits variables from all of them. If the same variable is defined in multiple group files, Ansible resolves the conflict using 'variable precedence'' which means more specific groups win over less specific ones. `host_vars/` always wins over `group_vars/`.
-
-{{% /steps %}}
+When a host belongs to multiple groups (e.g., `spine-01` belongs to both `spine_switches` and `cisco_nxos`), it inherits variables from all of them. If the same variable is defined in multiple group files, Ansible resolves the conflict using 'variable precedence'' which means more specific groups win over less specific ones. `host_vars/` always wins over `group_vars/`.
 
 ---
 
@@ -724,21 +718,21 @@ While `group_vars/` handles settings shared across a group, `host_vars/` is for 
 
 ---
 
-{{% steps %}}
+{{< subtle-label >}}Directory Structure{{< /subtle-label >}}
 
-#### Directory Structure
-
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p ~/projects/ansible-network/inventory/host_vars/{wan-r1,wan-r2,fw-01,spine-01,spine-02,leaf-01,leaf-02,host-01,host-02}
-```
+{{< /codeblock >}}
 
-#### IOS-XE WAN Router
+---
 
-```bash
+{{< subtle-label >}}IOS-XE WAN Router{{< /subtle-label >}}
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/host_vars/wan-r1.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="wan-r1.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # wan-r1 — Cisco IOS-XE WAN Router 1
@@ -810,15 +804,17 @@ ntp_source_interface: Loopback0
 # --- SNMP ---
 snmp_location: "HQ-DC-Rack-A1-U12"
 snmp_contact: "netops@lab.local"
-```
+{{< /codeblock >}}
 
-#### IOS-XE WAN Router 2
+---
 
-```bash
+{{< subtle-label >}}IOS-XE WAN Router 2{{< /subtle-label >}}
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/host_vars/wan-r2.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="wan-r1.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # wan-r2 — Cisco IOS-XE WAN Router 2
@@ -868,15 +864,17 @@ bgp_neighbors:
 
 snmp_location: "HQ-DC-Rack-A2-U12"
 snmp_contact: "netops@lab.local"
-```
+{{< /codeblock >}}
 
-#### Palo Alto PAN-OS Firewall
+---
 
-```bash
+{{< subtle-label >}}Palo Alto PAN-OS Firewall{{< /subtle-label >}}
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/host_vars/fw-01.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="fw-01.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # fw-01 — Palo Alto PAN-OS Firewall
@@ -953,15 +951,17 @@ bgp_router_id: 10.255.0.10
 
 snmp_location: "HQ-DC-Rack-A3-U10"
 snmp_contact: "netops@lab.local"
-```
+{{< /codeblock >}}
 
-#### NX-OS Spine Switch 1
+---
 
-```bash
+{{< subtle-label >}}NX-OS Spine Switch 1{{< /subtle-label >}}
+
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/host_vars/spine-01.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="spine-01.yml" syntax="yaml"}}
 ---
 # =============================================================
 # spine-01 — Cisco NX-OS Spine Switch 1
@@ -1036,7 +1036,9 @@ vpc_peer_ip: 172.16.0.22
 
 snmp_location: "HQ-DC-Rack-B1-U20"
 snmp_contact: "netops@lab.local"
-```
+{{< /codeblock >}}
+
+---
 
 #### NX-OS Leaf Switch 1
 
@@ -1112,8 +1114,6 @@ snmp_location: "HQ-DC-Rack-C1-U18"
 snmp_contact: "netops@lab.local"
 ```
 
-{{% /steps %}}
-
 ---
 
 ## Variable Precedence Preview
@@ -1150,8 +1150,6 @@ So far I've been maintaining a static inventory, a YAML file I update manually w
 Dynamic inventory solves this by generating the inventory automatically from an external source of truth. Typically a CMDB, IPAM, or network management platform. Instead of a static YAML file, I provide a dynamic inventory plugin that queries the source of truth at runtime and returns a live inventory.
 
 ---
-
-{{% steps %}}
 
 #### How Dynamic Inventory Works
 
@@ -1264,8 +1262,6 @@ compose:
 
 For this lab, I use static inventory through Part 25. Part 26 migrates to Netbox dynamic inventory.
 
-{{% /steps %}}
-
 ---
 
 ## Testing the Inventory
@@ -1273,8 +1269,6 @@ For this lab, I use static inventory through Part 25. Part 26 migrates to Netbox
 With the full inventory built out, I validate it thoroughly before running any playbooks against it.
 
 ---
-
-{{% steps %}}
 
 #### `ansible-inventory --graph`
 
@@ -1423,8 +1417,6 @@ Run against everything except one device
 ```bash
 ansible all -i inventory/ -m ansible.netcommon.net_ping --limit "all,!fw-01"
 ```
-
-{{% /steps %}}
 
 ---
 

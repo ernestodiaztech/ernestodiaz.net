@@ -961,7 +961,7 @@ snmp_contact: "netops@lab.local"
 nano ~/projects/ansible-network/inventory/host_vars/spine-01.yml
 {{< /codeblock >}}
 
-{{< codeblock file="spine-01.yml" syntax="yaml"}}
+{{< codeblock file="spine-01.yml" syntax="yaml" >}}
 ---
 # =============================================================
 # spine-01 — Cisco NX-OS Spine Switch 1

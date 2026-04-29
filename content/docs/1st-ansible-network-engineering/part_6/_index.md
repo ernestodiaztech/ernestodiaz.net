@@ -292,7 +292,7 @@ Line 14:
 
 Before writing the topology file, I draw out what I'm building.
 
-![topology](1st-topology.png)
+{{< topology1 src="diagrams/topology1.svg" >}}
 
 ---
 
@@ -766,25 +766,7 @@ This is important to understand before building the Ansible inventory.
 
 When I deploy the lab, Containerlab creates a Docker bridge network called `mgmt-net` with the subnet `172.16.0.0/24`. Every container in the topology connects to this bridge via its `eth0` interface.
 
-{{< codeblock lang="" copy="false" >}}
-┌─────────────────────────────────────────────────────┐
-│              Docker Bridge: mgmt-net                │
-│              Subnet: 172.16.0.0/24                  │
-│              Gateway: 172.16.0.1                    │
-│                                                     │
-│  Ubuntu VM ─── 172.16.0.1 (Docker bridge gateway)   │
-│                                                     │
-│  wan-r1    ─── 172.16.0.11 (eth0 management)        │
-│  wan-r2    ─── 172.16.0.12 (eth0 management)        │
-│  fw-01     ─── 172.16.0.10 (eth0 management)        │
-│  spine-01  ─── 172.16.0.21 (eth0 management)        │
-│  spine-02  ─── 172.16.0.22 (eth0 management)        │
-│  leaf-01   ─── 172.16.0.23 (eth0 management)        │
-│  leaf-02   ─── 172.16.0.24 (eth0 management)        │
-│  host-01   ─── 172.16.0.31 (eth0 management)        │
-│  host-02   ─── 172.16.0.32 (eth0 management)        │
-└─────────────────────────────────────────────────────┘
-{{< /codeblock >}}
+{{< topology1 src="diagrams/mgmt-net.svg" >}}
 
 The Ubuntu VM can reach all management IPs directly because the Docker bridge acts as a router on the Ubuntu VM at `172.16.0.1`. This is the out-of-band management network.
 

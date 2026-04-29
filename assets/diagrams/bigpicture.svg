@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 900" width="700" height="900" role="img" aria-label="Ansible architecture: Control Node containing inventory, playbook, ansible.cfg, and the Ansible Engine, connecting via SSH/NETCONF/HTTPS API to Managed Nodes including Cisco IOS, Cisco NX-OS, and Juniper devices.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .section { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .engine { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .arrow-line { stroke: var(--lab-accent); stroke-width: 1.75; fill: none; stroke-linecap: round; }
+      .arrow-head { fill: var(--lab-accent); }
+      .label-mono { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .label-mono-left { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .label-muted { fill: var(--lab-text-muted); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .section-header { fill: var(--lab-text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-anchor: middle; text-transform: uppercase; }
+      .engine-title { fill: var(--lab-text); font-size: 13px; font-weight: 600; text-anchor: middle; }
+      .protocol { fill: var(--lab-text-muted); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    ]]></style>
+    <!-- Reusable arrowhead -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-head"/>
+    </marker>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="699" height="860" rx="18" ry="18"/>
+
+  <!-- ========== CONTROL NODE SECTION ========== -->
+  <text class="section-header" x="350" y="40">CONTROL NODE</text>
+
+  <!-- Three input cards row -->
+  <!-- Inventory card -->
+  <g transform="translate(70, 70)">
+    <rect class="card" x="0" y="0" width="160" height="90" rx="12"/>
+    <text class="label-mono" x="80" y="40">Inventory</text>
+    <text class="label-mono" x="80" y="60">hosts.yml</text>
+  </g>
+
+  <!-- Playbook card -->
+  <g transform="translate(270, 70)">
+    <rect class="card" x="0" y="0" width="160" height="90" rx="12"/>
+    <text class="label-mono" x="80" y="40">Playbook</text>
+    <text class="label-mono" x="80" y="60">site.yml</text>
+  </g>
+
+  <!-- ansible.cfg card -->
+  <g transform="translate(470, 70)">
+    <rect class="card" x="0" y="0" width="160" height="90" rx="12"/>
+    <text class="label-mono" x="80" y="50">ansible.cfg</text>
+  </g>
+
+  <!-- Horizontal arrows between input cards -->
+  <line class="arrow-line" x1="232" y1="115" x2="266" y2="115" marker-end="url(#arrow)"/>
+  <line class="arrow-line" x1="432" y1="115" x2="466" y2="115" marker-end="url(#arrow)"/>
+
+  <!-- Vertical arrows from input cards down to Engine -->
+  <line class="arrow-line" x1="150" y1="162" x2="150" y2="208" marker-end="url(#arrow)"/>
+  <line class="arrow-line" x1="350" y1="162" x2="350" y2="208" marker-end="url(#arrow)"/>
+  <line class="arrow-line" x1="550" y1="162" x2="550" y2="208" marker-end="url(#arrow)"/>
+
+  <!-- ========== ANSIBLE ENGINE ========== -->
+  <g transform="translate(70, 210)">
+    <rect class="engine" x="0" y="0" width="560" height="270" rx="14"/>
+    <text class="engine-title" x="280" y="34">Ansible Engine</text>
+
+    <!-- Bullet list -->
+    <text class="label-muted" x="32" y="74">— Parses inventory &gt; builds host list</text>
+    <text class="label-muted" x="32" y="100">— Parses playbook &gt; builds task list</text>
+    <text class="label-muted" x="32" y="126">— Resolves variables (hosts_vars, group_vars, play vars)</text>
+    <text class="label-muted" x="32" y="152">— Renders Jinja2 templates</text>
+    <text class="label-muted" x="32" y="178">— Calls connection plugin &gt; opens SSH session</text>
+    <text class="label-muted" x="32" y="204">— Executes module &gt; receives result dict</text>
+    <text class="label-muted" x="32" y="230">— Evaluates changed/failed &gt; updates play recap</text>
+  </g>
+
+  <!-- ========== ENGINE -> PROTOCOLS -> MANAGED NODES ========== -->
+  <!-- Engine to protocol label -->
+  <line class="arrow-line" x1="350" y1="480" x2="350" y2="490"/>
+
+  <!-- Protocol label -->
+  <text class="protocol" x="350" y="510">SSH / NETCONF / HTTPS API</text>
+
+  <!-- Down to managed nodes branch point -->
+  <line class="arrow-line" x1="350" y1="525" x2="350" y2="595"/>
+
+  <!-- Branch lines to three managed node cards -->
+  <path class="arrow-line" d="M 350 595 L 150 595 L 150 640" marker-end="url(#arrow)"/>
+  <path class="arrow-line" d="M 350 595 L 350 640" marker-end="url(#arrow)"/>
+  <path class="arrow-line" d="M 350 595 L 550 595 L 550 640" marker-end="url(#arrow)"/>
+
+  <!-- ========== MANAGED NODES ========== -->
+  <text class="section-header" x="350" y="820">MANAGED NODES</text>
+
+  <!-- Cisco IOS card -->
+  <g transform="translate(70, 660)">
+    <rect class="card" x="0" y="0" width="160" height="100" rx="12"/>
+    <text class="label-mono" x="80" y="42">Cisco IOS</text>
+    <text class="label-mono" x="80" y="65">R1, R2, R3</text>
+  </g>
+
+  <!-- Cisco NX-OS card -->
+  <g transform="translate(270, 660)">
+    <rect class="card" x="0" y="0" width="160" height="100" rx="12"/>
+    <text class="label-mono" x="80" y="42">Cisco NX-OS</text>
+    <text class="label-mono" x="80" y="65">SW1, SW2</text>
+  </g>
+
+  <!-- Juniper card -->
+  <g transform="translate(470, 660)">
+    <rect class="card" x="0" y="0" width="160" height="100" rx="12"/>
+    <text class="label-mono" x="80" y="42">Juniper</text>
+    <text class="label-mono" x="80" y="65">vJunos-1</text>
+  </g>
+
+</svg>

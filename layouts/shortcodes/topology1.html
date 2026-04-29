@@ -1,0 +1,8 @@
+{{ $src := .Get "src" }}
+{{ with resources.Get $src }}
+<div class="lab-topology1">
+{{ .Content | safeHTML }}
+</div>
+{{ else }}
+<!-- topology: could not find {{ $src }} -->
+{{ end }}

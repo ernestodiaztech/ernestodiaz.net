@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 620" width="700" height="620" role="img" aria-label="Docker bridge mgmt-net management network: subnet 172.16.0.0/24, gateway 172.16.0.1, with assigned IPs for Ubuntu VM, WAN routers, firewall, spine and leaf switches, and hosts.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .divider { stroke: var(--lab-border); stroke-width: 1; }
+      .header-label { fill: var(--lab-text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-anchor: middle; text-transform: uppercase; }
+      .meta-key { fill: var(--lab-text-muted); font-size: 13px; font-weight: 500; text-anchor: end; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .meta-val { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .host { fill: var(--lab-text); font-size: 13px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .ip { fill: var(--lab-accent); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .role { fill: var(--lab-text-muted); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .gateway-row { fill: var(--lab-text); font-size: 13px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="670" height="550" rx="18" ry="18"/>
+
+  <!-- ========== HEADER ========== -->
+  <text class="header-label" x="350" y="38">DOCKER BRIDGE · MGMT-NET</text>
+
+  <!-- Subnet/Gateway metadata block -->
+  <g>
+    <text class="meta-key" x="280" y="78">Subnet</text>
+    <text class="meta-val" x="295" y="78">172.16.0.0/24</text>
+
+    <text class="meta-key" x="280" y="100">Gateway</text>
+    <text class="meta-val" x="295" y="100">172.16.0.1</text>
+  </g>
+
+  <!-- Divider -->
+  <line class="divider" x1="40" y1="130" x2="640" y2="130"/>
+
+  <!-- ========== GATEWAY ROW (Ubuntu VM, slightly emphasized) ========== -->
+  <g>
+    <text class="host" x="60" y="170">Ubuntu VM</text>
+    <text class="ip" x="240" y="170">172.16.0.1</text>
+    <text class="role" x="400" y="170">Docker bridge gateway</text>
+  </g>
+
+  <!-- Divider after gateway -->
+  <line class="divider" x1="40" y1="200" x2="640" y2="200"/>
+
+  <!-- ========== DEVICE ROWS ========== -->
+  <g>
+    <!-- wan-r1 -->
+    <text class="host" x="60" y="240">wan-r1</text>
+    <text class="ip" x="240" y="240">172.16.0.11</text>
+    <text class="role" x="400" y="240">eth0 management</text>
+
+    <!-- wan-r2 -->
+    <text class="host" x="60" y="270">wan-r2</text>
+    <text class="ip" x="240" y="270">172.16.0.12</text>
+    <text class="role" x="400" y="270">eth0 management</text>
+
+    <!-- fw-01 -->
+    <text class="host" x="60" y="300">fw-01</text>
+    <text class="ip" x="240" y="300">172.16.0.10</text>
+    <text class="role" x="400" y="300">eth0 management</text>
+
+    <!-- spine-01 -->
+    <text class="host" x="60" y="340">spine-01</text>
+    <text class="ip" x="240" y="340">172.16.0.21</text>
+    <text class="role" x="400" y="340">eth0 management</text>
+
+    <!-- spine-02 -->
+    <text class="host" x="60" y="370">spine-02</text>
+    <text class="ip" x="240" y="370">172.16.0.22</text>
+    <text class="role" x="400" y="370">eth0 management</text>
+
+    <!-- leaf-01 -->
+    <text class="host" x="60" y="400">leaf-01</text>
+    <text class="ip" x="240" y="400">172.16.0.23</text>
+    <text class="role" x="400" y="400">eth0 management</text>
+
+    <!-- leaf-02 -->
+    <text class="host" x="60" y="430">leaf-02</text>
+    <text class="ip" x="240" y="430">172.16.0.24</text>
+    <text class="role" x="400" y="430">eth0 management</text>
+
+    <!-- host-01 -->
+    <text class="host" x="60" y="470">host-01</text>
+    <text class="ip" x="240" y="470">172.16.0.31</text>
+    <text class="role" x="400" y="470">eth0 management</text>
+
+    <!-- host-02 -->
+    <text class="host" x="60" y="500">host-02</text>
+    <text class="ip" x="240" y="500">172.16.0.32</text>
+    <text class="role" x="400" y="500">eth0 management</text>
+  </g>
+
+  <!-- Subtle group separator dividers -->
+  <line class="divider" x1="40" y1="313" x2="640" y2="313" stroke-opacity="0.5"/>
+  <line class="divider" x1="40" y1="443" x2="640" y2="443" stroke-opacity="0.5"/>
+
+</svg>

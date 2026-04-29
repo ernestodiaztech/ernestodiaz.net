@@ -16,7 +16,9 @@ I broke it down into 38 parts, with each part building onto the previous one. Th
 
 {{< accent-label >}}Network topology{{< /accent-label >}}
 
-![topology](2nd-topology.png)
+---
+
+{{< topology1 src="diagrams/topology2.svg" >}}
 
 ---
 

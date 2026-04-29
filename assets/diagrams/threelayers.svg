@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" width="600" height="700" role="img" aria-label="Ansible package structure: the Ansible pip package contains ansible-core and bundled collections, with separately installed collections shown below.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .header { fill: var(--lab-text); font-size: 14px; font-weight: 600; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .subheader { fill: var(--lab-text); font-size: 14px; font-weight: 600; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .body { fill: var(--lab-text-muted); font-size: 13px; font-weight: 500; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    ]]></style>
+  </defs>
+
+  <!-- ========== TOP: Ansible (pip package) container ========== -->
+  <rect class="frame" x="0.5" y="0.5" width="599" height="429" rx="18" ry="18"/>
+  <text class="header" x="300" y="40">Ansible (pip package)</text>
+
+  <!-- ansible-core nested card -->
+  <g transform="translate(40, 70)">
+    <rect class="card" x="0" y="0" width="520" height="130" rx="12"/>
+    <text class="subheader" x="260" y="34">ansible-core</text>
+    <text class="body" x="260" y="68">The engine: playbook runner, task</text>
+    <text class="body" x="260" y="90">executor, inventory parser, variable</text>
+    <text class="body" x="260" y="112">system, Jinja2</text>
+  </g>
+
+  <!-- Bundled Collections nested card -->
+  <g transform="translate(40, 220)">
+    <rect class="card" x="0" y="0" width="520" height="180" rx="12"/>
+    <text class="subheader" x="260" y="50">Bundled Collections</text>
+    <text class="body" x="260" y="100">ansible.builtin, community.general,</text>
+    <text class="body" x="260" y="122">and 85 other collections</text>
+  </g>
+
+  <!-- ========== BOTTOM: Separately Installed Collections ========== -->
+  <rect class="frame" x="0.5" y="470.5" width="599" height="200" rx="18" ry="18"/>
+
+  <text class="header" x="300" y="520">Separately Installed Collections</text>
+  <text class="body" x="300" y="570">cisco.ios, cisco.nxos,</text>
+  <text class="body" x="300" y="592">junipernetworks.junos,</text>
+  <text class="body" x="300" y="614">paloaltonetworks.panos, ansible.netcommon,</text>
+  <text class="body" x="300" y="636">etc.</text>
+
+</svg>

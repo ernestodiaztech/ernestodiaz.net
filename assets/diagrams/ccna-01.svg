@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 220" width="500" height="220" role="img" aria-label="Network topology: Router R1 connected to switch SW1 connected to router R2.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .device { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .icon-stroke { stroke: var(--lab-text-muted); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-accent { stroke: var(--lab-accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+      .accent-fill { fill: var(--lab-accent); }
+      .link { stroke: var(--lab-border); stroke-width: 1.25; fill: none; stroke-linecap: round; }
+      .label { fill: var(--lab-text); font-size: 12px; font-weight: 500; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="499" height="219" rx="18" ry="18"/>
+
+  <!-- ========== CONNECTIONS ========== -->
+  <g>
+    <!-- R1 -> SW1 -->
+    <path class="link" d="M 142,100 L 218,100"/>
+    <!-- SW1 -> R2 -->
+    <path class="link" d="M 282,100 L 358,100"/>
+  </g>
+
+  <!-- ========== R1 (Router) ========== -->
+  <g transform="translate(110, 100)">
+    <rect class="device" x="-32" y="-20" width="64" height="40" rx="10"/>
+    <g transform="translate(-12, -12)">
+      <circle class="icon-accent" cx="12" cy="12" r="3"/>
+      <path class="icon-accent" d="M 12 6 L 12 9"/>
+      <path class="icon-accent" d="M 10 7.5 L 12 6 L 14 7.5"/>
+      <path class="icon-accent" d="M 12 18 L 12 15"/>
+      <path class="icon-accent" d="M 10 16.5 L 12 18 L 14 16.5"/>
+      <path class="icon-accent" d="M 6 12 L 9 12"/>
+      <path class="icon-accent" d="M 7.5 10 L 6 12 L 7.5 14"/>
+      <path class="icon-accent" d="M 18 12 L 15 12"/>
+      <path class="icon-accent" d="M 16.5 10 L 18 12 L 16.5 14"/>
+    </g>
+    <text class="label" y="36">R1</text>
+  </g>
+
+  <!-- ========== SW1 (Switch) ========== -->
+  <g transform="translate(250, 100)">
+    <rect class="device" x="-32" y="-20" width="64" height="40" rx="10"/>
+    <g transform="translate(-12, -12)">
+      <rect class="icon-stroke" x="3" y="8" width="18" height="9" rx="1"/>
+      <circle class="accent-fill" cx="6" cy="13.5" r="0.9"/>
+      <circle class="accent-fill" cx="9" cy="13.5" r="0.9"/>
+      <circle class="accent-fill" cx="12" cy="13.5" r="0.9"/>
+      <circle class="accent-fill" cx="15" cy="13.5" r="0.9"/>
+      <circle class="accent-fill" cx="18" cy="13.5" r="0.9"/>
+      <path class="icon-stroke" d="M 6 10.5 L 18 10.5"/>
+    </g>
+    <text class="label" y="36">SW1</text>
+  </g>
+
+  <!-- ========== R2 (Router) ========== -->
+  <g transform="translate(390, 100)">
+    <rect class="device" x="-32" y="-20" width="64" height="40" rx="10"/>
+    <g transform="translate(-12, -12)">
+      <circle class="icon-accent" cx="12" cy="12" r="3"/>
+      <path class="icon-accent" d="M 12 6 L 12 9"/>
+      <path class="icon-accent" d="M 10 7.5 L 12 6 L 14 7.5"/>
+      <path class="icon-accent" d="M 12 18 L 12 15"/>
+      <path class="icon-accent" d="M 10 16.5 L 12 18 L 14 16.5"/>
+      <path class="icon-accent" d="M 6 12 L 9 12"/>
+      <path class="icon-accent" d="M 7.5 10 L 6 12 L 7.5 14"/>
+      <path class="icon-accent" d="M 18 12 L 15 12"/>
+      <path class="icon-accent" d="M 16.5 10 L 18 12 L 16.5 14"/>
+    </g>
+    <text class="label" y="36">R2</text>
+  </g>
+
+</svg>

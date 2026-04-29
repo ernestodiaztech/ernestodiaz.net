@@ -111,7 +111,7 @@ When I ran `pip install ansible` in Part 3, I didn't just install one thing. I n
 
 {{< subtle-label >}}The 3 Layers{{< /subtle-label >}}
 
-![](threelayers.png)
+{{< topology1 src="diagrams/threelayers.svg" >}}
 
 ---
 
@@ -180,7 +180,7 @@ Understanding this diagram saves hours of debugging. When something goes wrong, 
 
 {{< subtle-label >}}The Big Picture{{< /subtle-label >}}
 
-![](bigpicture.png)
+{{< topology1 src="diagrams/bigpicture.svg" >}}
 
 ---
 

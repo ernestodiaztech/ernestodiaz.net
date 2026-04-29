@@ -20,7 +20,9 @@ This project is documented across 46 parts, starting from a bare control node an
 
 All devices run as Containerlab nodes using vrnetlab on a dedicated Proxmox VM. The topology file is version controller, validated by a 3 stage pipeline, and deployed via a diff-aware Gitea Actions job that adds or removes only what changed.
 
-![topology](1st-topology.png)
+---
+
+{{< topology1 src="diagrams/topology1.svg" >}}
 
 ----
 

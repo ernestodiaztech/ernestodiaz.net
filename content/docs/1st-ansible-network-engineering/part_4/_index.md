@@ -721,7 +721,7 @@ Refs: #87
 
 ## Connecting to GitHub and Pushing
 
-#### Creating the Remote Repository on GitHub
+{{< subtle-label >}}Creating the Remote Repository on GitHub{{< /subtle-label >}}
 
 1. Log in to **GitHub.com**
 2. Click the **+** in the top right → **New repository**
@@ -736,7 +736,7 @@ GitHub shows the "Quick setup" page with instructions. I'll use the SSH URL.
 
 ---
 
-#### Connecting the Local Repository to GitHub
+{{< subtle-label >}}Connecting the Local Repository to GitHub{{< /subtle-label >}}
 
 {{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network

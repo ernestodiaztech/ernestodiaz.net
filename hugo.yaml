@@ -80,3 +80,12 @@ markup:
   highlight:
     noClasses: false
 
+security:
+  http:
+    methods:
+      - '(?i)GET|POST'
+    urls:
+      - '(?i)^https://cdn\.jsdelivr\.net/'
+      - '(?i)^https?://[a-z]'
+      - '! (?i)localhost'
+      - '! @'

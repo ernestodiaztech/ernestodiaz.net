@@ -15,16 +15,23 @@ weight: 10
 {{< badge "Ansible" >}}
 {{< badge content="Linux" color="red" >}}
 
-This project is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+---
 
+{{< lab-callout type="info" >}}
+This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+{{< /lab-callout >}}
+
+---
 
 ## Playbooks
 
 A playbook is a YAML file containing 1 of more "plays". Each "play" targets a group of hosts and defines a list of tasks to run against them.
 
-#### The Structure
+---
 
-```yaml {linenos=table}
+{{< subtle-label >}}Structure{{< /subtle-label >}}
+
+{{< codeblock lang="YAML" syntax="yaml" lines="true" >}}
 ---
 
 - name: "Play name"
@@ -64,31 +71,70 @@ A playbook is a YAML file containing 1 of more "plays". Each "play" targets a gr
     - name: handler_name
       module_name:
         parameter: value
-```
+{{< /codeblock >}}
 
-- **Line 1** - YAML document start marker.
-- **Line 3** - A play begins with a dash
-- **Line 4** - Which inventory group or host to target
-- **Line 5** - Whether to run the facts module before tasks
-- **Line 6** - How to connect to devices
-- **Line 7** - Enable privilege escalation (`enable mode` for IOS)
-- **Line 8** - How to escalate (`enable` for IOS, `sudo` for Linux)
-- **Line 10** - Play level variables (optional)
-- **Line 13** - Load variables from external files (optional)
-- **Line 16** - Tasks that run before roles and main tasks
-- **Line 21** - The main task list
-- **Line 22** - Always required (appears in playbook output)
-- **Line 23** - The Ansible module to use
-- **Line 24** - Module parameters
-- **Line 25** - Store the task's return value in a variable
-- **Line 26** - Only run thistask if condition is true
-- **Line 27** - Run this task once for each item in the list
-- **Line 28** - Trigger a handler if this task reports changed
-- **Line 29** - Tag for selective playbook execution
+{{< line-explain >}}
+Line 1:
+: YAML document start marker.
+
+Line 3:
+: A play begins with a dash
+
+Line 4:
+: Which inventory group or host to target
+
+Line 5:
+: Whether to run the facts module before tasks
+
+Line 6:
+: How to connect to devices
+
+Line 7:
+: Enable privilege escalation (`enable mode` for IOS)
+
+Line 8:
+: How to escalate (`enable` for IOS, `sudo` for Linux)
+
+Line 10:
+: Play level variables (optional)
+
+Line 13:
+: Load variables from external files (optional)
+
+Line 16:
+: Tasks that run before roles and main tasks
+
+Line 21:
+: The main task list
+
+Line 22:
+: Always required (appears in playbook output)
+
+Line 23:
+: The Ansible module to use
+
+Line 24:
+: Module parameters
+
+Line 25:
+: Store the task's return value in a variable
+
+Line 26:
+: Only run thistask if condition is true
+
+Line 27:
+: Run this task once for each item in the list
+
+Line 28:
+: Trigger a handler if this task reports changed
+
+Line 29:
+: Tag for selective playbook execution
+{{< /line-explain >}}
 
 ---
 
-**The Required Fields**
+{{< subtle-label >}}Required Fields{{< /subtle-label >}}
 
 These 6 fields appear in every network device playbook I write.
 
@@ -101,11 +147,11 @@ These 6 fields appear in every network device playbook I write.
 
 ---
 
-**Multiple Plays**
+{{< subtle-label >}}Multiple Plays{{< /subtle-label >}}
 
 A single playbook file can contain multiple plays, each targeting different devices.
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 ---
 - name: "Play 1 - Configure IOS devices"
   hosts: cisco_ios
@@ -127,7 +173,7 @@ A single playbook file can contain multiple plays, each targeting different devi
   gather_facts: true
   tasks:
     - ....
-```
+{{< /codeblock >}}
 
 ---
 
@@ -171,7 +217,7 @@ The format is always <collection_namespace>.<collection_name>.<platform>
 
 I'll build 1 playbook file that grows throughout this part. Starting with gathering facts.
 
-```yaml {filename="playbooks/report/first_playbook.yml"}
+{{< codeblock file="playbooks/report/first_playbook.yml" syntax="yaml" >}}
 ---
 - name: "Report | Gather and display facts from IOS-XE devices"
   hosts: cisco_ios
@@ -200,20 +246,18 @@ I'll build 1 playbook file that grows throughout this part. Starting with gather
           - "Serial: {{ ansible_net_serialnum | default{'unknown'} }}"
           - "Interfaces: {{ansible_net_interfaces | length }} configured"
           - "============================"
-```
+{{< /codeblock >}}
 
 ---
 
 Running it:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
 ansible-playbook playbooks/report/first_playbook.yml
-```
+{{< /codeblock >}}
 
-Expected output:
-
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 PLAY [Report | Gather and display facts from IOS-XE devices] ***
 
 TASK [Facts | Gather IOS device facts] *********************************
@@ -244,13 +288,13 @@ ok: [wan-r2] => {
 PLAY RECAP *************************************************************
 wan-r1    : ok=2    changed=0    unreachable=0    failed=0
 wan-r2    : ok=2    changed=0    unreachable=0    failed=0
-```
+{{< /codeblock >}}
 
 ---
 
 The play recap is the summary at the bottom of every playbook run:
 
-```
+{{< codeblock lang="" copy="false" >}}
 wan-r1 : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
          │         │             │                │            │            │            │
          │         │             │                │            │            │            └── Tasks with ignore_errors: true that failed
@@ -260,7 +304,7 @@ wan-r1 : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=
          │         │             └── Hosts unreachable via SSH
          │         └── Tasks that made a configuration change
          └── Total tasks that completed successfully (including changed)
-```
+{{< /codeblock >}}
 
 ---
 
@@ -270,7 +314,7 @@ wan-r1 : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=
 
 ---
 
-#### Adding Register
+{{< subtle-label >}}Adding Register{{< /subtle-label >}}
 
 I add a task that runs a show command and registers the output:
 

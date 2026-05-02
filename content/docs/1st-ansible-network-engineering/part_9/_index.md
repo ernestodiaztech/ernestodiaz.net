@@ -31,7 +31,7 @@ An ad-hoc command is a single Ansible module call executed directly from the com
 
 {{< subtle-label >}}Model{{< /subtle-label >}}
 
-
+{{< topology1 src="diagrams/adhoc-vs-playbook.svg" >}}
 
 ---
 

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 540" width="900" height="540" role="img" aria-label="Ad-hoc Ansible command anatomy showing hosts, module flag, and arguments flag, with the equivalent playbook task in YAML form.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 540" width="740" height="540" role="img" aria-label="Ad-hoc Ansible command anatomy showing hosts, module flag, and arguments flag, with the equivalent playbook task in YAML form.">
   <defs>
     <style><![CDATA[
       svg {

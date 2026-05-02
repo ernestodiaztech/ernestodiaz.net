@@ -20,7 +20,7 @@
   </defs>
 
   <!-- Outer container -->
-  <rect class="frame" x="0.5" y="0.5" width="740" height="539" rx="18" ry="18"/>
+  <rect class="frame" x="0.5" y="0.5" width="739" height="539" rx="18" ry="18"/>
 
   <!-- ========== TOP: Ad-hoc command anatomy ========== -->
   <g transform="translate(40, 32)">

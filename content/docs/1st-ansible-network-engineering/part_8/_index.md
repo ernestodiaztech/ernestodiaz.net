@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '8 - Structure'
 description: "Part 8 of my Ansible learning geared towards Network Engineering."
 tags:
@@ -15,8 +15,13 @@ weight: 8
 {{< badge "Ansible" >}}
 {{< badge content="Linux" color="red" >}}
 
-This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+---
 
+{{< lab-callout type="info" >}}
+This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+{{< /lab-callout >}}
+
+---
 
 ## Ansible Directory Structure
 
@@ -27,6 +32,8 @@ This part locks in the definitive project layout, expands `ansible.cfg` with eve
 ## The Project Structure
 
 Here is the complete, final directory structure for the `ansible-network` project.
+
+*(folders expand)*
 
 {{< filetree/container >}}
   {{< filetree/folder name="ansible-network" >}}
@@ -193,27 +200,19 @@ Here is the complete, final directory structure for the `ansible-network` projec
 - `scripts/` - Shell and Python help scripts.
 - `containerlab/` - Everything related to the lab environment.
 
----
-
-{{< callout type="info" >}}
-
 The `backups/` directory is committed to `.gitignore`. Usually, configuration backups have their own dedicated storage (either a separate Git repository, an S3 bucket, or dedicated backup platform like Oxidized.)
 
-{{< /callout >}}
-
 ---
 
-{{% steps %}}
-
-#### Creating Directory Structure
+{{< subtle-label >}}Creating Directory Structure{{< /subtle-label >}}
 
 After creating the structure layout, I create all directories that don't exist yet.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 mkdir -p playbooks/{deploy,validate,backup,rollback,report,utils}
 mkdir -p roles
 mkdir -p templates/{ios,nxos,panos}
@@ -221,43 +220,42 @@ mkdir -p files/{ios,ssl}
 mkdir -p vars
 mkdir -p backups/{cisco_ios,cisco_nxos,paloalto}
 mkdir -p scripts
-```
+{{< /codeblock >}}
 
 I then added `backups/` to `.gitignore`
 
-```bash {filename=".gitignore"}
+{{< codeblock file=".gitignore" syntax="ini" >}}
 backups/
-```
+{{< /codeblock >}}
 
 Then commit it.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add .gitignore
 git commit -m "chore: exclude backups/ directory from git"
-```
+{{< /codeblock >}}
 
 Git doesn't track empty directories, so I add `.gitkeep` placeholder files so the directory structure is committed.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 find . -type d -empty -not -path "./.git/*" -not -path "./backups/*" \
     -exec touch {}/.gitkeep \;
-```
+{{< /codeblock >}}
 
 Then commit the added files.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add .
 git commit -m "chore: add directory structure with .gitkeep placeholders"
-```
+{{< /codeblock >}}
 
 ---
 
-#### Ansible Config File
+{{< subtle-label >}}Ansible Config File{{< /subtle-label >}}
 
 The definitive version for this project.
 
-```cfg {filename="ansible.cfg"}
-
+{{< codeblock file="ansible.cfg" syntax="cfg" >}}
 [defaults]
 
 inventory = inventory/
@@ -327,31 +325,29 @@ changed = yellow
 diff_add = green
 diff_remove = red
 diff_lines = cyan
-
-```
+{{< /codeblock >}}
 
 The 3 settings that must change before this config going into production:
 
-```
-#Lab                                        Production
+{{< codeblock lang="" copy="false">}}
 host_key_checking = False                 > host_key_checking = True
 ssh_args = ... StrictHostKeyChecking=no   > remove that argument
 vault_password_file = .vault_pass         > make sure this is set and .vault_pass is secured
-```
+{{< /codeblock >}}
 
 These settings should be added as well:
 
-```
+{{< codeblock lang="" copy="false" >}}
 log_path = /var/log/ansible/ansible.log
 any_errors_fatal = False
 fact_checking = jsonfile
-```
+{{< /codeblock >}}
 
 To check which `ansible.cfg` is active
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible --version | grep "config file"
-```
+{{< /codeblock >}}
 
 ---
 
@@ -361,14 +357,9 @@ Consistent naming helps navigate projects at any given time, whether it be 1 wee
 
 ---
 
-#### Playbook Files  {class="no-step-marker"}
+{{< subtle-label >}}Playbook Files{{< /subtle-label >}}
 
-```
-Format: <verb>_<noun>[_<qualifier>].yml
-        <verb> = deploy, validate, backup, rollback, report, test, update
-        <noun> = what is being acted on
-        <qualifier> = optional scope or platform
-```
+{{< topology1 src="diagrams/playbook-naming.svg" >}}
 
 **Good Name Examples:**
 - `deploy_bgp.yml`
@@ -382,12 +373,9 @@ Format: <verb>_<noun>[_<qualifier>].yml
 
 ---
 
-#### Role Names {class="no-step-marker"}
+{{< subtle-label >}}Role Names{{< /subtle-label >}}
 
-```
-Format: <verb>_<platform>_<function>
-        <function>
-```
+{{< topology1 src="diagrams/role-naming.svg" >}}
 
 **Good Name Examples:**
 - `cisco_ios_base`
@@ -401,7 +389,7 @@ Format: <verb>_<platform>_<function>
 
 ---
 
-#### Task Names {class="no-step-marker"}
+{{< subtle-label >}}Task Names{{< /subtle-label >}}
 
 **Good Name Examples:**
 - name: "Deploy | Configure OSP process and area on WAN interfaces"
@@ -413,11 +401,9 @@ Format: <verb>_<platform>_<function>
 
 ---
 
-#### Variable Names {class="no-step-marker"}
+{{< subtle-label >}}Variable Names {{< /subtle-label >}}
 
-```
-Format: <scope>_<object>_<attribute>
-```
+{{< topology1 src="diagrams/variable-naming.svg" >}}
 
 **Good Name Examples:**
 - bgp_as
@@ -430,7 +416,7 @@ Format: <scope>_<object>_<attribute>
 
 ---
 
-#### File & Directory Names {class="no-step-marker"}
+{{< subtle-label >}}File & Directory Names{{< /subtle-label >}}
 
 Always use:
 - lowercase-with-hyphens for directories and most files
@@ -444,8 +430,6 @@ Always use:
 - CamelCase/
 - spaces in names/
 
-{{% /steps %}}
-
 ---
 
 ## Playbooks by Function
@@ -454,13 +438,11 @@ The `playbooks/` directory is organized into subdirectories by function.
 
 ---
 
-{{% steps %}}
-
-#### Master Playbook
+{{< subtle-label >}}Master Playbook{{< /subtle-label >}}
 
 The master playbook calls other playbooks in sequence. Running `site.yml` deploys the entire environment.
 
-```yaml {filename="playbooks/deploy/site.yml"}
+{{< codeblock file="playbooks/deploy/site.yml" syntax="yaml" >}}
 ---
 
 - name: "Deploy | Base configuration on all network devices"
@@ -494,15 +476,15 @@ The master playbook calls other playbooks in sequence. Running `site.yml` deploy
     - acls
     - security
     - ios
-```
+{{< /codeblock >}}
 
 ---
 
-#### Base Configuration Playbook
+{{< subtle-label >}}Base Configuration Playbook{{< /subtle-label >}}
 
 This playbook will configure hostname, domain, NTP, DNS, syslog, SNMP and banners.
 
-```yaml {filename="playbooks/deploy/deploy_base_config.yml"}
+{{< codeblock file="playbooks/deploy/deploy_base_config.yml" syntax="yaml" >}}
 ---
 
 - name: "Deploy | Base configuration on Cisco IOS-XE devices"
@@ -576,15 +558,15 @@ This playbook will configure hostname, domain, NTP, DNS, syslog, SNMP and banner
       cisco.nxos.nxos_command:
         commands:
           - copy running-config startup-config
-```
+{{< /codeblock >}}
 
 ---
 
-#### Validate Playbook
+{{< subtle-label >}}Validate Playbook{{< /subtle-label >}}
 
 This playbook will verify basic device connectivity. It will test ssh reachability, device response, and basic interface state.
 
-```yaml {filename="playbooks/validate/validate_connectivity.yml"}
+{{< codeblock file="playbooks/validate/validate_connectivity.yml" syntax="yaml" >}}
 ---
 
 - name: "Validate | Connectivity to all network devices"
@@ -630,15 +612,15 @@ post_tasks:
   - name: "Validate | Print connectivity summary"
     ansible.builtin.debug:
       msg: "All connectivity checks passed for {{ inventory_hostname }}"
-```
+{{< /codeblock >}}
 
 ---
 
-#### Backup Playbook
+{{< subtle-label >}}Backup Playbook{{< /subtle-label >}}
 
 This playbook will back up running configurations from all devices.
 
-```yaml {filename="playbooks/backup/backup_all.yml"}
+{{< codeblock file="playbooks/backup/backup_all.yml" syntax="yaml" >}}
 ---
 
 - name: "Backup | Running configurations from IOS-XE devices"
@@ -702,15 +684,15 @@ This playbook will back up running configurations from all devices.
         dest: "backups/cisco_nxos/{{ inventory_hostname }}/{{ inventory_hostname }}_{{ timestamp }}.cfg"
         mode: '0644'
       delegate_to: localhost
-```
+{{< /codeblock >}}
 
 ---
 
-#### Rollback Playbook
+{{< subtle-label >}}Rollback Playbook{{< /subtle-label >}}
 
 This playbook will restore a device configuration from backup.
 
-```yaml {filename="playbooks/rollback/rollback_config.yml"}
+{{< codeblock file="playbooks/rollback/rollback_config.yml" syntax="yaml" >}}
 ---
 
 - name: "Rollback | Restore IOS-XE configuration from backup"
@@ -770,15 +752,15 @@ This playbook will restore a device configuration from backup.
           Rollback complete for {{ inventory_hostname }}.
           Changed: {{ rollback_result.changed }}
           Device is responsive: {{ post_rollback_check is succeeded }}
-```
+{{< /codeblock >}}
 
 ---
 
-#### Report Playbook
+{{< subtle-label >}}Report Playbook{{< /subtle-label >}}
 
 This playbook will gather and display facts from all devices.
 
-```yaml {filename="playbooks/report/report_facts.yml"}
+{{< codeblock file="playbooks/report/report_facts.yml" syntax="yaml" >}}
 ---
 
 - name: "Report | Gather facts from IOS-XE devices"
@@ -822,9 +804,7 @@ This playbook will gather and display facts from all devices.
           - "Platform:  {{ ansible_net_platform }}"
           - "Version:   {{ ansible_net_version }}"
           - "Interfaces:{{ ansible_net_interfaces | length }} total"
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 
@@ -859,48 +839,46 @@ Is this variable shared across multiple playbooks but not device-specific?
 
 ---
 
-{{% steps %}}
-
-#### Examples
+{{< subtle-label >}}Examples{{< /subtle-label >}}
 
 **Same for every device**
 
-```yaml {filename="group_vars/all.yml"}
+{{< codeblock file="group_vars/all.yml" syntax="yaml" >}}
 ntp_servers:
   - 216.239.35.0
   - 216.239.35.4
 ansible_user: ansible
-```
+{{< /codeblock >}}
 
 ---
 
 **Same for every IOS device**
 
-```yaml {filename="group_vars/cisco_ios.yml"}
+{{< codeblock file="group_vars/cisco_ios.yml" syntax="yaml" >}}
 ansible_network_os: cisco.ios.ios
 ansible_become: true
-```
+{{< /codeblock >}}
 
 ---
 
 **Same for every IOS device**
 
-```yaml {filename="group_vars/spine_switches.yml"}
+{{< codeblock file="group_vars/spine_switches.yml" syntax="yaml" >}}
 device_role: spine
 bgp_as: 65000
 fabric_mtu: 9216
-```
+{{< /codeblock >}}
 
 ---
 
 **Unique to Spine-01**
 
-```yaml {filename="host_vars/spine-01.yml"}
+{{< codeblock file="host_vars/spine-01.yml" syntax="yaml" >}}
 ansible_host: 172.16.0.21
 loopback0:
   ip: 10.255.1.1
 bgp_router_id: 10.255.1.1
-```
+{{< /codeblock >}}
 
 ---
 
@@ -908,26 +886,24 @@ bgp_router_id: 10.255.1.1
 
 vars: inside a playbook
 
-```yaml
+{{< codeblock lang="YAML" syntax="yaml" >}}
 - name: Deploy BGP
   hosts: cisco_ios
   vars:
     bgp_timer_keepalive: 30
     bgp_timer_holdtime: 90
   tasks: ...
-```
+{{< /codeblock >}}
 
 ---
 
 **Shared across playbooks**
 
-```yaml {filename="vars/bgp_policy.yml"}
+{{< codeblock file="vars/bgp_policy.yml" syntax="yaml" >}}
 route_map_permit_local:
   - prefix: 10.0.0.0/8
   - prefix: 172.16.0.0/12
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 

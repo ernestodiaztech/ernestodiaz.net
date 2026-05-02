@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 140" width="800" height="140" role="img" aria-label="Variable naming convention: scope_object_attribute.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .format-card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .format-label { fill: var(--lab-text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-anchor: start; }
+      .format-text { fill: var(--lab-text); font-size: 18px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .format-text-accent { fill: var(--lab-accent); font-size: 18px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="799" height="139" rx="18" ry="18"/>
+
+  <!-- ========== FORMAT CARD ========== -->
+  <g transform="translate(40, 32)">
+    <rect class="format-card" x="0" y="0" width="720" height="76" rx="12"/>
+    <text class="format-label" x="20" y="24">FORMAT</text>
+    <text x="20" y="58">
+      <tspan class="format-text-accent">&lt;scope&gt;</tspan><tspan class="format-text">_</tspan><tspan class="format-text-accent">&lt;object&gt;</tspan><tspan class="format-text">_</tspan><tspan class="format-text-accent">&lt;attribute&gt;</tspan>
+    </text>
+  </g>
+
+</svg>

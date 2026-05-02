@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" width="800" height="320" role="img" aria-label="Playbook naming convention: format is verb_noun with optional qualifier dot yml. Verb is one of deploy, validate, backup, rollback, report, test, or update. Noun is what is being acted on. Qualifier is an optional scope or platform.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .format-card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .format-label { fill: var(--lab-text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-anchor: start; }
+      .format-text { fill: var(--lab-text); font-size: 18px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .format-text-accent { fill: var(--lab-accent); font-size: 18px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .format-text-optional { fill: var(--lab-text-muted); font-size: 18px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .key-text { fill: var(--lab-accent); font-size: 13px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .equals-text { fill: var(--lab-text-muted); font-size: 13px; font-weight: 500; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .value-text { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .value-text-mono { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .divider { stroke: var(--lab-border); stroke-width: 1; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="799" height="290" rx="18" ry="18"/>
+
+  <!-- ========== FORMAT CARD (top) ========== -->
+  <g transform="translate(40, 32)">
+    <rect class="format-card" x="0" y="0" width="720" height="76" rx="12"/>
+    <text class="format-label" x="20" y="24">FORMAT</text>
+    <!-- The format string itself, with each segment colored by role -->
+    <text x="20" y="58">
+      <tspan class="format-text-accent">&lt;verb&gt;</tspan><tspan class="format-text">_</tspan><tspan class="format-text-accent">&lt;noun&gt;</tspan><tspan class="format-text-optional">[_&lt;qualifier&gt;]</tspan><tspan class="format-text">.yml</tspan>
+    </text>
+  </g>
+
+  <!-- Divider between format and key definitions -->
+  <line class="divider" x1="40" y1="138" x2="760" y2="138"/>
+
+  <!-- ========== KEY/VALUE ROWS ========== -->
+  <!-- verb -->
+  <g transform="translate(40, 168)">
+    <text class="key-text" x="0" y="0">&lt;verb&gt;</text>
+    <text class="equals-text" x="118" y="0">=</text>
+    <text class="value-text-mono" x="138" y="0">deploy, validate, backup, rollback, report, test, update</text>
+  </g>
+
+  <!-- noun -->
+  <g transform="translate(40, 208)">
+    <text class="key-text" x="0" y="0">&lt;noun&gt;</text>
+    <text class="equals-text" x="118" y="0">=</text>
+    <text class="value-text" x="138" y="0">what is being acted on</text>
+  </g>
+
+  <!-- qualifier -->
+  <g transform="translate(40, 248)">
+    <text class="key-text" x="0" y="0">&lt;qualifier&gt;</text>
+    <text class="equals-text" x="118" y="0">=</text>
+    <text class="value-text" x="138" y="0">optional scope or platform</text>
+  </g>
+
+</svg>

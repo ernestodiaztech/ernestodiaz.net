@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="800" height="480" role="img" aria-label="Ansible variable precedence: host_vars/wan-r1.yml has highest priority, overriding group_vars/wan.yml, then group_vars/cisco_ios.yml, then group_vars/all.yml at the lowest priority.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .row-bg { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1; }
+      .path-text { fill: var(--lab-text); font-size: 14px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .priority-label { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: start; }
+      .priority-meta { fill: var(--lab-text-muted); font-size: 12px; font-weight: 400; text-anchor: start; }
+      .arrow-line { stroke: var(--lab-accent); stroke-width: 1.75; fill: none; stroke-linecap: round; }
+      .arrow-head { fill: var(--lab-accent); stroke: var(--lab-accent); stroke-width: 1; stroke-linejoin: miter; }
+      .scale-label { fill: var(--lab-text-muted); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-anchor: middle; }
+      .scale-line { stroke: var(--lab-border); stroke-width: 1; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="799" height="479" rx="18" ry="18"/>
+
+  <!-- Vertical priority scale on the left side -->
+  <g>
+    <text class="scale-label" transform="translate(50, 90) rotate(-90)">HIGHEST</text>
+    <line class="scale-line" x1="50" y1="120" x2="50" y2="380"/>
+    <text class="scale-label" transform="translate(50, 410) rotate(-90)">LOWEST</text>
+  </g>
+
+  <!-- ========== ROW 1: host_vars/wan-r1.yml (highest priority, top) ========== -->
+  <g transform="translate(100, 60)">
+    <rect class="row-bg" x="0" y="0" width="660" height="70" rx="10"/>
+    <text class="path-text" x="24" y="42">host_vars/wan-r1.yml</text>
+    <text class="priority-label" x="340" y="36">Highest priority</text>
+    <text class="priority-meta" x="340" y="56">most specific</text>
+  </g>
+
+  <!-- Arrow up between row 2 and row 1 -->
+  <g>
+    <line class="arrow-line" x1="230" y1="160" x2="230" y2="138"/>
+    <path class="arrow-head" d="M 225,142 L 230,132 L 235,142 Z"/>
+  </g>
+
+  <!-- ========== ROW 2: group_vars/wan.yml ========== -->
+  <g transform="translate(100, 160)">
+    <rect class="row-bg" x="0" y="0" width="660" height="70" rx="10"/>
+    <text class="path-text" x="24" y="42">group_vars/wan.yml</text>
+    <text class="priority-label" x="340" y="42">More specific group</text>
+  </g>
+
+  <!-- Arrow up between row 3 and row 2 -->
+  <g>
+    <line class="arrow-line" x1="230" y1="260" x2="230" y2="238"/>
+    <path class="arrow-head" d="M 225,242 L 230,232 L 235,242 Z"/>
+  </g>
+
+  <!-- ========== ROW 3: group_vars/cisco_ios.yml ========== -->
+  <g transform="translate(100, 260)">
+    <rect class="row-bg" x="0" y="0" width="660" height="70" rx="10"/>
+    <text class="path-text" x="24" y="42">group_vars/cisco_ios.yml</text>
+    <text class="priority-label" x="340" y="36">Less specific group</text>
+    <text class="priority-meta" x="340" y="56">parent</text>
+  </g>
+
+  <!-- Arrow up between row 4 and row 3 -->
+  <g>
+    <line class="arrow-line" x1="230" y1="360" x2="230" y2="338"/>
+    <path class="arrow-head" d="M 225,342 L 230,332 L 235,342 Z"/>
+  </g>
+
+  <!-- ========== ROW 4: group_vars/all.yml (lowest priority, bottom) ========== -->
+  <g transform="translate(100, 360)">
+    <rect class="row-bg" x="0" y="0" width="660" height="70" rx="10"/>
+    <text class="path-text" x="24" y="42">group_vars/all.yml</text>
+    <text class="priority-label" x="340" y="36">Lowest priority</text>
+    <text class="priority-meta" x="340" y="56">applies to everything</text>
+  </g>
+
+</svg>

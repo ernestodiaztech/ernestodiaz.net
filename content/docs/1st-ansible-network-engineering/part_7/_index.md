@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '7 - Inventory'
 description: "Part 7 of my Ansible learning geared towards Network Engineering."
 tags:
@@ -207,27 +207,6 @@ nano ~/projects/ansible-network/inventory/hosts.yml
 
 {{< codeblock file="hosts.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# Ansible Inventory — Enterprise Lab
-# Containerlab Management Network: 172.16.0.0/24
-#
-# Group Hierarchy:
-#   all
-#   ├── network_devices
-#   │   ├── cisco_ios        (WAN routers)
-#   │   │   └── wan
-#   │   ├── cisco_nxos       (DC switches)
-#   │   │   ├── spine_switches
-#   │   │   └── leaf_switches
-#   │   └── paloalto         (Firewall)
-#   └── linux_hosts          (End hosts)
-#
-# Logical Groups (cross-platform targeting):
-#   ├── wan                  (WAN-facing devices)
-#   ├── datacenter           (All DC devices)
-#   └── edge                 (Firewall + WAN routers)
-# =============================================================
-
 all:
   children:
 
@@ -302,13 +281,7 @@ all:
 
 When a device belongs to a group, it also implicitly belongs to all parent groups above it. For example, `spine-01` is in:
 
-{{< codeblock lang="" copy="false" >}}
-spine-01
-  └── spine_switches      (direct parent)
-      └── cisco_nxos      (grandparent)
-          └── network_devices  (great-grandparent)
-              └── all          (top-level — always exists)
-{{< /codeblock >}}
+{{< topology1 src="diagrams/inventory00.svg" >}}
 
 This matters for variable inheritance and for playbook targeting. If I write `hosts: cisco_nxos`, my playbook runs against `spine-01`, `spine-02`, `leaf-01`, and `leaf-02`. All devices in the hierarchy beneath `cisco_nxos`.
 
@@ -420,24 +393,7 @@ The `group_vars/` directory is where I define variables that apply to an entire 
 
 {{< subtle-label >}}Directory Structure{{< /subtle-label >}}
 
-{{< codeblock lang="" copy="false" >}}
-inventory/
-├── hosts.yml
-├── group_vars/
-│   ├── all.yml              # Applies to every device
-│   ├── cisco_ios.yml        # Applies to all cisco_ios hosts
-│   ├── cisco_nxos.yml       # Applies to all cisco_nxos hosts
-│   ├── paloalto.yml         # Applies to all paloalto hosts
-│   ├── spine_switches.yml   # Applies to spine switches only
-│   ├── leaf_switches.yml    # Applies to leaf switches only
-│   ├── wan.yml              # Applies to WAN group only
-│   └── linux_hosts.yml      # Applies to Linux hosts
-└── host_vars/
-    ├── wan-r1.yml
-    ├── wan-r2.yml
-    ├── spine-01.yml
-    └── ...
-{{< /codeblock >}}
+{{< topology1 src="diagrams/inventory-tree.svg" >}}
 
 ---
 
@@ -734,11 +690,6 @@ nano ~/projects/ansible-network/inventory/host_vars/wan-r1.yml
 
 {{< codeblock file="wan-r1.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# wan-r1 — Cisco IOS-XE WAN Router 1
-# Management IP: 172.16.0.11
-# Role: Primary WAN router, BGP to upstream ISP
-# =============================================================
 
 # --- Device Identity ---
 device_hostname: wan-r1
@@ -816,11 +767,6 @@ nano ~/projects/ansible-network/inventory/host_vars/wan-r2.yml
 
 {{< codeblock file="wan-r1.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# wan-r2 — Cisco IOS-XE WAN Router 2
-# Management IP: 172.16.0.12
-# Role: Secondary WAN router, BGP redundancy
-# =============================================================
 
 device_hostname: wan-r2
 device_role: wan_router
@@ -876,11 +822,6 @@ nano ~/projects/ansible-network/inventory/host_vars/fw-01.yml
 
 {{< codeblock file="fw-01.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# fw-01 — Palo Alto PAN-OS Firewall
-# Management IP: 172.16.0.10
-# Role: WAN edge firewall, security policy enforcement
-# =============================================================
 
 device_hostname: fw-01
 device_role: firewall
@@ -963,11 +904,6 @@ nano ~/projects/ansible-network/inventory/host_vars/spine-01.yml
 
 {{< codeblock file="spine-01.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# spine-01 — Cisco NX-OS Spine Switch 1
-# Management IP: 172.16.0.21
-# Role: DC spine, BGP route reflector, VXLAN VTEP
-# =============================================================
 
 device_hostname: spine-01
 device_role: spine
@@ -1040,19 +976,14 @@ snmp_contact: "netops@lab.local"
 
 ---
 
-#### NX-OS Leaf Switch 1
+{{< subtle-label >}}NX-OS Leaf Switch 1{{< /subtle-label >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 nano ~/projects/ansible-network/inventory/host_vars/leaf-01.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="leaf-01.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# leaf-01 — Cisco NX-OS Leaf Switch 1
-# Management IP: 172.16.0.23
-# Role: DC access layer, server connectivity, VPC peer
-# =============================================================
 
 device_hostname: leaf-01
 device_role: leaf
@@ -1112,7 +1043,7 @@ vpc_peer_ip: 172.16.0.24
 
 snmp_location: "HQ-DC-Rack-C1-U18"
 snmp_contact: "netops@lab.local"
-```
+{{< /codeblock >}}
 
 ---
 
@@ -1122,22 +1053,13 @@ Since I now have variables defined in `group_vars/all.yml`, `group_vars/cisco_io
 
 The rule is simple: **more specific always wins**.
 
-```
-host_vars/wan-r1.yml         ← Highest priority (most specific)
-    ↑
-group_vars/wan.yml           ← More specific group
-    ↑
-group_vars/cisco_ios.yml     ← Less specific group (parent)
-    ↑
-group_vars/all.yml           ← Lowest priority (applies to everything)
-```
+{{< topology1 src="diagrams/inventory01.svg" >}}
 
 A practical example: `ansible_become_password` is set in `group_vars/cisco_ios.yml` as `ansible123`. If `wan-r1` has a different enable password (common in real networks where devices have unique credentials), I override it in `host_vars/wan-r1.yml`:
 
-```yaml
-# host_vars/wan-r1.yml
+{{< codeblock file="host_vars/wan-r1.yml" syntax="yaml" >}}
 ansible_become_password: "unique-enable-password-for-r1"
-```
+{{< /codeblock >}}
 
 This overrides the group-level setting for `wan-r1` only. All other IOS devices still use the group setting. Full variable precedence is covered in depth in Part 11.
 
@@ -1151,47 +1073,26 @@ Dynamic inventory solves this by generating the inventory automatically from an 
 
 ---
 
-#### How Dynamic Inventory Works
+{{< subtle-label >}}How Dynamic Inventory Works{{< /subtle-label >}}
 
-```
-ansible-playbook site.yml -i inventory/
-         │
-         ▼
-Ansible sees inventory/ directory
-         │
-         ├── hosts.yml         ← Static hosts (if any)
-         └── netbox.yml        ← Dynamic inventory plugin config
-                  │
-                  ▼
-         Plugin queries Netbox API
-                  │
-                  ▼
-         Returns host list + variables
-                  │
-                  ▼
-         Ansible merges static + dynamic inventory
-         and proceeds with playbook execution
-```
+{{< topology1 src="diagrams/inventory02.svg" >}}
 
 The key insight: from a playbook's perspective, there's no difference between a statically-defined host and a dynamically-discovered one. Both show up the same way. The difference is only in how the inventory is maintained.
 
-#### The Netbox Dynamic Inventory Plugin
+---
+
+{{< subtle-label >}}Netbox Dynamic Inventory Plugin{{< /subtle-label >}}
 
 Netbox is the industry-standard network source of truth. When Netbox is running, I replace (or supplement) my static `hosts.yml` with a Netbox inventory plugin config.
 
 Here's what that config file looks like (I'm creating it now even though Netbox isn't running yet) so the structure is familiar when I get to it:
 
-```bash
+{{< codeblock lang="YAML" syntax="yaml" >}}
 nano ~/projects/ansible-network/inventory/netbox.yml
-```
+{{< /codeblock >}}
 
-```yaml
+{{< codeblock file="netbox.yml" syntax="yaml" >}}
 ---
-# =============================================================
-# Netbox Dynamic Inventory Plugin Configuration
-# This file will be active once Netbox is set up in Part 26
-# For now, comment out the plugin line to prevent errors
-# =============================================================
 
 # Uncomment when Netbox is running:
 # plugin: netbox.netbox.nb_inventory
@@ -1199,17 +1100,14 @@ nano ~/projects/ansible-network/inventory/netbox.yml
 plugin: netbox.netbox.nb_inventory
 
 # --- Netbox Connection ---
-api_endpoint: http://192.168.1.100:8000    # Replace with actual Netbox IP
-token: "{{ lookup('env', 'NETBOX_TOKEN') }}"    # Token from environment variable
-validate_certs: false                           # Lab — self-signed cert
+api_endpoint: http://192.168.1.100:8000
+token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
+validate_certs: false
 
-# --- What to pull from Netbox ---
-# Pull devices (not virtual machines) into the inventory
 compose:
   ansible_host: primary_ip4.address | ipaddr('address')
 
 # --- Grouping ---
-# Create Ansible groups based on Netbox attributes
 group_by:
   - device_roles
   - platforms
@@ -1217,17 +1115,14 @@ group_by:
   - tags
 
 # --- Filters ---
-# Only pull active devices
 device_query_filters:
   - status: active
 
 # Only pull devices that have a primary IP set
-# (devices without IPs can't be automated)
 filters:
   has_primary_ip: true
 
 # --- Variable mapping ---
-# Map Netbox fields to Ansible variables
 compose:
   ansible_network_os: >-
     {
@@ -1238,7 +1133,7 @@ compose:
   device_role: device_role.slug
   site_name: site.name
   rack: rack.name | default('unknown')
-```
+{{< /codeblock >}}
 
 **What this configuration does when active:**
 - Connects to the Netbox API and pulls all active devices that have a primary IP
@@ -1246,10 +1141,13 @@ compose:
 - Maps Netbox's platform slugs to Ansible's `ansible_network_os` values
 - Pulls device-specific data (rack, site, role) as Ansible variables automatically
 
->[!Info]
-> The `token: "{{ lookup('env', 'NETBOX_TOKEN') }}"` syntax reads the API token from an environment variable rather than hardcoding it in the file. The config file goes in Git, the token stays out of Git. I set the environment variable before running Ansible: `export NETBOX_TOKEN=my_token_here`. This can also be stored in a `.env` file (which is in `.gitignore`) and sourced before running playbooks.
+{{< lab-callout type="info" >}}
+The `token: "{{ lookup('env', 'NETBOX_TOKEN') }}"` syntax reads the API token from an environment variable rather than hardcoding it in the file. The config file goes in Git, the token stays out of Git. I set the environment variable before running Ansible: `export NETBOX_TOKEN=my_token_here`. This can also be stored in a `.env` file (which is in `.gitignore`) and sourced before running playbooks.
+{{< /lab-callout >}}
 
-#### Static vs Dynamic
+---
+
+{{< subtle-label >}}Static vs Dynamic{{< /subtle-label >}}
 
 | Scenario | Use |
 |---|---|
@@ -1270,17 +1168,16 @@ With the full inventory built out, I validate it thoroughly before running any p
 
 ---
 
-#### `ansible-inventory --graph`
+{{< subtle-label >}}ansible-inventory --graph{{< /subtle-label >}}
 
 The graph view shows the group hierarchy visually:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
 ansible-inventory -i inventory/ --graph
-```
+{{< /codeblock >}}
 
-Expected output:
-```
+{{< codeblock lang="Expected Output" copy="false" >}}
 @all:
   |--@cisco_ios:
   |  |--@wan:
@@ -1316,28 +1213,29 @@ Expected output:
   |  |--leaf-01
   |  |--leaf-02
   |--@ungrouped:
-```
+{{< /codeblock >}}
 
-#### `ansible-inventory --list`
+---
+
+{{< subtle-label >}}ansible-inventory --list{{< /subtle-label >}}
 
 The list view shows the full inventory as JSON including all variables:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-inventory -i inventory/ --list
-```
+{{< /codeblock >}}
 
 This is verbose but useful for confirming that variables from `group_vars` and `host_vars` are being read correctly.
 
-#### `ansible-inventory --host <hostname>`
+{{< subtle-label >}}ansible-inventory --host <hostname>{{< /subtle-label >}}
 
 Shows all variables that apply to a specific host — including inherited group variables:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible-inventory -i inventory/ --host wan-r1
-```
+{{< /codeblock >}}
 
-Expected output:
-```json
+{{< codeblock lang="Expected Output" copy="false" >}}
 {
     "ansible_become": true,
     "ansible_become_method": "enable",
@@ -1363,75 +1261,76 @@ Expected output:
     "ospf_area": 0,
     ...
 }
-```
+{{< /codeblock >}}
 
 This output shows exactly what variables Ansible will have available when running a task against `wan-r1`. If a variable is missing here, it won't be available in playbooks or templates.
 
->[!Tip]
-> I run `ansible-inventory --host <device>` whenever a playbook fails with an `undefined variable` error. It immediately shows whether the variable exists in the inventory at all, and if so, what value it has. This is faster than grep-ing through multiple `group_vars` and `host_vars` files manually.
+---
 
-#### Testing Connectivity Against the Inventory
+{{< subtle-label >}}Testing Connectivity Against the Inventory{{< /subtle-label >}}
 
 With the lab running, I test that Ansible can actually reach all devices:
 
 Test all IOS-XE devices
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_ios -i inventory/ -m ansible.netcommon.net_ping
-```
+{{< /codeblock >}}
 
 Test all NX-OS devices
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_nxos -i inventory/ -m ansible.netcommon.net_ping
-```
+{{< /codeblock >}}
 
 Test all network devices at once
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible network_devices -i inventory/ -m ansible.netcommon.net_ping
-```
+{{< /codeblock >}}
 
 Test Linux hosts
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible linux_hosts -i inventory/ -m ansible.builtin.ping
-```
+{{< /codeblock >}}
 
-#### Limiting to Specific Hosts During Testing
+---
+
+{{< subtle-label >}}Limiting to Specific Hosts During Testing{{< /subtle-label >}}
 
 Run against a single host
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_ios -i inventory/ -m ansible.netcommon.net_ping --limit wan-r1
-```
+{{< /codeblock >}}
 
 Run against a pattern
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible all -i inventory/ -m ansible.netcommon.net_ping --limit "spine*"
-```
+{{< /codeblock >}}
 
 Run against everything except one device
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible all -i inventory/ -m ansible.netcommon.net_ping --limit "all,!fw-01"
-```
+{{< /codeblock >}}
 
 ---
 
 ## Committing the Expanded Inventory to Git
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 cd ~/projects/ansible-network
-```
+{{< /codeblock >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git add inventory/
 git status
-```
+{{< /codeblock >}}
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 git commit -m "feat(inventory): expand inventory with full group_vars and host_vars
 
 - Add comprehensive group_vars for all platforms (cisco_ios, cisco_nxos,
@@ -1441,10 +1340,9 @@ git commit -m "feat(inventory): expand inventory with full group_vars and host_v
 - Add logical group structure (wan_edge, datacenter, network_devices)
 - Add Netbox dynamic inventory config (inactive until Part 26)
 - Expand hosts.yml with full group hierarchy and comments"
-```
+{{< /codeblock >}}
 
 ---
-
 
 The inventory is now a proper data source.
 

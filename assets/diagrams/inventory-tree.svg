@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="800" height="580" role="img" aria-label="Inventory directory structure: hosts.yml at top level, group_vars folder containing all.yml, cisco_ios.yml, cisco_nxos.yml, paloalto.yml, spine_switches.yml, leaf_switches.yml, wan.yml, and linux_hosts.yml; host_vars folder containing wan-r1.yml, wan-r2.yml, spine-01.yml, and others.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .tree-line { stroke: var(--lab-border); stroke-width: 1.25; fill: none; }
+      .root-text { fill: var(--lab-text); font-size: 14px; font-weight: 700; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .dir-text { fill: var(--lab-text); font-size: 14px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .file-text { fill: var(--lab-text); font-size: 14px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .comment-text { fill: var(--lab-text-muted); font-size: 13px; font-weight: 400; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .accent-text { fill: var(--lab-accent); font-size: 14px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="759" height="579" rx="18" ry="18"/>
+
+  <!-- ========== TREE STRUCTURE ========== -->
+
+  <!-- Vertical trunks (the | characters in tree output) -->
+  <!-- Main trunk from inventory/ down through group_vars/ to host_vars/ -->
+  <line class="tree-line" x1="60" y1="44" x2="60" y2="464"/>
+
+  <!-- group_vars/ inner trunk: from group_vars/ row down through its files -->
+  <line class="tree-line" x1="100" y1="104" x2="100" y2="384"/>
+
+  <!-- host_vars/ inner trunk: from host_vars/ row down through its files -->
+  <line class="tree-line" x1="100" y1="474" x2="100" y2="554"/>
+
+  <!-- Horizontal connectors (the ├── and └── elbows) -->
+  <!-- Top-level: hosts.yml -->
+  <line class="tree-line" x1="60" y1="74" x2="86" y2="74"/>
+  <!-- Top-level: group_vars/ -->
+  <line class="tree-line" x1="60" y1="104" x2="86" y2="104"/>
+  <!-- Top-level: host_vars/ (last, the └) -->
+  <line class="tree-line" x1="60" y1="444" x2="86" y2="444"/>
+
+  <!-- group_vars children: all 8 yml files -->
+  <line class="tree-line" x1="100" y1="134" x2="126" y2="134"/>
+  <line class="tree-line" x1="100" y1="164" x2="126" y2="164"/>
+  <line class="tree-line" x1="100" y1="194" x2="126" y2="194"/>
+  <line class="tree-line" x1="100" y1="224" x2="126" y2="224"/>
+  <line class="tree-line" x1="100" y1="254" x2="126" y2="254"/>
+  <line class="tree-line" x1="100" y1="284" x2="126" y2="284"/>
+  <line class="tree-line" x1="100" y1="314" x2="126" y2="314"/>
+  <line class="tree-line" x1="100" y1="344" x2="126" y2="344"/>
+
+  <!-- host_vars children -->
+  <line class="tree-line" x1="100" y1="474" x2="126" y2="474"/>
+  <line class="tree-line" x1="100" y1="504" x2="126" y2="504"/>
+  <line class="tree-line" x1="100" y1="534" x2="126" y2="534"/>
+
+  <!-- ========== TEXT CONTENT ========== -->
+
+  <!-- Root: inventory/ -->
+  <text class="root-text" x="40" y="48">inventory/</text>
+
+  <!-- hosts.yml -->
+  <text class="file-text" x="92" y="78">hosts.yml</text>
+
+  <!-- group_vars/ -->
+  <text class="dir-text" x="92" y="108">group_vars/</text>
+
+  <!-- group_vars files with comments -->
+  <text class="file-text" x="132" y="138">all.yml</text>
+  <text class="comment-text" x="340" y="138">Applies to every device</text>
+
+  <text class="file-text" x="132" y="168">cisco_ios.yml</text>
+  <text class="comment-text" x="340" y="168">Applies to all cisco_ios hosts</text>
+
+  <text class="file-text" x="132" y="198">cisco_nxos.yml</text>
+  <text class="comment-text" x="340" y="198">Applies to all cisco_nxos hosts</text>
+
+  <text class="file-text" x="132" y="228">paloalto.yml</text>
+  <text class="comment-text" x="340" y="228">Applies to all paloalto hosts</text>
+
+  <text class="file-text" x="132" y="258">spine_switches.yml</text>
+  <text class="comment-text" x="340" y="258">Applies to spine switches only</text>
+
+  <text class="file-text" x="132" y="288">leaf_switches.yml</text>
+  <text class="comment-text" x="340" y="288">Applies to leaf switches only</text>
+
+  <text class="file-text" x="132" y="318">wan.yml</text>
+  <text class="comment-text" x="340" y="318">Applies to WAN group only</text>
+
+  <text class="file-text" x="132" y="348">linux_hosts.yml</text>
+  <text class="comment-text" x="340" y="348">Applies to Linux hosts</text>
+
+  <!-- host_vars/ -->
+  <text class="dir-text" x="92" y="448">host_vars/</text>
+
+  <!-- host_vars files (no comments in original) -->
+  <text class="file-text" x="132" y="478">wan-r1.yml</text>
+  <text class="file-text" x="132" y="508">wan-r2.yml</text>
+  <text class="file-text" x="132" y="538">spine-01.yml</text>
+
+</svg>

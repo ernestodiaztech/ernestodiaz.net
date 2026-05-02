@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 740" width="800" height="740" role="img" aria-label="Ansible inventory resolution flow: ansible-playbook reads inventory directory, processes static hosts.yml then dynamic netbox.yml, plugin queries Netbox API, returns host list and variables, then Ansible merges static and dynamic inventory before executing the playbook.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .file-card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.25; }
+      .cmd-text { fill: var(--lab-text); font-size: 14px; font-weight: 600; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .step-text { fill: var(--lab-text); font-size: 14px; font-weight: 500; text-anchor: middle; }
+      .file-name { fill: var(--lab-text); font-size: 13px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .file-desc { fill: var(--lab-text-muted); font-size: 12px; font-weight: 400; text-anchor: start; }
+      .arrow-line { stroke: var(--lab-accent); stroke-width: 1.75; fill: none; stroke-linecap: round; }
+      .arrow-head { fill: var(--lab-accent); }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="799" height="739" rx="18" ry="18"/>
+
+  <!-- ========== STEP 1: Command ========== -->
+  <g transform="translate(220, 30)">
+    <rect class="card" x="0" y="0" width="360" height="56" rx="12"/>
+    <text class="cmd-text" x="180" y="35">ansible-playbook site.yml -i inventory/</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <line class="arrow-line" x1="400" y1="86" x2="400" y2="114"/>
+  <path class="arrow-head" d="M 395,110 L 400,120 L 405,110 Z"/>
+
+  <!-- ========== STEP 2: Sees inventory directory ========== -->
+  <g transform="translate(220, 124)">
+    <rect class="card" x="0" y="0" width="360" height="56" rx="12"/>
+    <text class="step-text" x="180" y="35">Ansible sees inventory/ directory</text>
+  </g>
+
+  <!-- Arrow 2: down to hosts.yml -->
+  <line class="arrow-line" x1="400" y1="180" x2="400" y2="208"/>
+  <path class="arrow-head" d="M 395,204 L 400,214 L 405,204 Z"/>
+
+  <!-- ========== STEP 3: hosts.yml (static, on top) ========== -->
+  <g transform="translate(220, 218)">
+    <rect class="file-card" x="0" y="0" width="360" height="64" rx="10"/>
+    <text class="file-name" x="20" y="28">hosts.yml</text>
+    <text class="file-desc" x="20" y="50">Static hosts (if any)</text>
+  </g>
+
+  <!-- Arrow 3: hosts.yml -> netbox.yml -->
+  <line class="arrow-line" x1="400" y1="282" x2="400" y2="312"/>
+  <path class="arrow-head" d="M 395,308 L 400,318 L 405,308 Z"/>
+
+  <!-- ========== STEP 4: netbox.yml (dynamic, below) ========== -->
+  <g transform="translate(220, 322)">
+    <rect class="file-card" x="0" y="0" width="360" height="64" rx="10"/>
+    <text class="file-name" x="20" y="28">netbox.yml</text>
+    <text class="file-desc" x="20" y="50">Dynamic inventory plugin config</text>
+  </g>
+
+  <!-- Arrow 4: down to plugin step -->
+  <line class="arrow-line" x1="400" y1="386" x2="400" y2="414"/>
+  <path class="arrow-head" d="M 395,410 L 400,420 L 405,410 Z"/>
+
+  <!-- ========== STEP 5: Plugin queries Netbox API ========== -->
+  <g transform="translate(220, 424)">
+    <rect class="card" x="0" y="0" width="360" height="56" rx="12"/>
+    <text class="step-text" x="180" y="35">Plugin queries Netbox API</text>
+  </g>
+
+  <!-- Arrow 5 -->
+  <line class="arrow-line" x1="400" y1="480" x2="400" y2="508"/>
+  <path class="arrow-head" d="M 395,504 L 400,514 L 405,504 Z"/>
+
+  <!-- ========== STEP 6: Returns host list + variables ========== -->
+  <g transform="translate(220, 518)">
+    <rect class="card" x="0" y="0" width="360" height="56" rx="12"/>
+    <text class="step-text" x="180" y="35">Returns host list + variables</text>
+  </g>
+
+  <!-- Arrow 6 -->
+  <line class="arrow-line" x1="400" y1="574" x2="400" y2="602"/>
+  <path class="arrow-head" d="M 395,598 L 400,608 L 405,598 Z"/>
+
+  <!-- ========== STEP 7: Merge and execute (final card) ========== -->
+  <g transform="translate(180, 612)">
+    <rect class="card" x="0" y="0" width="440" height="100" rx="12"/>
+    <text class="step-text" x="220" y="42">Ansible merges static + dynamic inventory</text>
+    <text class="step-text" x="220" y="68">and proceeds with playbook execution</text>
+  </g>
+
+</svg>

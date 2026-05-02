@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" width="800" height="460" role="img" aria-label="Ansible group inheritance for spine-01: spine-01 belongs to spine_switches (direct parent), which belongs to cisco_nxos (grandparent), which belongs to network_devices (great-grandparent), which belongs to all (top-level group).">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .host-card { fill: var(--lab-bg); stroke: var(--lab-accent); stroke-width: 1.75; }
+      .name-text { fill: var(--lab-text); font-size: 14px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .role-text { fill: var(--lab-text-muted); font-size: 12px; font-weight: 400; text-anchor: start; }
+      .tree-line { stroke: var(--lab-border); stroke-width: 1.25; fill: none; }
+      .scope-label { fill: var(--lab-text-muted); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-anchor: middle; }
+      .scope-line { stroke: var(--lab-border); stroke-width: 1; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="799" height="459" rx="18" ry="18"/>
+
+  <!-- Vertical scope axis on the left -->
+  <g>
+    <text class="scope-label" transform="translate(50, 80) rotate(-90)">NARROWEST</text>
+    <line class="scope-line" x1="50" y1="110" x2="50" y2="370"/>
+    <text class="scope-label" transform="translate(50, 400) rotate(-90)">BROADEST</text>
+  </g>
+
+  <!-- ========== Tree connector lines (drawn first, behind cards) ========== -->
+  <!-- Vertical trunk and elbows for the └── pattern -->
+  <g>
+    <!-- spine-01 -> spine_switches -->
+    <path class="tree-line" d="M 130,90 L 130,150 L 170,150"/>
+    <!-- spine_switches -> cisco_nxos -->
+    <path class="tree-line" d="M 200,180 L 200,220 L 240,220"/>
+    <!-- cisco_nxos -> network_devices -->
+    <path class="tree-line" d="M 270,250 L 270,290 L 310,290"/>
+    <!-- network_devices -> all -->
+    <path class="tree-line" d="M 340,320 L 340,360 L 380,360"/>
+  </g>
+
+  <!-- ========== ROW 1: spine-01 (the host, accent border) ========== -->
+  <g transform="translate(100, 60)">
+    <rect class="host-card" x="0" y="0" width="280" height="60" rx="10"/>
+    <text class="name-text" x="20" y="28">spine-01</text>
+    <text class="role-text" x="20" y="46">host</text>
+  </g>
+
+  <!-- ========== ROW 2: spine_switches ========== -->
+  <g transform="translate(170, 140)">
+    <rect class="card" x="0" y="0" width="540" height="60" rx="10"/>
+    <text class="name-text" x="20" y="28">spine_switches</text>
+    <text class="role-text" x="20" y="46">direct parent</text>
+  </g>
+
+  <!-- ========== ROW 3: cisco_nxos ========== -->
+  <g transform="translate(240, 210)">
+    <rect class="card" x="0" y="0" width="470" height="60" rx="10"/>
+    <text class="name-text" x="20" y="28">cisco_nxos</text>
+    <text class="role-text" x="20" y="46">grandparent</text>
+  </g>
+
+  <!-- ========== ROW 4: network_devices ========== -->
+  <g transform="translate(310, 280)">
+    <rect class="card" x="0" y="0" width="400" height="60" rx="10"/>
+    <text class="name-text" x="20" y="28">network_devices</text>
+    <text class="role-text" x="20" y="46">great-grandparent</text>
+  </g>
+
+  <!-- ========== ROW 5: all ========== -->
+  <g transform="translate(380, 350)">
+    <rect class="card" x="0" y="0" width="330" height="60" rx="10"/>
+    <text class="name-text" x="20" y="28">all</text>
+    <text class="role-text" x="20" y="46">top-level — always exists</text>
+  </g>
+
+</svg>

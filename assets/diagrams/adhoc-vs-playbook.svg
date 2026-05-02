@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 540" width="900" height="540" role="img" aria-label="Ad-hoc Ansible command anatomy showing hosts, module flag, and arguments flag, with the equivalent playbook task in YAML form.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .section-label { fill: var(--lab-text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-anchor: start; }
+      .cmd-text { fill: var(--lab-text); font-size: 16px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .cmd-text-accent { fill: var(--lab-accent); font-size: 16px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .yaml-text { fill: var(--lab-text); font-size: 15px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .yaml-key { fill: var(--lab-text-muted); font-size: 15px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .yaml-value-accent { fill: var(--lab-accent); font-size: 15px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .annotation-text { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .annotation-meta { fill: var(--lab-text-muted); font-size: 13px; font-weight: 400; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .callout-line { stroke: var(--lab-accent); stroke-width: 1.25; fill: none; stroke-linecap: round; }
+      .callout-dot { fill: var(--lab-accent); }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="740" height="539" rx="18" ry="18"/>
+
+  <!-- ========== TOP: Ad-hoc command anatomy ========== -->
+  <g transform="translate(40, 32)">
+    <rect class="card" x="0" y="0" width="670" height="280" rx="12"/>
+    <text class="section-label" x="20" y="24">AD-HOC COMMAND</text>
+
+    <!-- The command itself -->
+    <text x="20" y="64">
+      <tspan class="cmd-text">ansible </tspan><tspan class="cmd-text-accent">&lt;hosts&gt;</tspan><tspan class="cmd-text"> -m </tspan><tspan class="cmd-text-accent">&lt;module&gt;</tspan><tspan class="cmd-text"> -a "</tspan><tspan class="cmd-text-accent">&lt;arguments&gt;</tspan><tspan class="cmd-text">"</tspan>
+    </text>
+
+    <!-- Callout lines pointing to each placeholder -->
+    <!-- <hosts> sits roughly under x=20+8*char width. Using actual measured positions from font:
+         "ansible " = 8 chars * 9.6px ≈ 77px → <hosts> starts at x=97
+         "<hosts> -m " ends → <module> starts at x=200 area
+         "<module> -a \"" ends → <arguments> starts at x=320 area
+         I'll use approximate x-positions and let the callouts be slightly schematic. -->
+
+    <!-- Dot under <hosts> -->
+    <circle class="callout-dot" cx="118" cy="74" r="2.5"/>
+    <!-- Dot under <module> -->
+    <circle class="callout-dot" cx="220" cy="74" r="2.5"/>
+    <!-- Dot under <arguments> -->
+    <circle class="callout-dot" cx="356" cy="74" r="2.5"/>
+
+    <!-- Callout 1: <hosts> -->
+    <path class="callout-line" d="M 118,76 L 118,220"/>
+    <path class="callout-line" d="M 118,220 L 138,220"/>
+    <text class="annotation-text" x="148" y="216">Which hosts or groups to target</text>
+    <text class="annotation-meta" x="148" y="234">from inventory</text>
+
+    <!-- Callout 2: <module> -->
+    <path class="callout-line" d="M 220,76 L 220,170"/>
+    <path class="callout-line" d="M 220,170 L 240,170"/>
+    <text class="annotation-text" x="250" y="166">The module to run</text>
+    <text class="annotation-meta" x="250" y="184">ios_command, ping, debug, etc.</text>
+
+    <!-- Callout 3: <arguments> -->
+    <path class="callout-line" d="M 356,76 L 356,120"/>
+    <path class="callout-line" d="M 356,120 L 376,120"/>
+    <text class="annotation-text" x="386" y="116">Module parameters</text>
+    <text class="annotation-meta" x="386" y="134">like task args in a playbook</text>
+  </g>
+
+  <!-- ========== BOTTOM: Equivalent playbook task ========== -->
+  <g transform="translate(40, 340)">
+    <rect class="card" x="0" y="0" width="670" height="170" rx="12"/>
+    <text class="section-label" x="20" y="24">EQUIVALENT PLAYBOOK TASK</text>
+
+    <!-- YAML body -->
+    <text x="20" y="58">
+      <tspan class="yaml-key">- hosts: </tspan><tspan class="yaml-value-accent">&lt;hosts&gt;</tspan>
+    </text>
+    <text x="35" y="84">
+      <tspan class="yaml-key">tasks:</tspan>
+    </text>
+    <text x="45" y="110">
+      <tspan class="yaml-key">- </tspan><tspan class="yaml-value-accent">&lt;module&gt;</tspan><tspan class="yaml-key">:</tspan>
+    </text>
+    <text x="85" y="136">
+      <tspan class="yaml-key"></tspan><tspan class="yaml-value-accent">&lt;arguments&gt;</tspan>
+    </text>
+  </g>
+
+</svg>

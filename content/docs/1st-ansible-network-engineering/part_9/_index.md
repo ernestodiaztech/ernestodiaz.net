@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: '9 - Adhoc'
 description: "Part 9 of my Ansible learning geared towards Network Engineering."
 tags:
@@ -15,43 +15,35 @@ weight: 9
 {{< badge "Ansible" >}}
 {{< badge content="Linux" color="red" >}}
 
-This project is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+---
 
+{{< lab-callout type="info" >}}
+This is me documenting my journey of learning Ansible that is focused on network engineering. It's not a "how-to guide" per-say, more of a diary. Each part will build upon the last. A lot of information on here is so I can come back to and reference later. I also learn best when teaching someone, and this is kind of me teaching.
+{{< /lab-callout >}}
+
+---
 
 ## Ad-Hoc Commands
 
 An ad-hoc command is a single Ansible module call executed directly from the command line. It's used for quick, one-time operations that don't need to be repeatable.
 
-{{% steps %}}
+---
 
-#### Model
+{{< subtle-label >}}Model{{< /subtle-label >}}
 
-```
-Ad-hoc command:
-ansible <hosts> -m <module> -a "<arguments>"
-    │              │              │
-    │              │              └── Module parameters (like task args in a playbook)
-    │              └── The module to run (ios_command, ping, debug, etc.)
-    └── Which hosts or groups to target (from inventory)
-
-Equivalent playbook task:
-- hosts: <hosts>
-  tasks:
-    - <module>:
-        <arguments>
-```
+{{< topology1 src="diagrams/adhoc-vs-playbook.svg" >}}
 
 ---
 
-#### Command Syntax
+{{< subtle-label >}}Command Syntax{{< /subtle-label >}}
 
-```
+{{< codeblock lang="" copy="false" >}}
 ansible <pattern> \
     -m <module_name> \
     -a "<module_arguments>" \
     -i <inventory_path> \
     [options]
-```
+{{< /codeblock >}}
 
 **Flag Explanation:**
 
@@ -75,7 +67,7 @@ ansible <pattern> \
 
 ---
 
-#### Pattern Field
+{{< subtle-label >}}Pattern Field{{< /subtle-label >}}
 
 The pattern is how I tell Ansible which devices to target.
 
@@ -90,7 +82,7 @@ The pattern is how I tell Ansible which devices to target.
 
 ---
 
-#### Ping Test
+{{< subtle-label >}}Ping Test{{< /subtle-label >}}
 
 The ad-hoc command `ansible.builtin.ping` doesn't send ICMP pings. It verifies that Ansible can connect to and authenticate with a device and that Python is available (for Linux hosts).
 
@@ -98,29 +90,27 @@ The ad-hoc command `ansible.builtin.ping` doesn't send ICMP pings. It verifies t
 
 **Test all devices**
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible all -m ansible.builtin.ping
-```
+{{< /codeblock >}}
 
 **Test a specific group**
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_ios -m ansible.builtin.ping
-```
+{{< /codeblock >}}
 
 **Test a single device**
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible wan-r1 -m ansible.builtin.ping
-```
+{{< /codeblock >}}
 
 ----
 
 **Output Explained**
 
-**Successful output:**
-
-```bash
+{{< codeblock lang="Successful Output" copy="false" >}}
 wan-r1 | SUCCESS => {
     "changed": false,
     "ping": "pong"
@@ -129,32 +119,30 @@ wan-r2 | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
-```
+{{< /codeblock >}}
 
 ---
 
-**Failed output (device unreachable)**
-
-```bash
+{{< codeblock lang="Failed output (device unreachable)" copy="false" >}}
 wan-r1 | UNREACHABLE! => {
     "changed": false,
     "msg": "Failed to connect to the host via ssh: ssh: connect to host 172.16.0.11
             port 22: Connection timed out",
     "unreachable": true
 }
-```
+{{< /codeblock >}}
 
 ---
 
 **Failed output (authentication error)**
 
-```bash
+{{< codeblock lang="Failed output (authentication error)" copy="false" >}}
 wan-r1 | FAILED! => {
     "changed": false,
     "msg": "Failed to authenticate: Authentication failed.",
     "rc": 255
 }
-```
+{{< /codeblock >}}
 
 ---
 
@@ -170,36 +158,36 @@ wan-r1 | FAILED! => {
 
 ---
 
-#### Basic Show Commands {class="no-step-marker"}
+{{< subtle-label >}}Basic Show Commands{{< /subtle-label >}}
 
 Run a single show command on all IOS devices
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_ios -m cisco.ios.ios_command -a "commands='show version'"
-```
+{{< /codeblock >}}
 
 Run on a single device
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible wan-r1 -m cisco.ios.ios_command -a "commands='show ip interface brief'"
-```
+{{< /codeblock >}}
 
 Run mutliple commands
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible wan-r1 -m cisco.ios.ios_command \
     -a "commands=['show ip bgp summary', 'show ip route']"
-```
+{{< /codeblock >}}
 
-{{< callout type="info" >}}
+---
 
 **Example output from running 'show ip interface brief'**
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible wan-r1 -m cisco.ios.ios_command -a "commands='show ip interface brief'"
-```
+{{< /codeblock >}}
 
-```bash
+{{< codeblock lang="" copy="false" >}}
 wan-r1 | SUCCESS => {
     "changed": false,
     "stdout": [
@@ -214,99 +202,87 @@ wan-r1 | SUCCESS => {
         ]
     ]
 }
-```
+{{< /codeblock >}}
 
 - `stdout` - a list containing the raw output string of each command.
 - `stdout_lines` - the same output split into a list of lines.
 - `changed: false` - show commands never report a change.
 
-{{< /callout >}}
-
 ---
 
-#### Useful Show Commands {class="no-step-marker"}
+{{< subtle-label >}}Useful Show Commands{{< /subtle-label >}}
 
 Verify device identity
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show version'" -o
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show version'" -o
+{{< /codeblock >}}
 
 Check interface states
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show ip interface brief'"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show ip interface brief'"
+{{< /codeblock >}}
 
 Check routing table
 
-```bash
-ansible wan-r1 -m cisco.ios.ios_command \
-    -a "commands='show ip route'"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible wan-r1 -m cisco.ios.ios_command -a "commands='show ip route'"
+{{< /codeblock >}}
 
 Check BGP neighbors
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show ip bgp summary'"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show ip bgp summary'"
+{{< /codeblock >}}
 
 Check OSPF neighbors
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show ip ospf neighbor'"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show ip ospf neighbor'"
+{{< /codeblock >}}
 
 Check running config
 
-```bash
-ansible wan-r1 -m cisco.ios.ios_command \
-    -a "commands='show running-config'"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible wan-r1 -m cisco.ios.ios_command -a "commands='show running-config'"
+{{< /codeblock >}}
 
 Check NTP sync status
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show ntp status'" -o
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show ntp status'" -o
+{{< /codeblock >}}
 
 Check CDP/LLDP neighbors
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show cdp neighbors detail'"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show cdp neighbors detail'"
+{{< /codeblock >}}
 
 ---
 
-#### PAN-OS {class="no-step-marker"}
+{{< subtle-label >}}PAN-OS{{< /subtle-label >}}
 
 PAN-OS uses the `httpapi` connection type. I have to use `paloaltonetworks.panos.panos_op` for commands.
 
 Example:
 
-```bash
-ansible paloalto -m paloaltonetworks.panos.panos_op \
-    -a "cmd='show system info'"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible paloalto -m paloaltonetworks.panos.panos_op -a "cmd='show system info'"
+{{< /codeblock >}}
 
 ---
 
-#### Linux Host {class="no-step-marker"}
+{{< subtle-label >}}Linux Host{{< /subtle-label >}}
 
 For Linus host Iuse standard Ansible modules.
 
 Example:
 
-```bash
-ansible linux_hosts -m ansible.builtin.command \
-    -a "ip route show"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible linux_hosts -m ansible.builtin.command -a "ip route show"
+{{< /codeblock >}}
 
 ---
 
@@ -318,29 +294,23 @@ Ansible's facts modules collect data from devices like software version, interfa
 
 Gather all default facts from IOS devices
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible cisco_ios -m cisco.ios.ios_facts
-```
+{{< /codeblock >}}
 
 Gather only specific subsets to speed things up
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_facts \
-    -a "gather_subset=['default', 'interfaces']"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_facts -a "gather_subset=['default', 'interfaces']"
+{{< /codeblock >}}
 
 Gather facts from a single device
 
-```bash
-ansible wan-r1 -m cisco.ios.ios_facts \
-    -a "gather_subset=['all']"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible wan-r1 -m cisco.ios.ios_facts -a "gather_subset=['all']"
+{{< /codeblock >}}
 
----
-
-Example output:
-
-```bash
+{{< codeblock lang="Example Output" copy="false" >}}
 wan-r1 | SUCCESS => {
     "ansible_facts": {
         "ansible_net_all_ipv4_addresses": [
@@ -370,7 +340,7 @@ wan-r1 | SUCCESS => {
     },
     "changed": false
 }
-```
+{{< /codeblock >}}
 
 ---
 
@@ -387,7 +357,7 @@ wan-r1 | SUCCESS => {
 
 ---
 
-#### Limit Scope {class="no-step-marker"}
+{{< subtle-label >}}Limit Scope{{< /subtle-label >}}
 
 The `-l` flag narrows an ad-hoc command to a subset of the targeted hosts.
 
@@ -395,42 +365,33 @@ The `-l` flag narrows an ad-hoc command to a subset of the targeted hosts.
 
 Run against a group, but limit to a specific device
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show version'" \
-    -l wan-r1
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show version'" -l wan-r1
+{{< /codeblock >}}
 
 Limit to multiple specific devices
 
-```bash
-ansible cisco_nxos -m cisco.nxos.nxos_command \
-    -a "commands='show vlan brief'" \
-    -l "spine-01,spine-02"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_nxos -m cisco.nxos.nxos_command -a "commands='show vlan brief'" -l "spine-01,spine-02"
+{{< /codeblock >}}
 
 Limit to a subgroup
 
-```bash
-ansible cisco_nxos -m cisco.nxos.nxos_command \
-    -a "commands='show interface status'" \
-    -l spine_switches
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_nxos -m cisco.nxos.nxos_command -a "commands='show interface status'" -l spine_switches
+{{< /codeblock >}}
 
 Limit using wildcards
 
-```bash
-ansible all -m anible.netcommon.net_ping \
-    -l "leaf*"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible all -m anible.netcommon.net_ping -l "leaf*"
+{{< /codeblock >}}
 
 Limit to a group except one device
 
-```bash
-ansible cisco_ios -m cisco.ios.ios_command \
-    -a "commands='show ip bgp summary'" \
-    -l "cisco_ios:!wan-r2"
-```
+{{< codeblock lang="Bash" syntax="bash" >}}
+ansible cisco_ios -m cisco.ios.ios_command -a "commands='show ip bgp summary'" -l "cisco_ios:!wan-r2"
+{{< /codeblock >}}
 
 ---
 
@@ -440,20 +401,20 @@ The verbosity flags are extremely useful for debugging. Each level adds more det
 
 ---
 
-#### The Three Levels {class="no-step-marker"}
+{{< subtle-label >}}Three Levels{{< /subtle-label >}}
 
 - `-v` - Level 1, task results
 
 Example:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible wan-r1 -m cisco.ios.ios_command -a "commands='show ntp status'" -v
-```
+{{< /codeblock >}}
 
-```bash
+{{< codeblock lang="Output" copy="false" >}}
 wan-r1 | SUCCESS => {
     "changed": false,
-    "invocation": {                      # ← Added by -v: shows module and args used
+    "invocation": {                      ← Added by -v: shows module and args used
         "module_args": {
             "commands": ["show ntp status"],
             "interval": 1,
@@ -469,7 +430,7 @@ wan-r1 | SUCCESS => {
         ["Clock is synchronized, stratum 2, reference is 216.239.35.0", ...]
     ]
 }
-```
+{{< /codeblock >}}
 
 The `invocation` block shows exactly which module arguments were used. This is useful for confirming that the arguments I passed are being interpreted correctly.
 
@@ -479,18 +440,18 @@ The `invocation` block shows exactly which module arguments were used. This is u
 
 Example:
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible wan-r1 -m cisco.ios.ios_command -a "commands='show version'" -vv
-```
+{{< /codeblock >}}
 
-```bash
+{{< codeblock lang="Output" copy="false" >}}
 ESTABLISH PERSISTENT CONNECTION FOR USER: ansible on PORT 22 TO 172.16.0.11  # ← New at -vv
 SSH connection established to 172.16.0.11:22                                  # ← New at -vv
 ...
 wan-r1 | SUCCESS => {
     ...
 }
-```
+{{< /codeblock >}}
 
 Connection establishment details shows which user, which IP, which port. This level is where you can see evidence of SSH connection issues.
 
@@ -498,11 +459,11 @@ Connection establishment details shows which user, which IP, which port. This le
 
 - `-vvv` - Level 3, full SSH debug output
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible wan-r1 -m cisco.ios.ios_command -a "commands='show version'" -vvv
-```
+{{< /codeblock >}}
 
-```
+{{< codeblock lang="Output" copy="false" >}}
 Using /home/ansible/projects/ansible-network/ansible.cfg as config file
 Connecting to 172.16.0.11:22 as user ansible                          
 <wan-r1> ESTABLISH PERSISTENT CONNECTION FOR USER: ansible             
@@ -514,7 +475,7 @@ Connecting to 172.16.0.11:22 as user ansible
 <wan-r1> EXEC /bin/sh -c 'echo PLATFORM && uname'                     
 <wan-r1> Sending XML...                                                
 ...
-```
+{{< /codeblock >}}
 
 This adds the exact SSH command Ansible is running, the SSH key files being tried, the exact bytes being sent to and received from the device, and Python exceptions with full tracebacks when something fails.
 
@@ -522,13 +483,13 @@ This adds the exact SSH command Ansible is running, the SSH key files being trie
 
 ## Check and Diff Flags
 
-**Check**
+{{< subtle-label >}}Check{{< /subtle-label >}}
 
 On Linux hosts `--check` does a dry-run of the playbook. Ansible simulates the change, reports whether it would change anything, but makes no actual modifications.
 
-```bash
+{{< codeblock lang="Bash" syntax="bash" >}}
 ansible linux_hosts -m ansible.builtin.copy -a "src=files/banner.txt dest=/etc/motd" --check
-```
+{{< /codeblock >}}
 
 ---
 
@@ -542,23 +503,19 @@ With `ios_config` and `--check` Ansible reports would it would send but cannot v
 
 ---
 
-**Diff**
+{{< subtle-label >}}Diff{{< /subtle-label >}}
 
 `--diff` shows the before/after of configuration changes.
 
 For `ios_config` the `--diff` shows the config lines Ansible would send.
 
-Example out:
-
-```bash
+{{< codeblock lang="Example Output" copy="false" >}}
 wan-r1 | CHANGED => {
     "diff": {
         "prepared": "interface GigabitEthernet1\n description TEST\n"
     }
 }
-```
-
-{{% /steps %}}
+{{< /codeblock >}}
 
 ---
 

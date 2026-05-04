@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 820" width="720" height="820" role="img" aria-label="Variable placement decision tree: six yes/no questions guide where to put an Ansible variable, from group_vars/all.yml at the broadest scope down to vars directory files at the most reusable scope.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .question-card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .answer-card { fill: var(--lab-bg); stroke: var(--lab-accent); stroke-width: 1.5; }
+      .question-text { fill: var(--lab-text); font-size: 13px; font-weight: 500; text-anchor: start; }
+      .answer-path { fill: var(--lab-accent); font-size: 13px; font-weight: 600; text-anchor: start; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .yes-label { fill: var(--lab-accent); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-anchor: middle; }
+      .no-label { fill: var(--lab-text-muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-anchor: middle; }
+      .branch-line { stroke: var(--lab-accent); stroke-width: 1.5; fill: none; stroke-linecap: round; }
+      .down-line { stroke: var(--lab-text-muted); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-dasharray: 3 3; }
+      .arrow-head { fill: var(--lab-accent); }
+      .arrow-head-muted { fill: var(--lab-text-muted); }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="719" height="819" rx="18" ry="18"/>
+
+  <!-- Each row block:
+       - Question card on the left at x=24, width=400
+       - YES → answer card on the right at x=474, width=224
+       - NO ↓ dashed line down to next row
+
+       Row spacing: 150px between rows
+       Question card height: 64px (taller for wrapped text)
+  -->
+
+  <!-- ========== ROW 1 ========== -->
+  <g transform="translate(24, 32)">
+    <rect class="question-card" x="0" y="0" width="400" height="64" rx="10"/>
+    <text class="question-text" x="16" y="30">Is this variable the same for every</text>
+    <text class="question-text" x="16" y="48">device in the entire inventory?</text>
+  </g>
+  <!-- YES branch -->
+  <line class="branch-line" x1="424" y1="64" x2="464" y2="64"/>
+  <path class="arrow-head" d="M 460,59 L 470,64 L 460,69 Z"/>
+  <text class="yes-label" x="444" y="56">YES</text>
+  <g transform="translate(474, 32)">
+    <rect class="answer-card" x="0" y="0" width="224" height="64" rx="10"/>
+    <text class="answer-path" x="16" y="40">group_vars/all.yml</text>
+  </g>
+  <!-- NO down -->
+  <line class="down-line" x1="224" y1="96" x2="224" y2="160"/>
+  <path class="arrow-head-muted" d="M 219,156 L 224,166 L 229,156 Z"/>
+  <text class="no-label" x="244" y="132">NO</text>
+
+  <!-- ========== ROW 2 ========== -->
+  <g transform="translate(24, 168)">
+    <rect class="question-card" x="0" y="0" width="400" height="64" rx="10"/>
+    <text class="question-text" x="16" y="30">Is this variable the same for every</text>
+    <text class="question-text" x="16" y="48">device in a specific platform group?</text>
+  </g>
+  <line class="branch-line" x1="424" y1="200" x2="464" y2="200"/>
+  <path class="arrow-head" d="M 460,195 L 470,200 L 460,205 Z"/>
+  <text class="yes-label" x="444" y="192">YES</text>
+  <g transform="translate(474, 168)">
+    <rect class="answer-card" x="0" y="0" width="224" height="64" rx="10"/>
+    <text class="answer-path" x="16" y="40">group_vars/&lt;platform&gt;.yml</text>
+  </g>
+  <line class="down-line" x1="224" y1="232" x2="224" y2="296"/>
+  <path class="arrow-head-muted" d="M 219,292 L 224,302 L 229,292 Z"/>
+  <text class="no-label" x="244" y="268">NO</text>
+
+  <!-- ========== ROW 3 ========== -->
+  <g transform="translate(24, 304)">
+    <rect class="question-card" x="0" y="0" width="400" height="64" rx="10"/>
+    <text class="question-text" x="16" y="30">Is this variable the same for a specific</text>
+    <text class="question-text" x="16" y="48">device role or logical group?</text>
+  </g>
+  <line class="branch-line" x1="424" y1="336" x2="464" y2="336"/>
+  <path class="arrow-head" d="M 460,331 L 470,336 L 460,341 Z"/>
+  <text class="yes-label" x="444" y="328">YES</text>
+  <g transform="translate(474, 304)">
+    <rect class="answer-card" x="0" y="0" width="224" height="64" rx="10"/>
+    <text class="answer-path" x="16" y="40">group_vars/&lt;group&gt;.yml</text>
+  </g>
+  <line class="down-line" x1="224" y1="368" x2="224" y2="432"/>
+  <path class="arrow-head-muted" d="M 219,428 L 224,438 L 229,428 Z"/>
+  <text class="no-label" x="244" y="404">NO</text>
+
+  <!-- ========== ROW 4 ========== -->
+  <g transform="translate(24, 440)">
+    <rect class="question-card" x="0" y="0" width="400" height="64" rx="10"/>
+    <text class="question-text" x="16" y="40">Is this variable unique to a specific device?</text>
+  </g>
+  <line class="branch-line" x1="424" y1="472" x2="464" y2="472"/>
+  <path class="arrow-head" d="M 460,467 L 470,472 L 460,477 Z"/>
+  <text class="yes-label" x="444" y="464">YES</text>
+  <g transform="translate(474, 440)">
+    <rect class="answer-card" x="0" y="0" width="224" height="64" rx="10"/>
+    <text class="answer-path" x="16" y="40">host_vars/&lt;hostname&gt;.yml</text>
+  </g>
+  <line class="down-line" x1="224" y1="504" x2="224" y2="568"/>
+  <path class="arrow-head-muted" d="M 219,564 L 224,574 L 229,564 Z"/>
+  <text class="no-label" x="244" y="540">NO</text>
+
+  <!-- ========== ROW 5 ========== -->
+  <g transform="translate(24, 576)">
+    <rect class="question-card" x="0" y="0" width="400" height="64" rx="10"/>
+    <text class="question-text" x="16" y="30">Is this variable only relevant to a</text>
+    <text class="question-text" x="16" y="48">specific play (not reusable)?</text>
+  </g>
+  <line class="branch-line" x1="424" y1="608" x2="464" y2="608"/>
+  <path class="arrow-head" d="M 460,603 L 470,608 L 460,613 Z"/>
+  <text class="yes-label" x="444" y="600">YES</text>
+  <g transform="translate(474, 576)">
+    <rect class="answer-card" x="0" y="0" width="224" height="64" rx="10"/>
+    <text class="answer-path" x="16" y="32">vars: block inside</text>
+    <text class="answer-path" x="16" y="50">the playbook</text>
+  </g>
+  <line class="down-line" x1="224" y1="640" x2="224" y2="704"/>
+  <path class="arrow-head-muted" d="M 219,700 L 224,710 L 229,700 Z"/>
+  <text class="no-label" x="244" y="676">NO</text>
+
+  <!-- ========== ROW 6 ========== -->
+  <g transform="translate(24, 712)">
+    <rect class="question-card" x="0" y="0" width="400" height="64" rx="10"/>
+    <text class="question-text" x="16" y="30">Is this variable shared across multiple</text>
+    <text class="question-text" x="16" y="48">playbooks but not device-specific?</text>
+  </g>
+  <line class="branch-line" x1="424" y1="744" x2="464" y2="744"/>
+  <path class="arrow-head" d="M 460,739 L 470,744 L 460,749 Z"/>
+  <text class="yes-label" x="444" y="736">YES</text>
+  <g transform="translate(474, 712)">
+    <rect class="answer-card" x="0" y="0" width="224" height="64" rx="10"/>
+    <text class="answer-path" x="16" y="40">vars/ directory file</text>
+  </g>
+
+</svg>

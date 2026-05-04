@@ -31,14 +31,14 @@ The goal of this part is to get comfortable enough with Python that it never slo
 Here's where Python shows up:
 
 - **Variables and data structures in playbooks** are Python dictionaries and lists, just written in YAML syntax
-- **Jinja2 filters** (used constantly in templates) are Python expressions
+- **[Jinja2](https://jinja.palletsprojects.com/) filters** (used constantly in templates) are Python expressions
 - **Custom filters and plugins** I might write for Ansible are Python scripts
 - **`ansible-lint`**, **`yamllint`**, and most Ansible tooling is Python
-- **Netmiko and NAPALM**: the libraries that underpin many network automation workflows are Python
+- **[Netmiko](https://github.com/ktbyers/netmiko) and [NAPALM](https://napalm.readthedocs.io/)**: the libraries that underpin many network automation workflows are Python
 - When Ansible throws an error, the traceback is Python. If I can't read a Python traceback, I can't debug effectively
 
 {{< lab-callout type="info" >}}
-Ansible modules are Python scripts that run on managed hosts (or locally for network devices). When I call `ios_config` in a playbook, Ansible is executing a Python script behind the scenes. Understanding Python helps me understand what those modules are actually doing.
+[Ansible modules](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html) are Python scripts that run on managed hosts (or locally for network devices). When I call `ios_config` in a playbook, Ansible is executing a Python script behind the scenes. Understanding Python helps me understand what those modules are actually doing.
 {{< /lab-callout >}}
 
 ---
@@ -116,7 +116,7 @@ vlan = 100
 print(f"VLAN {vlan} is {'even' if vlan % 2 == 0 else 'odd'}")
 {{< /codeblock >}}
 
-F-strings (formatted string literals) start with `f` before the quote. Anything inside `{}` is evaluated as Python.
+[F-strings (formatted string literals)](https://peps.python.org/pep-0498/) start with `f` before the quote. Anything inside `{}` is evaluated as Python.
 
 {{< lab-callout type="info" >}}
 Jinja2 templating in Ansible uses `{{ variable_name }}` syntax. Which is conceptually identical to Python f-strings. Once I understand f-strings, Jinja2 templating feels familiar rather than foreign.
@@ -374,7 +374,7 @@ These two formats are everywhere in network automation. REST APIs return JSON. A
 
 ### JSON in Python
 
-JSON looks almost identical to Python dictionaries. Python's built-in `json` module handles it.
+JSON looks almost identical to Python dictionaries. Python's built-in [`json` module](https://docs.python.org/3/library/json.html) handles it.
 
 {{< codeblock lang="Python" syntax="python" lines="true" >}}
 import json
@@ -440,7 +440,7 @@ print(loaded_inventory["SW1"]["platform"])
 
 {{< line-explain >}}
 Line 9:
-: `with open(...) as f:` is the correct way to open files in Python. The `with` block automatically closes the file when done, even if an error occurs. `"w"` means write mode, `"r"` means read mode.
+: [`with open(...) as f:`](https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files) is the correct way to open files in Python. The `with` block automatically closes the file when done, even if an error occurs. `"w"` means write mode, `"r"` means read mode.
 
 Line 10:
 : `json.dump()` (no `s`) writes to a file object. Contrast with `json.dumps()` which writes to a string.
@@ -509,7 +509,7 @@ Lines 28-29:
 {{< /line-explain >}}
 
 {{< lab-callout type="warning" >}}
-Never use `yaml.load()` without a `Loader` argument in any script, and never use `yaml.load(data, Loader=yaml.FullLoader)` on YAML files from untrusted sources. The safe habit is `yaml.safe_load()` always, everywhere. This same principle applies when I see Ansible warning about unsafe YAML loading.
+[Never use `yaml.load()`](https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load%28input%29-Deprecation) without a `Loader` argument in any script, and never use `yaml.load(data, Loader=yaml.FullLoader)` on YAML files from untrusted sources. The safe habit is `yaml.safe_load()` always, everywhere. This same principle applies when I see Ansible warning about unsafe YAML loading.
 {{< /lab-callout >}}
 
 ---
@@ -538,13 +538,13 @@ When I run `ansible-playbook site.yml`, here's what actually happens:
 1. Ansible reads my YAML playbook and converts it into Python data structures (dictionaries and lists)
 2. For each task, Ansible finds the corresponding Python module file (e.g., `ios_config.py`)
 3. For network devices using `network_cli` connection, Ansible runs the module **locally** on the control node (my Ubuntu VM), not on the device itself
-4. The module uses Paramiko or SSH to connect to the device, send commands, and receive output
+4. The module uses [Paramiko](https://www.paramiko.org/) or SSH to connect to the device, send commands, and receive output
 5. The module returns a Python dictionary with keys like `changed`, `failed`, `stdout`, `diff`
 6. Ansible evaluates the return dictionary to determine if the task passed or failed, and whether anything changed
 
 ---
 
-This is a key difference between network automation and server automation. When Ansible manages a Linux server, it copies the Python module to the server and runs it there. When Ansible manages a network device (a router or switch), the device doesn't run Python (Ansible runs the module locally on the control node and communicates with the device over SSH or NETCONF). This is why network modules require `connection: network_cli` or `connection: netconf` instead of the default `connection: ssh`.
+This is a key difference between network automation and server automation. When Ansible manages a Linux server, it copies the Python module to the server and runs it there. When Ansible manages a network device (a router or switch), the device doesn't run Python (Ansible runs the module locally on the control node and communicates with the device over SSH or NETCONF). This is why network modules require [`connection: network_cli`](https://docs.ansible.com/ansible/latest/collections/ansible/netcommon/network_cli_connection.html) or `connection: netconf` instead of the default `connection: ssh`.
 
 ---
 
@@ -587,14 +587,14 @@ pip3 install netmiko napalm requests --break-system-packages
 {{< /codeblock >}}
 
 {{< lab-callout type="warning" >}}
-The `--break-system-packages` flag is needed on Ubuntu 22.04 because pip is restricted from modifying system packages by default. I use this flag only for quick experiments on a VM I control.
+The [`--break-system-packages`](https://peps.python.org/pep-0668/) flag is needed on Ubuntu 22.04 because pip is restricted from modifying system packages by default. I use this flag only for quick experiments on a VM I control.
 {{< /lab-callout >}}
 
 ---
 
 ### Talking to REST APIs
 
-`requests` is the standard Python HTTP library. I use it to interact with REST APIs (Netbox, AWX, Palo Alto, etc.).
+[`requests`](https://requests.readthedocs.io/) is the standard Python HTTP library. I use it to interact with REST APIs (Netbox, AWX, Palo Alto, etc.).
 
 {{< codeblock lang="Python" syntax="python" lines="true" >}}
 import requests

@@ -26,7 +26,7 @@ This is me documenting my journey of learning Ansible that is focused on network
 
 ## Git & GitHub
 
-I already know the basics (add, commit, push). But there's a big difference between using Git and using Git well. Playbooks are infrastructure code. A bad commit that gets pushed and run in production can take down a network segment. A missing `.gitignore` can leak credentials to a public repository.
+I already know the basics (add, commit, push). But there's a big difference between using [Git](https://git-scm.com/) and using Git well. Playbooks are infrastructure code. A bad commit that gets pushed and run in production can take down a network segment. A missing [`.gitignore`](https://git-scm.com/docs/gitignore) can leak credentials to a public repository.
 
 ---
 
@@ -40,7 +40,7 @@ Version control changes everything:
 
 - **Every change is recorded**: who changed what, when, and why
 - **Every change is reversible**: I can roll back to any previous state in seconds
-- **Changes are reviewed before they run**: Pull Requests mean a second set of eyes before anything touches production
+- **Changes are reviewed before they run**: [Pull Requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) mean a second set of eyes before anything touches production
 - **The history is the documentation**: commit messages explain decisions that comments in code never would
 - **Collaboration is structured**: multiple engineers can work on the same codebase without overwriting each other
 
@@ -81,7 +81,7 @@ Without this configuration, Git will either refuse to commit or use a default th
 
 {{< subtle-label >}}Setting the Default Branch Name{{< /subtle-label >}}
 
-GitHub's default branch name is `main`. Older Git versions default to `master`. I align them to avoid confusion:
+[GitHub's default branch name is `main`](https://github.com/github/renaming). Older Git versions default to `master`. I align them to avoid confusion:
 
 {{< codeblock lang="Bash" syntax="bash" >}}
 git config --global init.defaultBranch main
@@ -101,7 +101,7 @@ git config --global core.editor nano
 
 {{< subtle-label >}}Setting Up a Credential Helper{{< /subtle-label >}}
 
-When I push to GitHub over HTTPS (before SSH keys are set up), Git will ask for my credentials. The credential helper caches them so I'm not asked every single time:
+When I push to GitHub over HTTPS (before SSH keys are set up), Git will ask for my credentials. The [credential helper](https://git-scm.com/docs/gitcredentials) caches them so I'm not asked every single time:
 
 {{< codeblock lang="Bash" syntax="bash" >}}
 git config --global credential.helper store
@@ -163,7 +163,7 @@ ssh-keygen -t ed25519 -C "myemail@company.com" -f ~/.ssh/github_key
 
 {{< line-explain >}}
 -t ed25519:
-: Ed25519 is the modern, recommended key type for GitHub
+: [Ed25519](https://wiki.archlinux.org/title/SSH_keys#Choosing_the_authentication_key_types) is the modern, recommended key type for GitHub
 
 -C "myemail@company.com:
 : the comment becomes a label in GitHub's SSH key list, helping me identify which key is which
@@ -482,7 +482,7 @@ Lines 54-55:
 {{< /line-explain >}}
 
 {{< lab-callout type="warning" >}}
-The `.gitignore` file only prevents untracked files from being added to Git. If I accidentally commit a secret file before adding it to `.gitignore`, the secret is now in the Git history. Even if I delete the file afterward. Git history is permanent. The correct remediation is `git filter-repo` to rewrite history (which destroys all commit SHAs and requires every team member to re-clone), plus immediately rotating the compromised credential. The lesson: set up `.gitignore` before the first commit, every single time.
+The `.gitignore` file only prevents untracked files from being added to Git. If I accidentally commit a secret file before adding it to `.gitignore`, the secret is now in the Git history. Even if I delete the file afterward. Git history is permanent. The correct remediation is [`git filter-repo`](https://github.com/newren/git-filter-repo) to rewrite history (which destroys all commit SHAs and requires every team member to re-clone), plus immediately rotating the compromised credential. The lesson: set up `.gitignore` before the first commit, every single time.
 {{< /lab-callout >}}
 
 ---
@@ -498,7 +498,7 @@ I left these two lines commented out intentionally:
 
 If I uncomment them, Git ignores the entire `host_vars/` and `group_vars/` directories, which means my variable files never get committed. That's too aggressive. Most content in these directories (VLAN lists, interface names, routing configs) is not sensitive and should be in version control.
 
-The correct approach is to use Ansible Vault to encrypt only the sensitive values within those files. I commit the encrypted vault files. Git stores the ciphertext, which is safe. The vault password itself goes in `.vault_pass`, which is in `.gitignore`.
+The correct approach is to use [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) to encrypt only the sensitive values within those files. I commit the encrypted vault files. Git stores the ciphertext, which is safe. The vault password itself goes in `.vault_pass`, which is in `.gitignore`.
 
 ---
 
@@ -659,6 +659,8 @@ Closes: #42
 ---
 
 ### Commit Types
+
+These types follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
 | Type | When to Use |
 |---|---|
@@ -1063,7 +1065,7 @@ The PR on GitHub automatically updates with the new commit. The reviewer can see
 
 ### Branch Protection Rules
 
-For a team with formal review, I configure branch protection on `main` in GitHub:
+For a team with formal review, I configure [branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) on `main` in GitHub:
 
 1. Go to repository → **Settings** → **Branches**
 2. Click **Add branch protection rule**
@@ -1219,7 +1221,7 @@ Never use `git reset --hard` or `git push --force` on the `main` branch on a sha
 
 {{< subtle-label >}}Scanning for Accidentlly Committed Secrets{{< /subtle-label >}}
 
-Before pushing, I can scan for secrets using `git-secrets` or `trufflehog`:
+Before pushing, I can scan for secrets using `git-secrets` or [`trufflehog`](https://github.com/trufflesecurity/trufflehog):
 
 Install trufflehog (a secrets scanner)
 
@@ -1237,7 +1239,7 @@ trufflehog git file://. --only-verified
 
 A pre-commit hook runs automatically before every `git commit` and can block the commit if it finds problems:
 
-Install pre-commit framework
+Install [pre-commit](https://pre-commit.com/) framework
 
 {{< codeblock lang="Bash" syntax="bash" >}}
 pip install pre-commit

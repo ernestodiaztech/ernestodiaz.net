@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" width="720" height="330" role="img" aria-label="Comparison of Ansible task flow: normal flow runs the task on the target device via SSH, while delegate_to localhost runs the task on the Ubuntu VM control node without SSH.">
+  <defs>
+    <style><![CDATA[
+      svg {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+      .frame { fill: var(--lab-surface-subtle); stroke: var(--lab-border); stroke-width: 1; }
+      .column-card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .node-card { fill: var(--lab-bg); stroke: var(--lab-border); stroke-width: 1.5; }
+      .target-card { fill: var(--lab-bg); stroke: var(--lab-accent); stroke-width: 1.75; }
+      .column-title { fill: var(--lab-text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-anchor: middle; }
+      .node-text { fill: var(--lab-text); font-size: 14px; font-weight: 600; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .target-text { fill: var(--lab-text); font-size: 14px; font-weight: 700; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .target-meta { fill: var(--lab-accent); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-anchor: middle; }
+      .protocol-text { fill: var(--lab-text); font-size: 13px; font-weight: 600; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .protocol-meta { fill: var(--lab-text-muted); font-size: 12px; font-weight: 400; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .arrow-line { stroke: var(--lab-accent); stroke-width: 1.75; fill: none; stroke-linecap: round; }
+      .arrow-head { fill: var(--lab-accent); }
+      .divider { stroke: var(--lab-border); stroke-width: 1; }
+    ]]></style>
+  </defs>
+
+  <!-- Outer container -->
+  <rect class="frame" x="0.5" y="0.5" width="719" height="329" rx="18" ry="18"/>
+
+  <!-- Vertical divider between the two columns -->
+  <line class="divider" x1="360" y1="40" x2="360" y2="320"/>
+
+  <!-- ========== LEFT COLUMN: Normal task flow ========== -->
+  <text class="column-title" x="180" y="40">NORMAL TASK FLOW</text>
+
+  <!-- Ubuntu VM (source) -->
+  <g transform="translate(80, 70)">
+    <rect class="node-card" x="0" y="0" width="200" height="50" rx="10"/>
+    <text class="node-text" x="100" y="32">Ubuntu VM</text>
+  </g>
+
+  <!-- Arrow with SSH label -->
+  <line class="arrow-line" x1="180" y1="120" x2="180" y2="194"/>
+  <path class="arrow-head" d="M 175,190 L 180,200 L 185,190 Z"/>
+  <text class="protocol-text" x="240" y="160">SSH</text>
+
+  <!-- Target: wan-r1 (accent border, this is where it runs) -->
+  <g transform="translate(80, 210)">
+    <rect class="target-card" x="0" y="0" width="200" height="68" rx="10"/>
+    <text class="target-text" x="100" y="32">wan-r1</text>
+    <text class="target-meta" x="100" y="54">TASK RUNS HERE</text>
+  </g>
+
+  <!-- ========== RIGHT COLUMN: With delegate_to ========== -->
+  <text class="column-title" x="540" y="40">WITH DELEGATE_TO: LOCALHOST</text>
+
+  <!-- Ubuntu VM (source) -->
+  <g transform="translate(440, 70)">
+    <rect class="node-card" x="0" y="0" width="200" height="50" rx="10"/>
+    <text class="node-text" x="100" y="32">Ubuntu VM</text>
+  </g>
+
+  <!-- Arrow with "runs locally, no SSH" label -->
+  <line class="arrow-line" x1="540" y1="120" x2="540" y2="194"/>
+  <path class="arrow-head" d="M 535,190 L 540,200 L 545,190 Z"/>
+  <text class="protocol-text" x="540" y="156">runs locally</text>
+  <text class="protocol-meta" x="540" y="174">no SSH</text>
+
+  <!-- Target: same Ubuntu VM (accent border, this is where it runs) -->
+  <g transform="translate(440, 210)">
+    <rect class="target-card" x="0" y="0" width="200" height="68" rx="10"/>
+    <text class="target-text" x="540" y="32" transform="translate(-440, 0)">Ubuntu VM</text>
+    <text class="target-meta" x="540" y="54" transform="translate(-440, 0)">TASK RUNS HERE</text>
+  </g>
+
+</svg>

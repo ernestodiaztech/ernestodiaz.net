@@ -36,7 +36,7 @@ I opened VSCode and went to the Extensions panel (`Ctrl+Shift+X`). I searched fo
 
 ![](remotessh.jpg)
 
-- **Remote - SSH** : connects to any SSH host
+- **[Remote - SSH](https://code.visualstudio.com/docs/remote/ssh)** : connects to any SSH host
 - **Remote - SSH: Editing Configuration Files** : gives me a UI to manage SSH config
 - **Remote - Explorer** : sidebar panel to manage my remote connections
 
@@ -57,14 +57,14 @@ Right now I'm just setting everything up, so I will create an SSH-key with no pa
 {{< lab-callout type="info" >}}
   **How SSH Key Authentication Works**
 
-  When I generate an SSH key pair, I get 2 files:
+  When I generate an [SSH key pair](https://www.digitalocean.com/community/tutorials/understanding-the-ssh-encryption-and-connection-process), I get 2 files:
   - **Private key** - stays on my machine, never shared, treated like a password
   - **Public key** - placed on every server I want to connect to
 
   When I SSH in, the server uses the public key to issue a challenge that only the private key can solve. No password ever crosses the network.
 {{< /lab-callout >}}
 
-On my Windows PC, I ran the following on PowerShell:
+On my Windows PC, I ran the following [`ssh-keygen`](https://man.openbsd.org/ssh-keygen.1) command on PowerShell:
 
 {{< codeblock lang="Bash" syntax="bash" >}}
 ssh-keygen -t ed25519 -C "ansible-key" -f "c\users\nesto\.ssh\ansible_key"
@@ -72,7 +72,7 @@ ssh-keygen -t ed25519 -C "ansible-key" -f "c\users\nesto\.ssh\ansible_key"
 
 {{< line-explain >}}
 -t ed25519:
-: specifies the key type. Ed25519 is the modern standard (faster and more secure than the older RSA 2048 keys)
+: specifies the key type. [Ed25519](https://wiki.archlinux.org/title/SSH_keys#Choosing_the_authentication_key_types) is the modern standard (faster and more secure than the older RSA 2048 keys)
 
 -C "ansible-key":
 : a comment/label embedded in the public key to identify it later.
@@ -104,7 +104,7 @@ type c:\users\nesto\.ssh\ansible_key.pub | ssh ansible@192.168.1.50 "mkdir -p ~/
 {{< /details >}}
 
 {{< lab-callout type="info" >}}
-`authorized_keys` is the file Ubuntu checks when I SSH in. It can hold multiple public keys (1 per line). This is how I'd add keys for multiple engineers or multiple machines to the same server.
+[`authorized_keys`](https://man.openbsd.org/sshd.8#AUTHORIZED_KEYS_FILE_FORMAT) is the file Ubuntu checks when I SSH in. It can hold multiple public keys (1 per line). This is how I'd add keys for multiple engineers or multiple machines to the same server.
 {{< /lab-callout >}}
 
 Then to test if it worked, I issued the following command from VS Code:
@@ -123,7 +123,7 @@ Once key-based auth is confirmed working, I disable password SSH login on Ubuntu
 sudo nano /etc/ssh/sshd_config
 {{< /codeblock >}}
 
-I find and change these lines:
+I find and change these lines in [`sshd_config`](https://man.openbsd.org/sshd_config.5):
 
 {{< codeblock lang="ini" syntax="ini" >}}
 PasswordAuthentication no
@@ -218,7 +218,7 @@ Line 4:
 : Fingerprints of hosts I've SSH'd to
 
 Line 5:
-: Shell config, runs on every new terminal
+: [Shell config](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html), runs on every new terminal
 
 Line 6:
 : Runs at login (not every terminal)
@@ -247,7 +247,7 @@ Line 9:
 
 {{< line-explain >}}
 Line 1:
-: System-wide configuration files
+: [System-wide configuration files](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03.html)
 
 Line 2:
 : Default location for ansible.cfg
@@ -270,7 +270,7 @@ I keep all my Ansible projects under `~/projects/`. That way, when I come back t
 
 ## Persistent Terminal Sessions
 
-`tmux` is a terminal multiplexer. It runs a terminal sessions on the Ubuntu VM that persists even when I disconnect. When I reconnect, I just re-attach to the session and everything is exactly as I left it.
+[`tmux`](https://github.com/tmux/tmux/wiki/Getting-Started) is a terminal multiplexer. It runs a terminal sessions on the Ubuntu VM that persists even when I disconnect. When I reconnect, I just re-attach to the session and everything is exactly as I left it.
 
 ### tmux Concepts
 

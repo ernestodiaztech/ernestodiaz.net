@@ -812,30 +812,7 @@ This playbook will gather and display facts from all devices.
 
 Here's a decision guide on when to use each type:
 
-```
-Is this variable the same for every device in the entire inventory?
-  Yes → group_vars/all.yml
-  No ↓
-
-Is this variable the same for every device in a speicifc platform group?
-  Yes → group_vars/<platform>.yml
-  No ↓
-
-Is this variable the same for a specific device role or logical group?
-  Yes → group_vars/<group>.yml
-  No ↓
-
-Is this variable unique to a specific device?
-  Yes → host_vars/<hostname>.yml
-  No ↓
-
-Is this variable only relevant to a specific play (no reusable)?
-  Yes → vars: block inside the playbook
-  No ↓
-
-Is this variable shared across multiple playbooks but not device-specific?
-  Yes → vars/ directory file
-```
+{{< topology1 src="diagrams/variable-placement-tree.svg" >}}
 
 ---
 
